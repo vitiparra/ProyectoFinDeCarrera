@@ -49,6 +49,9 @@
     <Compile Include="Codificador04A.cs" />
     <Compile Include="Codificador03A.cs" />
     <Compile Include="Codificador02A.cs" />
+    <Compile Include="Decodificador04A.cs" />
+    <Compile Include="Decodificador03A.cs" />
+    <Compile Include="Decodificador02A.cs" />
     <Compile Include="Struct01Basica.cs" />
     <Compile Include="Clase01Basica.cs" />
     <Compile Include="Codificador01A.cs" />
