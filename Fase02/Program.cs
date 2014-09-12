@@ -27,7 +27,7 @@ namespace Fase02
             Console.WriteLine("Codificación básica. Clase con dos atributos");
             Codificador01A cod1A = new Codificador01A();
             inicio = DateTime.Now;
-            cod1A.put(c1);
+            cod1A.encode(c1);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -35,7 +35,7 @@ namespace Fase02
             Console.WriteLine("Decodificación básica. Clase con dos atributos");
             Decodificador01A dec1A = new Decodificador01A();
             inicio = DateTime.Now;
-            Object c1decodedAux = dec1A.decode("1");
+            Object c1decodedAux = dec1A.decode(1, "2");
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -56,7 +56,7 @@ namespace Fase02
             Console.WriteLine("Codificación de estructura con dos campos");
             Codificador01A cod1A_ = new Codificador01A();
             inicio = DateTime.Now;
-            cod1A_.put(c1);
+            cod1A_.encode(c1);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -64,7 +64,7 @@ namespace Fase02
             Console.WriteLine("Decodificación de una estructura con dos atributos");
             Decodificador01A dec1A_ = new Decodificador01A();
             inicio = DateTime.Now;
-            Object c1decodedAux_ = dec1A_.decode("1");
+            Object c1decodedAux_ = dec1A_.decode(1, "2");
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");

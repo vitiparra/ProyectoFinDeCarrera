@@ -10,9 +10,9 @@ namespace Fase02
     {
         public struct estructura
         {
-            public int valor1;
-            public string valor2;
+            public int valor1 { get; set; }
+            public string valor2 { get; set; }
         }
-        public int valor3 { get; set; }
+        public estructura valor3 { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace Fase02
 {
     public abstract class CodificadorBase
     {
-        public abstract void put(Object obj);
+        public abstract void encode(Object obj);
     }
 }

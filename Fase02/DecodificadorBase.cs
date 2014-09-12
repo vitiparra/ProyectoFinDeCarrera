@@ -10,6 +10,6 @@ namespace Fase02
     public abstract class DecodificadorBase
     {
 //        public abstract Object decode(Stream aux);
-        public abstract Object decode(String aux);
+        public abstract Object decode(int v1, string v2);
     }
 }

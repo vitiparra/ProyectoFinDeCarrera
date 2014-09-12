@@ -14,7 +14,6 @@ namespace Fase02
             public string var2 { get; set; }            
         }
 
-        public int var3 { get; set; }
-        public string var2 { get; set; }                   
+        public ClaseInterna var3 { get; set; }
     }
 }
