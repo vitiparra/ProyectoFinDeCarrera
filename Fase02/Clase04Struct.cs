@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Codificador01A : CodificadorBase
+    class Clase04Struct
     {
-        public override void put(Clase01Basica aux)
+        public struct estructura
         {
-            Console.WriteLine(c.var1);
-            Console.WriteLine(c.var2);
+            public int valor1;
+            public string valor2;
         }
+        public int valor3 { get; set; }
     }
 }

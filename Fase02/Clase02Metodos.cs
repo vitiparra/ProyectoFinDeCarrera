@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Codificador01A : CodificadorBase
+    class Clase02Metodos
     {
-        public override void put(Clase01Basica aux)
+        public int metodo1()
         {
-            Console.WriteLine(c.var1);
-            Console.WriteLine(c.var2);
+            return 1;
+        }
+        public string metodo2()
+        {
+            return "2";
         }
     }
 }

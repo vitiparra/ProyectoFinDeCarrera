@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clase02Metodos.cs" />
+    <Compile Include="Clase03Array.cs" />
+    <Compile Include="Clase04Struct.cs" />
+    <Compile Include="Clase05Clase.cs" />
     <Compile Include="Struct01Basica.cs" />
     <Compile Include="Clase01Basica.cs" />
     <Compile Include="Codificador01A.cs" />

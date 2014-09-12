@@ -22,7 +22,7 @@ namespace Fase02
              */
             Clase01Basica c1 = new Clase01Basica();
             c1.var1 = 1;
-            c1.var2 = 2;
+            c1.var2 = "2";
 
             Console.WriteLine("Codificación básica. Clase con dos atributos");
             Codificador01A cod1A = new Codificador01A();
@@ -51,7 +51,7 @@ namespace Fase02
             */
             Struct01Basica s1 = new Struct01Basica();
             s1.var1 = 1;
-            s1.var2 = 2;
+            s1.var2 = "2";
 
             Console.WriteLine("Codificación de estructura con dos campos");
             Codificador01A cod1A_ = new Codificador01A();

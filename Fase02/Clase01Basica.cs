@@ -9,6 +9,6 @@ namespace Fase02
     class Clase01Basica
     {
         public int var1 { get; set;}
-        public int var2 { get; set; }
+        public string var2 { get; set; }
     }
 }

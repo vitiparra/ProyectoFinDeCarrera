@@ -9,6 +9,6 @@ namespace Fase02
     struct Struct01Basica
     {
         public int var1 { get; set;}
-        public int var2 { get; set; }
+        public string var2 { get; set; }
     }
 }
