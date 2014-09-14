@@ -15,5 +15,10 @@ namespace Fase02
         }
 
         public ClaseInterna var3 { get; set; }
+
+        public Clase05Clase()
+        {
+            var3 = new ClaseInterna();
+        }
     }
 }

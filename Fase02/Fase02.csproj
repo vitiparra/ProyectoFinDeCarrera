@@ -49,6 +49,7 @@
     <Compile Include="Codificador04A.cs" />
     <Compile Include="Codificador03A.cs" />
     <Compile Include="Codificador02A.cs" />
+    <Compile Include="Decodificador05A.cs" />
     <Compile Include="Decodificador04A.cs" />
     <Compile Include="Decodificador03A.cs" />
     <Compile Include="Decodificador02A.cs" />
