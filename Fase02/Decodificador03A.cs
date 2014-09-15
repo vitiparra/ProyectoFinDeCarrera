@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Decodificador03A : DecodificadorBase
+    class Decodificador03A : DecodificadorBaseA
     {
 //        public override Object decode(Stream aux)
         public override Object decode(int v1, string v2)

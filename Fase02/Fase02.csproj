@@ -58,7 +58,7 @@
     <Compile Include="Codificador01A.cs" />
     <Compile Include="CodificadorBaseA.cs" />
     <Compile Include="Decodificador01A.cs" />
-    <Compile Include="DecodificadorBase.cs" />
+    <Compile Include="DecodificadorBaseA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
