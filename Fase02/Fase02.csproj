@@ -56,7 +56,7 @@
     <Compile Include="Struct01Basica.cs" />
     <Compile Include="Clase01Basica.cs" />
     <Compile Include="Codificador01A.cs" />
-    <Compile Include="CodificadorBase.cs" />
+    <Compile Include="CodificadorBaseA.cs" />
     <Compile Include="Decodificador01A.cs" />
     <Compile Include="DecodificadorBase.cs" />
     <Compile Include="Program.cs" />

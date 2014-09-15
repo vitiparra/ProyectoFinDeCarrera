@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    public abstract class CodificadorBase
+    class Clase03Array
     {
-        public abstract void encode(Object obj);
+        public int[] var1 { get; set; }
+        public string[] var2 { get; set; }
     }
 }

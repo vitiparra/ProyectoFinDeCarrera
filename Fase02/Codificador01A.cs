@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Codificador01A : CodificadorBase
+    class Codificador01A : CodificadorBaseA
     {
         public override void encode(Object aux)
         {
