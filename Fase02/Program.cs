@@ -154,10 +154,18 @@ namespace Fase02
 
         protected void codificarClase01(Object c)
         {
-            Console.WriteLine("Codificación básica. Clase con dos atributos");
+            Console.WriteLine("Codificación básica A. Clase con dos atributos");
             Codificador01A cod1A = new Codificador01A();
             inicio = DateTime.Now;
             cod1A.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación básica B. Clase con dos atributos");
+            Codificador01B cod1B = new Codificador01B();
+            inicio = DateTime.Now;
+            cod1B.encode(ref c);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -165,7 +173,7 @@ namespace Fase02
 
         protected Object decodificarClase01(int v1, string v2)
         {
-            Console.WriteLine("Decodificación básica. Clase con dos atributos");
+            Console.WriteLine("Decodificación básica A. Clase con dos atributos");
             Decodificador01A dec = new Decodificador01A();
             inicio = DateTime.Now;
             Object cAux = dec.decode(v1, v2);
@@ -173,13 +181,30 @@ namespace Fase02
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
             return cAux;
-        }
+/*
+            Console.WriteLine("Decodificación básica B. Clase con dos atributos");
+            Decodificador01A dec = new Decodificador01A();
+            inicio = DateTime.Now;
+            Object cAux = dec.decode(v1, v2);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            return cAux;
+*/        }
         protected void codificarClase02(Object c)
         {
-            Console.WriteLine("Codificación con métodos. Clase con dos métodos");
+            Console.WriteLine("Codificación con métodos A. Clase con dos métodos");
             Codificador02A cod = new Codificador02A();
             inicio = DateTime.Now;
             cod.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con métodos B. Clase con dos métodos");
+            Codificador02B cod2 = new Codificador02B();
+            inicio = DateTime.Now;
+            cod2.encode(ref c);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -199,10 +224,18 @@ namespace Fase02
 
         protected void codificarClase03(Object c)
         {
-            Console.WriteLine("Codificación con estructuras complejas. Clase con dos arrays");
+            Console.WriteLine("Codificación con estructuras complejas A. Clase con dos arrays");
             Codificador03A cod = new Codificador03A();
             inicio = DateTime.Now;
             cod.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas B. Clase con dos arrays");
+            Codificador03B cod2 = new Codificador03B();
+            inicio = DateTime.Now;
+            cod2.encode(ref c);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -222,10 +255,18 @@ namespace Fase02
 
         protected void codificarClase04(Object c)
         {
-            Console.WriteLine("Codificación con estructuras complejas. Clase con un struct");
+            Console.WriteLine("Codificación con estructuras complejas A. Clase con un struct");
             Codificador04A cod = new Codificador04A();
             inicio = DateTime.Now;
             cod.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas B. Clase con un struct");
+            Codificador04B cod2 = new Codificador04B();
+            inicio = DateTime.Now;
+            cod2.encode(ref c);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
@@ -245,10 +286,18 @@ namespace Fase02
 
         protected void codificarClase05(Object c)
         {
-            Console.WriteLine("Codificación con estructuras complejas. Clase con otra clase en su interior");
+            Console.WriteLine("Codificación con estructuras complejas A. Clase con otra clase en su interior");
             Codificador05A cod = new Codificador05A();
             inicio = DateTime.Now;
             cod.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas B. Clase con otra clase en su interior");
+            Codificador05B cod2 = new Codificador05B();
+            inicio = DateTime.Now;
+            cod2.encode(ref c);
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
