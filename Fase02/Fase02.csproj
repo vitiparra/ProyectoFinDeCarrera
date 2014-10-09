@@ -45,6 +45,7 @@
     <Compile Include="Clase03Array.cs" />
     <Compile Include="Clase04Struct.cs" />
     <Compile Include="Clase05Clase.cs" />
+    <Compile Include="CodecExtension.cs" />
     <Compile Include="Codificador01B.cs" />
     <Compile Include="Codificador02B.cs" />
     <Compile Include="Codificador03B.cs" />
