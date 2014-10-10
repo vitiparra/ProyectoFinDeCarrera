@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using CodecExtensions;
+
 namespace Fase02
 {
     class Program
@@ -169,6 +171,14 @@ namespace Fase02
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación básica C. Clase con dos atributos");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase01(int v1, string v2)
@@ -208,6 +218,14 @@ namespace Fase02
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con métodos C. Clase con dos métodos");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase02(int v1, string v2)
@@ -237,6 +255,14 @@ namespace Fase02
             inicio = DateTime.Now;
             cod2.encode(ref c);
             final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas C. Clase con dos arrays");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
         }
@@ -270,6 +296,14 @@ namespace Fase02
             final = DateTime.Now;
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas C. Clase con struct");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase04(int v1, string v2)
@@ -299,6 +333,14 @@ namespace Fase02
             inicio = DateTime.Now;
             cod2.encode(ref c);
             final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
             duracion = final - inicio;
             Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
         }
