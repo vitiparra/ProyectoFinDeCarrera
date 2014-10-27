@@ -44,12 +44,15 @@
     <Compile Include="Clase02Metodos.cs" />
     <Compile Include="Clase03Array.cs" />
     <Compile Include="Clase04Struct.cs" />
+    <Compile Include="Clase06ClaseDerivada.cs" />
     <Compile Include="Clase05Clase.cs" />
     <Compile Include="CodecExtension.cs" />
     <Compile Include="Codificador01B.cs" />
     <Compile Include="Codificador02B.cs" />
     <Compile Include="Codificador03B.cs" />
     <Compile Include="Codificador04B.cs" />
+    <Compile Include="Codificador06B.cs" />
+    <Compile Include="Codificador06A.cs" />
     <Compile Include="Codificador05B.cs" />
     <Compile Include="Codificador05A.cs" />
     <Compile Include="Codificador04A.cs" />
@@ -57,6 +60,7 @@
     <Compile Include="Codificador02A.cs" />
     <Compile Include="CodificadorBaseB.cs" />
     <Compile Include="Decodificador01B.cs" />
+    <Compile Include="Decodificador06A.cs" />
     <Compile Include="Decodificador05A.cs" />
     <Compile Include="Decodificador04A.cs" />
     <Compile Include="Decodificador03A.cs" />

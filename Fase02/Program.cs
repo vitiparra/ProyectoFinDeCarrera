@@ -122,6 +122,27 @@ namespace Fase02
             p.duracion = p.final - p.inicio;
             Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
 
+
+            Console.WriteLine("==================");
+            /*
+             * 06. Clase con una clase derivada
+             */
+            Clase06ClaseDerivada c6 = new Clase06ClaseDerivada();
+            c6.var1 = 1;
+            c6.var2 = "2";
+            c6.var3 = 3;
+
+            p.codificarClase06(c6);
+            Object c6decodedAux = p.decodificarClase06(1, "2");
+
+            // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
+            // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
+            p.inicio = DateTime.Now;
+            Clase06ClaseDerivada c6decoded = (Clase06ClaseDerivada)c6decodedAux;
+            p.final = DateTime.Now;
+            p.duracion = p.final - p.inicio;
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
+
             /*
             * 01. Struct básica
             */
@@ -349,6 +370,45 @@ namespace Fase02
         {
             Console.WriteLine("Decodificación con estructuras complejas. Clase con una clase en su interior");
             Decodificador05A dec = new Decodificador05A();
+            inicio = DateTime.Now;
+            Object cAux = dec.decode(v1, v2);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            return cAux;
+        }
+
+        protected void codificarClase06(Object c)
+        {
+            Console.WriteLine("Codificación con estructuras complejas A. Clase que deriva de otra clase");
+            Codificador06A cod = new Codificador06A();
+            inicio = DateTime.Now;
+            cod.encode(c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas B. Clase que deriva de otra clase");
+            Codificador06B cod2 = new Codificador06B();
+            inicio = DateTime.Now;
+            cod2.encode(ref c);
+            final = DateTime.Now;
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
+            inicio = DateTime.Now;
+            String aux = c.codificar();
+            final = DateTime.Now;
+            Console.WriteLine("Codificado: " + aux);
+            duracion = final - inicio;
+            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+        }
+
+        protected Object decodificarClase06(int v1, string v2)
+        {
+            Console.WriteLine("Decodificación con clases derivadas. Clase derivada de otra");
+            Decodificador06A dec = new Decodificador06A();
             inicio = DateTime.Now;
             Object cAux = dec.decode(v1, v2);
             final = DateTime.Now;
