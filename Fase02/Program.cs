@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using CodecExtensions;
 
 namespace Fase02
@@ -16,10 +16,12 @@ namespace Fase02
          */
         DateTime inicio, final;
         TimeSpan duracion;
+        Stopwatch watch;
 
         static void Main(string[] args)
         {
             Program p = new Program();
+            p.watch = new System.Diagnostics.Stopwatch();
 
             /*
              * 01. Clase básica
@@ -33,11 +35,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase01
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase01Basica c1decoded = (Clase01Basica)c1decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
             /*
@@ -50,11 +51,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase02
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase02Metodos c2decoded = (Clase02Metodos)c2decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
             /*
@@ -77,11 +77,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase03
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase03Array c3decoded = (Clase03Array)c3decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
             /*
@@ -95,11 +94,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase04Struct c4decoded = (Clase04Struct)c4decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
             /*
@@ -116,12 +114,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase05Clase c5decoded = (Clase05Clase)c5decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
-
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
             /*
@@ -137,12 +133,10 @@ namespace Fase02
 
             // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
             // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
-            p.inicio = DateTime.Now;
+            p.watch.Restart();
             Clase06ClaseDerivada c6decoded = (Clase06ClaseDerivada)c6decodedAux;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
-
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
             /*
             * 01. Struct básica
             */
@@ -179,38 +173,36 @@ namespace Fase02
         {
             Console.WriteLine("Codificación básica A. Clase con dos atributos");
             Codificador01A cod1A = new Codificador01A();
-            inicio = DateTime.Now;
+            watch.Restart();
             cod1A.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación básica B. Clase con dos atributos");
             Codificador01B cod1B = new Codificador01B();
-            inicio = DateTime.Now;
+            watch.Restart();
             cod1B.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación básica C. Clase con dos atributos");
-            inicio = DateTime.Now;
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase01(int v1, string v2)
         {
             Console.WriteLine("Decodificación básica A. Clase con dos atributos");
             Decodificador01A dec = new Decodificador01A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
 /*
             Console.WriteLine("Decodificación básica B. Clase con dos atributos");
@@ -226,38 +218,36 @@ namespace Fase02
         {
             Console.WriteLine("Codificación con métodos A. Clase con dos métodos");
             Codificador02A cod = new Codificador02A();
-            inicio = DateTime.Now;
+            watch.Restart();
             cod.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con métodos B. Clase con dos métodos");
             Codificador02B cod2 = new Codificador02B();
-            inicio = DateTime.Now;
+            watch.Restart();
             cod2.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con métodos C. Clase con dos métodos");
-            inicio = DateTime.Now;
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase02(int v1, string v2)
         {
             Console.WriteLine("Decodificación con métodos. Clase con dos métodos");
             Decodificador02A dec = new Decodificador02A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
         }
 
@@ -265,38 +255,38 @@ namespace Fase02
         {
             Console.WriteLine("Codificación con estructuras complejas A. Clase con dos arrays");
             Codificador03A cod = new Codificador03A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas B. Clase con dos arrays");
             Codificador03B cod2 = new Codificador03B();
-            inicio = DateTime.Now;
-            cod2.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
 
+            watch.Restart();
+            cod2.encode(ref c);
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+            
             Console.WriteLine("Codificación con estructuras complejas C. Clase con dos arrays");
-            inicio = DateTime.Now;
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase03(int v1, string v2)
         {
             Console.WriteLine("Decodificación con estructuras complejas. Clase con dos arrays");
             Decodificador03A dec = new Decodificador03A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
         }
 
@@ -304,38 +294,38 @@ namespace Fase02
         {
             Console.WriteLine("Codificación con estructuras complejas A. Clase con un struct");
             Codificador04A cod = new Codificador04A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas B. Clase con un struct");
             Codificador04B cod2 = new Codificador04B();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod2.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas C. Clase con struct");
-            inicio = DateTime.Now;
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase04(int v1, string v2)
         {
             Console.WriteLine("Decodificación con estructuras complejas. Clase con un struct");
             Decodificador04A dec = new Decodificador04A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
         }
 
@@ -343,38 +333,39 @@ namespace Fase02
         {
             Console.WriteLine("Codificación con estructuras complejas A. Clase con otra clase en su interior");
             Codificador05A cod = new Codificador05A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas B. Clase con otra clase en su interior");
             Codificador05B cod2 = new Codificador05B();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod2.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
-            inicio = DateTime.Now;
+
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase05(int v1, string v2)
         {
             Console.WriteLine("Decodificación con estructuras complejas. Clase con una clase en su interior");
             Decodificador05A dec = new Decodificador05A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
         }
 
@@ -382,40 +373,40 @@ namespace Fase02
         {
             Console.WriteLine("Codificación con estructuras complejas A. Clase que deriva de otra clase");
             Codificador06A cod = new Codificador06A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod.encode(c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas B. Clase que deriva de otra clase");
             Codificador06B cod2 = new Codificador06B();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             cod2.encode(ref c);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
-            inicio = DateTime.Now;
+
+            watch.Restart();
             String aux = c.codificar();
-            final = DateTime.Now;
+            watch.Stop();
             Console.WriteLine("Codificado: " + aux);
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
         }
 
         protected Object decodificarClase06(int v1, string v2)
         {
             Console.WriteLine("Decodificación con clases derivadas. Clase derivada de otra");
             Decodificador06A dec = new Decodificador06A();
-            inicio = DateTime.Now;
+
+            watch.Restart();
             Object cAux = dec.decode(v1, v2);
-            final = DateTime.Now;
-            duracion = final - inicio;
-            Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
             return cAux;
         }
-
     }
 }
