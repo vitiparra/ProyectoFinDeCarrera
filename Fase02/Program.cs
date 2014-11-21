@@ -14,8 +14,6 @@ namespace Fase02
          * Variables que usaremos para medir el tiempo de ejecución
          * y calcular la duración de una ejecución
          */
-        DateTime inicio, final;
-        TimeSpan duracion;
         Stopwatch watch;
 
         static void Main(string[] args)
@@ -120,6 +118,7 @@ namespace Fase02
             Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
             Console.WriteLine("==================");
+
             /*
              * 06. Clase con una clase derivada
              */
@@ -137,35 +136,24 @@ namespace Fase02
             Clase06ClaseDerivada c6decoded = (Clase06ClaseDerivada)c6decodedAux;
             p.watch.Stop();
             Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
+
+            Console.WriteLine("==================");
+
             /*
             * 01. Struct básica
             */
-/*            Struct01Basica s1 = new Struct01Basica();
+            Struct01Basica s1 = new Struct01Basica();
             s1.var1 = 1;
             s1.var2 = "2";
 
-            Console.WriteLine("Codificación de estructura con dos campos");
-            Codificador01A cod1A_ = new Codificador01A();
-            p.inicio = DateTime.Now;
-            cod1A_.encode(c1);
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.codificarStruct01(s1);
+            Object c1decodedAux_ = p.decodificarStruct01(1, "2");
 
-            Console.WriteLine("Decodificación de una estructura con dos atributos");
-            Decodificador01A dec1A_ = new Decodificador01A();
-            p.inicio = DateTime.Now;
-            Object c1decodedAux_ = dec1A_.decode(1, "2");
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo: " + p.duracion.TotalMilliseconds + " milisegundos");
+            p.watch.Restart();
+            Struct01Basica c1decoded_ = (Struct01Basica)c1decodedAux_;
+            p.watch.Stop();
+            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
 
-            p.inicio = DateTime.Now;
-            Clase01Basica c1decoded_ = (Clase01Basica)c1decodedAux_;
-            p.final = DateTime.Now;
-            p.duracion = p.final - p.inicio;
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.duracion.TotalMilliseconds + " milisegundos");
-*/
             Console.ReadLine();
         }
 
@@ -407,6 +395,52 @@ namespace Fase02
             Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
 
             return cAux;
+        }
+        protected void codificarStruct01(Object c)
+        {
+            Console.WriteLine("Codificación básica A. Struct con dos atributos simples");
+            Codificador01AStruct cod1A = new Codificador01AStruct();
+            watch.Restart();
+            cod1A.encode(c);
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación básica B. Struct con dos atributos simples");
+            Codificador01BStruct cod1B = new Codificador01BStruct();
+            watch.Restart();
+            cod1B.encode(ref c);
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            Console.WriteLine("Codificación básica C. Struct con dos atributos simples");
+            watch.Restart();
+            String aux = c.codificar(); // Ver como hago esto
+            watch.Stop();
+            Console.WriteLine("Codificado: " + aux);
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+        }
+
+        protected Object decodificarStruct01(int v1, string v2)
+        {
+            Console.WriteLine("Decodificación básica A. Struct con dos atributos simples");
+            Decodificador01AStruct dec = new Decodificador01AStruct();
+
+            watch.Restart();
+            Object cAux = dec.decode(v1, v2);
+            watch.Stop();
+            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return cAux;
+            /*
+                        Console.WriteLine("Decodificación básica B. Clase con dos atributos");
+                        Decodificador01A dec = new Decodificador01A();
+                        inicio = DateTime.Now;
+                        Object cAux = dec.decode(v1, v2);
+                        final = DateTime.Now;
+                        duracion = final - inicio;
+                        Console.WriteLine("Tiempo: " + duracion.TotalMilliseconds + " milisegundos");
+                        return cAux;
+            */
         }
     }
 }

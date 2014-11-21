@@ -47,6 +47,8 @@
     <Compile Include="Clase06ClaseDerivada.cs" />
     <Compile Include="Clase05Clase.cs" />
     <Compile Include="CodecExtension.cs" />
+    <Compile Include="Codificador01AStruct.cs" />
+    <Compile Include="Codificador01BStruct.cs" />
     <Compile Include="Codificador01B.cs" />
     <Compile Include="Codificador02B.cs" />
     <Compile Include="Codificador03B.cs" />
@@ -59,6 +61,8 @@
     <Compile Include="Codificador03A.cs" />
     <Compile Include="Codificador02A.cs" />
     <Compile Include="CodificadorBaseB.cs" />
+    <Compile Include="Decodificador01AStruct.cs" />
+    <Compile Include="Decodificador01BStruct.cs" />
     <Compile Include="Decodificador01B.cs" />
     <Compile Include="Decodificador06A.cs" />
     <Compile Include="Decodificador05A.cs" />
