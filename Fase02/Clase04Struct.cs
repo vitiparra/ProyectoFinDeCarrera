@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Clase04Struct
+    public class Clase04Struct
     {
         public struct estructura
         {

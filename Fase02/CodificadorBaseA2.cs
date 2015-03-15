@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    public struct Struct01Basica
+    public abstract class CodificadorBaseA2
     {
-        public int var1 { get; set;}
-        public string var2 { get; set; }
+        public abstract String encode(Object obj);
     }
 }

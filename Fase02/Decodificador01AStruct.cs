@@ -7,15 +7,25 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Decodificador01AStruct : DecodificadorBaseA
+    class Decodificador01AStruct : DecodificadorBaseA2
     {
 //        public override Object decode(Stream aux)
-        public override Object decode(int v1, string v2)
+        public override Object decode(String s)
         {
-            Struct01Basica s = new Struct01Basica();
-            s.var1 = v1;
-            s.var2 = v2;
-            return s;
+            Struct01Basica str = new Struct01Basica();
+            int v1 = 0;
+            string v2 = "";
+
+            String aux = s.ToString();
+            String[] parametros = aux.Split(',');
+
+            v1 = Convert.ToInt16(parametros[1]);
+            v2 = parametros[1];
+
+            str.var1 = v1;
+            str.var2 = v2;
+
+            return str;
         }
     }
 }

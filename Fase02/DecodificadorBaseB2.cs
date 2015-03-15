@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    public abstract class DecodificadorBaseA
+    public abstract class DecodificadorBaseB2
     {
 //        public abstract Object decode(Stream aux);
-        public abstract Object decode(int v1, String v2);
+        public abstract void decode(ref Object c, String s);
     }
 }

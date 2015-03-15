@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Clase01Basica
+    public class Clase01Basica
     {
+        public Wrapper<int> val { get; set; } // se espera que isGenericçType devuelva FALSE
         public int var1 { get; set;}
         public string var2 { get; set; }
+    }
+
+    public class Wrapper<T>
+    {
+        public T Value { get; set; } // se espera que isGenericçType devuelva TRUE
     }
 }

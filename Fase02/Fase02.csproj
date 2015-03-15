@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Fase02</RootNamespace>
     <AssemblyName>Fase02</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,8 +45,9 @@
     <Compile Include="Clase02Metodos.cs" />
     <Compile Include="Clase03Array.cs" />
     <Compile Include="Clase04Struct.cs" />
-    <Compile Include="Clase06ClaseDerivada.cs" />
+    <Compile Include="Clase07ClaseConTodo.cs" />
     <Compile Include="Clase05Clase.cs" />
+    <Compile Include="Clase08List.cs" />
     <Compile Include="CodecExtension.cs" />
     <Compile Include="Codificador01AStruct.cs" />
     <Compile Include="Codificador01BStruct.cs" />
@@ -60,8 +62,14 @@
     <Compile Include="Codificador04A.cs" />
     <Compile Include="Codificador03A.cs" />
     <Compile Include="Codificador02A.cs" />
+    <Compile Include="CodificadorBaseA2.cs" />
+    <Compile Include="CodificadorBaseB2.cs" />
     <Compile Include="CodificadorBaseB.cs" />
+    <Compile Include="Clase06ClaseDerivada.cs" />
     <Compile Include="Decodificador01AStruct.cs" />
+    <Compile Include="Decodificador04B.cs" />
+    <Compile Include="Decodificador03B.cs" />
+    <Compile Include="Decodificador02B.cs" />
     <Compile Include="Decodificador01BStruct.cs" />
     <Compile Include="Decodificador01B.cs" />
     <Compile Include="Decodificador06A.cs" />
@@ -69,7 +77,10 @@
     <Compile Include="Decodificador04A.cs" />
     <Compile Include="Decodificador03A.cs" />
     <Compile Include="Decodificador02A.cs" />
+    <Compile Include="DecodificadorBaseA2.cs" />
+    <Compile Include="DecodificadorBaseB2.cs" />
     <Compile Include="DecodificadorBaseB.cs" />
+    <Compile Include="SerializerStatic.cs" />
     <Compile Include="Struct01Basica.cs" />
     <Compile Include="Clase01Basica.cs" />
     <Compile Include="Codificador01A.cs" />

@@ -6,15 +6,20 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Clase02Metodos
+    public class Clase02Metodos
     {
+        private int var1;
+        private String var2;
+
         public int metodo1()
         {
-            return 1;
+            this.var1 = 1;
+            return this.var1;
         }
         public string metodo2()
         {
-            return "2";
+            this.var2 = "2";
+            return this.var2;
         }
     }
 }
