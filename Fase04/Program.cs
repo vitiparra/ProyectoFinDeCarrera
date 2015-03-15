@@ -33,22 +33,26 @@ namespace Fase04
             {
                 c3.var2[i] = Convert.ToString(i);
             }
-            c3.var3 = new int[2, 3];
-            for (int i = 0; i < 2; i++)
+            c3.var3 = new int[4, 3];
+            int cont = 0;
+            for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    c3.var3[i, j] = i + j;
+                    c3.var3[i, j] = cont;
+                    cont++;
                 }
             }
-            c3.var4 = new int[1, 2, 3];
-            for (int i = 0; i < 1; i++)
+            c3.var4 = new int[3, 2, 1];
+            cont = 0;
+            for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 2; j++)
                 {
-                    for (int k = 0; k < 3; k++)
+                    for (int k = 0; k < 1; k++)
                     {
-                        c3.var4[i, j, k] = i + j + k;
+                        c3.var4[i, j, k] = cont;
+                        cont++;
                     }
                 }
             }

@@ -118,12 +118,6 @@ using System.IO;
 
 namespace Serializer
 {
-
-        public class ArrayParaTodo
-        {
-            public object valor;
-        }
-
 ";
 
             // 2º Cabecera de la clase
@@ -634,6 +628,7 @@ Console.WriteLine(""esArray: "" + eEsArray);
                         {
 Console.WriteLine(""Datos del array"");
                             string tipoArray = nValor[""type""].InnerText;
+                            Type tArray = Type.GetType(tipoArray);
                             string cantidadArray = ""0"";
 Console.WriteLine(""Tipo de array: "" + tipoArray);
                             if(nValor[""count""] != null)
@@ -658,11 +653,12 @@ Console.WriteLine(""No hay rango del array"");
                             }
 
                             Dictionary<string, int> longitudes = new Dictionary<string, int>();
-                            Dictionary<string, int> valoresMenores= new Dictionary<string, int>();
+                            Dictionary<string, int> valoresMenores = new Dictionary<string, int>();
                             int contador = 0;
 
                             XmlNodeList xnldatosDeRango = nValor[""datosDeLosRangos""].SelectNodes(""datosDeRango"");
-                            Int32[] dimensionesArray = new Int32[rango];
+                            int[] dimensionesArray = new int[rango];
+Console.WriteLine(""Dimensiones del array "" + dimensionesArray.Length);
                             if(xnldatosDeRango != null)
                             {
 Console.WriteLine(""Lista de nodos datosDeRango"");
@@ -687,28 +683,65 @@ Console.WriteLine(""No hay datos de rango del array"");
 //                          XmlNodeList nValoresArray = oEsArray.GetElementsByTagName(""valores"");
                             if(nValor[""valores""] != null)
                             {
-                                XmlNode valores = nValor[""valores""];
-Console.WriteLine(""Creado array"");
-                                Array aux = Array.CreateInstance(Type.GetType(""ArrayParaTodo""), dimensionesArray);
-Console.WriteLine(""Rank del array: "" + aux.Rank);
+                                XmlNode xnValores = nValor[""valores""];
+                                XmlNodeList xnlValor = xnValores.SelectNodes(""valor"");
                                 contador = 0;
-
-                                XmlNodeList xnlValor = valores.SelectNodes(""valor"");
-                                foreach (ArrayParaTodo auxElemento in aux)
+                                Array aux = Array.CreateInstance(tArray, dimensionesArray);
+/* ********************************** RECORRIENDO ARRAY AUXILIAR PARA GUARDAR EN CADA ÍNDICE UN ""valor"" SERIALIZADO **************
+Console.WriteLine(""Creado array"");
+                                foreach (object auxElemento in aux)
                                 {
 Console.WriteLine(""Añadido valor "" + xnlValor[contador].InnerText + "" de tipo "" + tipoArray);
-                                    auxElemento.valor = Convert.ChangeType(xnlValor[contador].InnerText, Type.GetType(tipoArray));
-//                                    auxElemento = Convert.ChangeType(getElementValue(xnlValor[contador].InnerXml), Type.GetType(tipoArray));
+                                    auxElemento = Convert.ChangeType(xnlValor[contador].InnerText, tArray);
+// esto también hay que controlarlo                                    auxElemento = Convert.ChangeType(getElementValue(xnlValor[contador].InnerXml), tArray);
                                     contador++;
                                 }
-/*
-                                foreach (XmlNode valor in valores)
+*************************************************************************************************************************************** */
+                                int[] indicesDelElemento = new int[rango];
+                                for(int i=0; i<rango; i++)
+                                {
+                                    indicesDelElemento[i] = valoresMenores[""valorMenor"" + i];
+                                }
+
+                                foreach (XmlNode valor in xnValores)
                                 {
 Console.WriteLine(""Añadido valor "" + valor.InnerText + "" de tipo "" + tipoArray);
-                                    aux.SetValue(Convert.ChangeType(getElementValue(valor), Type.GetType(tipoArray)), contador);
+                                    string inx = """";
+                                    for(int i=0; i<rango; i++)
+                                    {
+                                        inx += indicesDelElemento[i] + "","";
+                                    }
+Console.WriteLine(""índices: "" + inx);
+                                    aux.SetValue(Convert.ChangeType(getElementValue(valor), tArray), indicesDelElemento);
                                     contador++;
+                                    for(int j=rango-1; j>=0; j--)
+                                    {
+Console.WriteLine(""Se comprueba la dimensión "" + j);
+                                        if(indicesDelElemento[j] < valoresMenores[""valorMenor"" + j] + longitudes[""longitud"" + j] - 1)
+                                        {
+Console.WriteLine(""Se incrementa el índice de la dimensión "" + j);
+                                            indicesDelElemento[j]++;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            if(indicesDelElemento[j] == valoresMenores[""valorMenor"" + j] + longitudes[""longitud"" + j] - 1)
+                                            {
+Console.WriteLine(""Hemos llegado al final de la dimensión "" + j);
+                                                for(int k=j; k<rango; k++)
+                                                {
+Console.WriteLine(""Se pone a 0 la dimensión "" + k);
+                                                    indicesDelElemento[k] = 0; 
+                                                }
+                                            }
+                                            else
+                                            {
+Console.WriteLine(""No pasa nada, se sigue procesando el siguiente elemento de la dimensión "" + j + "": "" + indicesDelElemento[j]);
+                                            }
+                                        }
+                                    }
                                 }
-*/
+
 Console.WriteLine(""Finalizado el recorrido por el array"");
                                 return aux;
                             }
