@@ -28,26 +28,26 @@ namespace Fase04
             {
                 c3.var1[i] = i;
             }
-            c3.var2 = new string[2];
-            for (int i = 0; i < 2; i++)
+            c3.var2 = new string[1];
+            for (int i = 0; i < 1; i++)
             {
                 c3.var2[i] = Convert.ToString(i);
             }
-            c3.var3 = new int[4, 3];
+            c3.var3 = new int[1,1];
             int cont = 0;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < 1; j++)
                 {
                     c3.var3[i, j] = cont;
                     cont++;
                 }
             }
-            c3.var4 = new int[3, 2, 1];
+            c3.var4 = new int[1, 1, 1];
             cont = 0;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 1; j++)
                 {
                     for (int k = 0; k < 1; k++)
                     {
@@ -55,6 +55,18 @@ namespace Fase04
                         cont++;
                     }
                 }
+            }
+            c3.var5 = new int[3][];
+            cont = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                int[] aux = new int[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    aux[j] = cont;
+                    cont++;
+                }
+                c3.var5[i] = aux;
             }
 
             Fase02.Clase04Struct c4 = new Clase04Struct();

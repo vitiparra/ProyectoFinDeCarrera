@@ -358,7 +358,6 @@ namespace Serializer
                         codigo += mostrarValor(propertyInfo.PropertyType.IsArray);
                         codigo += cerrar(""isArray"");
 
-
                         codigo += abrir(""valor"");
                         /*
                          * Comprobaciones adicionales
@@ -480,20 +479,27 @@ Console.WriteLine(""Tipo anidado"" + miembro.MemberType);
 */
         private static string recorrerIList(PropertyInfo propertyInfo, object obj)
         {
+Console.WriteLine(""a"");
+Console.WriteLine(""lista: "" + obj.ToString());
+Console.WriteLine(""valor: "" + propertyInfo.ToString());
             string codigo = """";
             IList list = propertyInfo.GetValue(obj, null) as IList;
             string tipoList = ""iList"";
+Console.WriteLine(""b"");
 
             codigo += abrir(""count"");
             codigo += mostrarValor(list.Count);
             codigo += cerrar(""count"");
+Console.WriteLine(""c"");
 
             codigo += abrir(""type"");
             codigo += mostrarValor(list.GetType().GetElementType().FullName);
             codigo += cerrar(""type"");
+Console.WriteLine(""d"");
 
             if (propertyInfo.PropertyType.IsArray)
             {
+Console.WriteLine(""e"");
                 tipoList = ""array"";
 
                 Array miArray = propertyInfo.GetValue(obj, null) as Array;
@@ -527,11 +533,10 @@ Console.WriteLine(""Tipo anidado"" + miembro.MemberType);
             foreach (object elemento in list)
             {
                 codigo += abrir(""cadaValor"");
-                codigo += SALTO;
                 IList lista = elemento as IList;
                 if (lista != null)
                 {
-                    MemberInfo[] miembros = elemento.GetType().GetMembers(BindingFlags.Public | BindingFlags.Instance);
+                    MemberInfo[] miembros = elemento.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
                     codigo += getCodigoByMembers(miembros, (object)elemento);
                 }
                 else
@@ -542,6 +547,7 @@ Console.WriteLine(""Tipo anidado"" + miembro.MemberType);
                 }
                 codigo += cerrar(""cadaValor"");
             }
+Console.WriteLine(""f"");
             codigo += cerrar(""valores"");
 
             return codigo;
@@ -613,6 +619,7 @@ Console.WriteLine(""valor del nodo: "" + nodo.InnerText);
 Console.WriteLine(""Tipo: "" + elTipo);
                 if(!isStopWord(elTipo) && elTipo != """")
                 {
+Console.WriteLine(""No es stopWord"");
                     XmlNode nValor  = nodo[""valor""];
                     Type t = Type.GetType(elTipo);
                     if(t == null)
@@ -697,6 +704,7 @@ Console.WriteLine(""Añadido valor "" + xnlValor[contador].InnerText + "" de tip
                                     contador++;
                                 }
 *************************************************************************************************************************************** */
+                                // Inicialización de los índices del array donde se guardará el valor
                                 int[] indicesDelElemento = new int[rango];
                                 for(int i=0; i<rango; i++)
                                 {
@@ -706,12 +714,14 @@ Console.WriteLine(""Añadido valor "" + xnlValor[contador].InnerText + "" de tip
                                 foreach (XmlNode valor in xnValores)
                                 {
 Console.WriteLine(""Añadido valor "" + valor.InnerText + "" de tipo "" + tipoArray);
-                                    string inx = """";
-                                    for(int i=0; i<rango; i++)
-                                    {
-                                        inx += indicesDelElemento[i] + "","";
-                                    }
+// Convertir los índices en una cadena separada por comas para mostrar los índices
+string inx = """";
+for(int i=0; i<rango; i++)
+{
+    inx += indicesDelElemento[i] + "","";
+}
 Console.WriteLine(""índices: "" + inx);
+                                    // Guardar el valor en el índice correspondiente
                                     aux.SetValue(Convert.ChangeType(getElementValue(valor), tArray), indicesDelElemento);
                                     contador++;
                                     for(int j=rango-1; j>=0; j--)
