@@ -175,24 +175,13 @@ namespace Serializer
                 // Se serializan todos los miembros públicos, privados y estáticos; propios y heredados
                 MemberInfo[] miembros = tipo.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
                 texto += getCodigoByMembers(miembros, obj);
-                // Campos
-//                FieldInfo[] fields = tipo.GetFields(flags);
-//                texto += getCodigoByFields(fields, ref obj);
-
-                // Propiedades
-//                PropertyInfo[] properties = t.GetProperties(flags);
-//                texto += GetCodigoByProperties(properties, ref obj);
-
                 texto += cerrar(""serializacion"");
                 Console.WriteLine(texto);
                 str = texto;
             }";
 
             strDecode += @"
-                //MemberInfo[] miembros = getMembersByCodigo(str, ref obj);
                 Dictionary<string,object> miembros = getMembersByCodigo(str, ref obj);
-                //foreach (MemberInfo miembro in miembros)
-
                 foreach(var elemento in miembros)
                 {
                     Console.WriteLine(elemento.Key + "": "" + elemento.Value.ToString());
@@ -292,8 +281,10 @@ namespace Serializer
             string tipoDeObjeto = """";
             string codigo = """";
             // Identificación del tipo de objeto: clase, interface, enum, struct
-            if(tipo.IsClass){
-                tipoDeObjeto += ""class "";
+            if (tipo.IsPrimitive)
+            {
+                TypeAttributes atr = tipo.Attributes;
+                tipoDeObjeto += atr.ToString();
             }
             else if (tipo.IsInterface){
                 tipoDeObjeto += ""interface "";
@@ -302,16 +293,19 @@ namespace Serializer
                 tipoDeObjeto += ""enum "";
             }
             else if (tipo.IsValueType){
-                if (tipo.IsPrimitive){
-                    TypeAttributes atr = tipo.Attributes;
-                    tipoDeObjeto += atr.ToString();
-                }
-                else if (tipo.IsEnum){
+                if (tipo.IsEnum){
                     tipoDeObjeto += ""enum "";
                 }
                 else{
                     tipoDeObjeto += ""struct "";
-                }
+                    }
+            }
+            else if(tipo.IsClass){
+                tipoDeObjeto += ""class "";
+            }
+            else
+            {
+                tipoDeObjeto += ""unknown"";
             }
             codigo += tipoDeObjeto;
             return codigo;
@@ -342,6 +336,10 @@ namespace Serializer
 
                         codigo += abrir(""elemento"");
 
+                        codigo += abrir(""tipoDeObjeto"");
+                        codigo += mostrarValor(getTipoDeObjeto(obj.GetType()));
+                        codigo += cerrar(""tipoDeObjeto"");
+
                         codigo += abrir(""tipoDeElemento"");
                         codigo += mostrarValor(""propiedad"");
                         codigo += cerrar(""tipoDeElemento"");
@@ -362,7 +360,8 @@ namespace Serializer
                         /*
                          * Comprobaciones adicionales
                          * Si el tipo de este miembro es un iList, mostramos más valores (length, etc.)
-                         * Si el tipo de este miembro es una clase,tendremos que llamar recursivamente a getCodigoByMembers con los miembros de la clase
+                         * Si el tipo de este miembro es un IDictionary, tomamos sus valores (de la forma key, values)
+                         * Si el tipo de este miembro es una clase, tendremos que llamar recursivamente a getCodigoByMembers con los miembros de la clase
                          */ 
                         IList list = propertyInfo.GetValue(obj, null) as IList;
                         if (list != null)
@@ -371,7 +370,13 @@ namespace Serializer
                         }
                         else
                         {
-                            if (miembro.GetType().IsInterface)
+                            IDictionary dict = propertyInfo.GetValue(obj, null) as IDictionary;
+//                            if (propertyInfo.GetType().GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                            if (dict != null)
+                            {
+                                codigo += recorrerIDictionary(propertyInfo, obj);
+                            }
+                            else if (miembro.GetType().IsInterface)
                             {
                                 Object objeto = propertyInfo.GetValue(obj, null) as Object;
                                 MemberInfo[] miembrosClase = objeto.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
@@ -441,68 +446,48 @@ Console.WriteLine(""Tipo anidado"" + miembro.MemberType);
             // miembro.ReflectedType == miembro.DeclaringType
         }
 
-        /*
-         * Captura la información de cada miembro de un tipo, incluyendo sus valores
-         * @input MemberInfo[] miembros Conjunto de miembros de un tipo susceptibles de ser serializados tipo.GetMembers(flags)
-         * @input Object obj Objeto instanciado para obtener los valores
-         * @output string Código serializado con todos los miembros del objeto indicado
-         */
-/*        private static string getCodigoByFields(FieldInfo[] fields, ref Object obj)
-        {
-            string codigo = """";
-            codigo += abrir(""elementos"");
-            foreach(FieldInfo field in fields)
-            {
-                FieldInfo fi = field as FieldInfo; // Conversión para obtener los datos del tipo de campo
-
-                codigo += abrir(""elemento"");
-
-                codigo += abrir(""nombre"");
-                codigo += mostrarValor(fi.Name);
-                codigo += cerrar(""nombre"");
-
-                codigo += abrir(""tipoDeElemento"");
-                codigo += mostrarValor(""campo"");
-                codigo += cerrar(""tipoDeElemento"");
-
-                codigo += abrir(""tipo"");
-                codigo += mostrarValor(fi.FieldType.FullName);
-                codigo += cerrar(""tipo"");
-
-                codigo += abrir(""valor"");
-                codigo += mostrarValor(fi.GetValue(obj));
-                codigo += cerrar(""valor"");
-
-                codigo += cerrar(""elemento"");
-            }
-        }
-*/
         private static string recorrerIList(PropertyInfo propertyInfo, object obj)
         {
 Console.WriteLine(""a"");
 Console.WriteLine(""lista: "" + obj.ToString());
 Console.WriteLine(""valor: "" + propertyInfo.ToString());
-            string codigo = """";
             IList list = propertyInfo.GetValue(obj, null) as IList;
+            return recorrerIListObject(list);
+        }
+
+        private static string recorrerIListObject(IList list)
+        {
+            string codigo = """";
             string tipoList = ""iList"";
-Console.WriteLine(""b"");
+            Type t = list.GetType();
 
             codigo += abrir(""count"");
             codigo += mostrarValor(list.Count);
             codigo += cerrar(""count"");
-Console.WriteLine(""c"");
 
+            codigo += abrir(""tipoDeElementos"");
+            codigo += mostrarValor(t.GetElementType().FullName);
+            codigo += cerrar(""tipoDeElementos"");
+
+            codigo += abrir(""tipoDeList"");
+            codigo += mostrarValor(tipoList);
+            codigo += cerrar(""tipoDeList"");
+/*
             codigo += abrir(""type"");
             codigo += mostrarValor(list.GetType().GetElementType().FullName);
             codigo += cerrar(""type"");
-Console.WriteLine(""d"");
+*/
 
-            if (propertyInfo.PropertyType.IsArray)
+            Array miArray;
+            miArray = list as Array;
+            if (miArray == null)
             {
-Console.WriteLine(""e"");
+                tipoList = ""iList"";
+            }
+            else
+            {
                 tipoList = ""array"";
 
-                Array miArray = propertyInfo.GetValue(obj, null) as Array;
                 codigo += abrir(""rank"");
                 codigo += mostrarValor(miArray.Rank);
                 codigo += cerrar(""rank"");
@@ -523,11 +508,11 @@ Console.WriteLine(""e"");
                     codigo += cerrar(""datosDeRango"");
                 }
                 codigo += cerrar(""datosDeLosRangos"");
-            }
 
-            codigo += abrir(""tipoDeList"");
-            codigo += mostrarValor(tipoList);
-            codigo += cerrar(""tipoDeList"");
+                codigo += abrir(""tipoDeList"");
+                codigo += mostrarValor(tipoList);
+                codigo += cerrar(""tipoDeList"");
+            }
 
             codigo += abrir(""valores"");
             foreach (object elemento in list)
@@ -536,12 +521,30 @@ Console.WriteLine(""e"");
                 IList lista = elemento as IList;
                 if (lista != null)
                 {
-                    MemberInfo[] miembros = elemento.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                    codigo += getCodigoByMembers(miembros, (object)elemento);
+                    codigo += abrir(""tipoDeElemento"");
+                    codigo += mostrarValor(""elementoDeArray"");
+                    codigo += cerrar(""tipoDeElemento"");
+
+                    codigo += abrir(""tipo"");
+                    codigo += mostrarValor(lista.GetType());
+                    codigo += cerrar(""tipo"");
+
+                    codigo += abrir(""isArray"");
+                    codigo += mostrarValor(""True"");
+                    codigo += cerrar(""isArray"");
+
+                    codigo += abrir(""valor"");
+
+                    codigo += recorrerIListObject(lista);
+                    codigo += cerrar(""valor"");
+
+//                    MemberInfo[] miembros = elemento.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+//                    codigo += getCodigoByMembers(miembros, (object)elemento);
                 }
                 else
                 {
                     codigo += abrir(""valor"");
+                    // Aquí hay que ver si el objeto es ""simple"" o es una estructura (clase, list, array, etc.)
                     codigo += mostrarValor(elemento);
                     codigo += cerrar(""valor"");
                 }
@@ -550,6 +553,81 @@ Console.WriteLine(""e"");
 Console.WriteLine(""f"");
             codigo += cerrar(""valores"");
 
+            return codigo;
+        }
+
+        private static string recorrerIDictionary(PropertyInfo propertyInfo, object obj)
+        {
+            IDictionary dict = propertyInfo.GetValue(obj, null) as IDictionary;
+            return recorrerIDictionaryObject(dict);
+        }
+
+        private static string recorrerIDictionaryObject(IDictionary dict)
+        {
+            string codigo = """";
+            string tipoList = ""iDictionary"";
+
+            codigo += abrir(""count"");
+            codigo += mostrarValor(dict.Count);
+            codigo += cerrar(""count"");
+
+            Type t = dict.GetType();
+            codigo += abrir(""type"");
+            codigo += mostrarValor(t.FullName);
+            codigo += cerrar(""type"");
+
+            codigo += abrir(""tipoDeList"");
+            codigo += mostrarValor(tipoList);
+            codigo += cerrar(""tipoDeList"");
+
+            Type[] arguments = dict.GetType().GetGenericArguments();
+            codigo += abrir(""tipoDeIndex"");
+            codigo += mostrarValor(arguments[0]);
+            codigo += cerrar(""tipoDeIndex"");
+
+            codigo += abrir(""tipoDeValue"");
+            codigo += mostrarValor(arguments[1]);
+            codigo += cerrar(""tipoDeValue"");
+
+            codigo += abrir(""valores"");
+
+            PropertyInfo[] pi = t.GetProperties();
+            foreach (var propiedad in pi)
+            {
+                if (propiedad.Name == ""Keys"")
+                {
+                    codigo += abrir(""valor"");
+                    IEnumerable claves = (IEnumerable)propiedad.GetValue(dict, null);
+                    foreach (var clave in claves)
+                    {
+                        codigo += abrir(""laClave"");
+                        codigo += mostrarValor(clave);
+                        codigo += cerrar(""laClave"");
+
+                        codigo += abrir(""elValor"");
+                        /*
+                         * Identificar si el valor es un dato único o un conjunto de datos
+                         */
+                        /*
+                        Object objAux = dict[clave] as Object;
+                        if (objAux.GetType().GetTypeInfo().IsPrimitive)
+                        {
+                            MemberInfo[] miembros = objAux.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                            codigo += getCodigoByMembers(miembros, objAux);
+                        }
+                        else
+                        {
+                            codigo += mostrarValor(objAux);
+                        }
+                         */ 
+                        codigo += mostrarValor(dict[clave]);
+                        codigo += cerrar(""elValor"");
+                    }
+                    codigo += cerrar(""valor"");
+                }
+            }
+
+            codigo += cerrar(""valores"");
             return codigo;
         }
 
@@ -629,12 +707,10 @@ Console.WriteLine(""No es stopWord"");
                     }
                     else
                     {
-                        string eEsArray = nodo[""isArray""].InnerText;
-Console.WriteLine(""esArray: "" + eEsArray);
-                        if(eEsArray != null && eEsArray == ""True"")
+                        if(nodo[""isArray""] != null && nodo[""isArray""].InnerText == ""True"")
                         {
 Console.WriteLine(""Datos del array"");
-                            string tipoArray = nValor[""type""].InnerText;
+                            string tipoArray = nValor[""tipoDeElementos""].InnerText;
                             Type tArray = Type.GetType(tipoArray);
                             string cantidadArray = ""0"";
 Console.WriteLine(""Tipo de array: "" + tipoArray);
@@ -762,8 +838,79 @@ Console.WriteLine(""No hay valores"");
                         }
                         else
                         {
+                            if (elTipo.Contains(""Dictionary"") || elTipo.Contains(""List`""))
+                            {
+                                // Hay varios elementos, se capturan todos y se meten en el tipo indicado como valor válido
+Console.WriteLine(""Datos del dictionary"");
+                                Type tArray = Type.GetType(elTipo);
+                                int cantidadDictionary = 0;
+                                if (nValor[""count""] != null)
+                                {
+                                    cantidadDictionary = Convert.ToInt16(nValor[""count""].InnerText);
+Console.WriteLine(""Cantidad de elementos en el dictionary: "" + cantidadDictionary);
+                                }
+                                else
+                                {
+                                    Console.WriteLine(""No hay cantidad de elementos en el dictionary (hará falta?)"");
+                                }
+
+                                if (cantidadDictionary > 0 && nValor[""valores""] != null)
+                                {
+                                    string tipoDeIndex = """";
+                                    if (nValor[""tipoDeIndex""] != null)
+                                    {
+                                        tipoDeIndex = nValor[""tipoDeIndex""].InnerText;
+                                    }
+                                    string tipoDeValue = """";
+                                    if (nValor[""tipoDeValue""] != null)
+                                    {
+                                        tipoDeValue = nValor[""tipoDeValue""].InnerText;
+                                    }
+                                    if (tipoDeIndex != """" && tipoDeValue != """")
+                                    {
+                                        Type tIndex = Type.GetType(tipoDeIndex);
+                                        Type tValue = Type.GetType(tipoDeValue);
+                                        var auxDict = (IDictionary)Activator.CreateInstance(tArray);
+
+//                                        Dictionary<tIndex, tValue> auxDict = new Dictionary<Type.GetType(tipoDeIndex),Type.GetType(tipoDeValue)>();
+
+                                        XmlNode xnValores = nValor[""valores""];
+                                        XmlNodeList xnlValor = xnValores.SelectNodes(""valor"");
+                                        int contador = 0;
+                                        foreach (XmlNode valor in xnValores)
+                                        {
+                                            object elIndex = valor[""laClave""].InnerText;
+                                            object elValue = valor[""elValor""].InnerText;
+
+                                            // Guardar el valor en el índice correspondiente
+                                            auxDict.Add(Convert.ChangeType(elIndex, tIndex), Convert.ChangeType(getElementValue(valor[""elValor""]), tValue));
+                                            Console.WriteLine(""Añadido valor "" + valor.InnerText + "" de tipo "" + tArray);
+                                        }
+                                        Console.WriteLine(""Finalizado el recorrido por el dictionary"");
+                                        return auxDict;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(""No hay índices o valores"");
+                                        return null;
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine(""No hay valores"");
+                                    return null;
+                                }
+                            }
+                            else if (nValor.InnerText != """")
+                            {
 Console.WriteLine(""Se añade un nuevo elemento al dictionary"");
-                            return Convert.ChangeType(nValor.InnerText, Type.GetType(elTipo));
+                                return Convert.ChangeType(nValor.InnerText, Type.GetType(elTipo));
+                            }
+                            else
+                            {
+Console.WriteLine(""No hay valores"");
+                                return null;
+                            }
                         }
                     }
                 }
