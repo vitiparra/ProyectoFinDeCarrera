@@ -132,7 +132,7 @@ namespace Serializer
 
         private void getCierre()
         {
-            strCodigo += @" }"; // Cierre de clase
+            strCodigo += " }"; // Cierre de clase
             strCodigo += "}"; // Cierre de namespace
         }
 
