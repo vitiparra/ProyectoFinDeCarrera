@@ -56,6 +56,7 @@ namespace Fase05
 
             // 1º Generar el código de la clase. Se guarda en strCodigo
             this.generateSerializer();
+            Console.WriteLine(strCodigo);
             // 2º Compilar e instanciar la clase serializador
             serializador = this.compile(this.tipo.Name);
             return serializador;
@@ -83,7 +84,7 @@ namespace Fase05
             strCodigo += strDecode;
 
             // 4º Generar los métodos auxiliares
-            this.generateAuxiliarMethods();
+//            this.generateAuxiliarMethods();
             this.getCierre();
         }
 
@@ -109,9 +110,9 @@ namespace Serializer
             strCodigo += "    public class ";
             strCodigo += this.tipo.Name + "Codec {";
             strCodigo += @"
-        public static Type tipo = Type.GetType(""" + this.tipo.FullName;
+        public static Type tipo = Type.GetType(""" + this.tipo.Name;
             strCodigo += @""");
-        public static String nombreClase = """ + this.tipo.FullName;
+        public static String nombreClase = """ + this.tipo.Name;
             strCodigo += @""";
         private static string TAB = ""\t"";
         private static string SALTO = ""\r\n"";";
@@ -132,14 +133,13 @@ namespace Serializer
         public object decode(String str, object obj){";
 
             strEncode += @"
-              " + this.tipo.FullName + " aux = (" + this.tipo.FullName + ")obj;";
-            strEncode += @"
+                string texto = """";
                 texto += """ + abrir("serializacion");
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + abrir("accesibilidad");
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + getAccesibilidad(tipo);
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + cerrar("accesibilidad");
 
             // Modificador, opcional
@@ -147,18 +147,18 @@ namespace Serializer
             string modificador = getModificador(tipo, ref pintar);
             if (pintar)
             {
-                strEncode += @"""
+                strEncode += @""";
                 texto += """ + abrir("modificador");
-                strEncode += @"""
+                strEncode += @""";
                 texto += """ + modificador;
-                strEncode += @"""
+                strEncode += @""";
                 texto += """ + cerrar("modificador");
             }
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + abrir("tipoDeObjeto");
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + getTipoDeObjeto(tipo);
-            strEncode += @"""
+            strEncode += @""";
                 texto += """ + cerrar("tipoDeObjeto");
             strEncode += @""";";
 
@@ -176,14 +176,18 @@ namespace Serializer
             texto += """ + cerrar("serializacion");
             strEncode += @""";
             Console.WriteLine(texto);
-            str = texto;";
+            str = texto;
+        }";
+            strDecode += @"
+            return null;
+        }";
 
 // strDecode ...
         }
 
         private static string abrir(string texto)
         {
-            string codigo = SALTO;
+            string codigo = "";
             // Aquí se controla qué tipo de salida queremos, si XML, JSON, etc.
 //            switch (Generador.tipoDeCodificacion)
 //            {
@@ -311,6 +315,7 @@ namespace Serializer
          * @output string Código serializado con todos los miembros del objeto indicado
          */
         // Método OK para obtener todos los miembros (propiedades y variables) susceptibles de ser serializados
+
         private string getCodigoByMembers(MemberInfo[] miembros)
         {
             string codigo = "";
@@ -353,7 +358,7 @@ namespace Serializer
                          * Si el tipo de este miembro es un IDictionary, tomamos sus valores (de la forma key, values)
                          * Si el tipo de este miembro es una clase, tendremos que llamar recursivamente a getCodigoByMembers con los miembros de la clase
                          */
-                        IList list = propertyInfo.GetValue(obj, null) as IList;
+/*                        IList list = propertyInfo.GetValue(obj, null) as IList;
                         if (list != null)
                         {
                             codigo += recorrerIList(propertyInfo, obj);
@@ -374,14 +379,72 @@ namespace Serializer
                             }
                             else
                             {
-                                codigo += mostrarValor(propertyInfo.GetValue(obj, null));
-                            }
-                        }
+ */
+//                        codigo += mostrarValor(propertyInfo.GetValue(obj, null));
+                        codigo += mostrarValor("\" + obj.GetType().GetProperty(\"" + propertyInfo.Name + "\").GetValue(obj, null) + \"");
+//                           }
+ //                       }
                         codigo += cerrar("valor");
                         codigo += cerrar("elemento");
                     }
                 }
             } //foreach
+            return codigo;
         } //getCodigoByMembers()
+
+        private Object compile(string className)
+        {
+            // TODO Ejecutar la compilación on tye fly
+            // Instanciar un objeto de la clase compilada y devolverlo
+            try
+            {
+                Console.WriteLine("Se ejecuta CreateCompiler");
+                ICodeCompiler loCompiler = new CSharpCodeProvider().CreateCompiler();
+
+                Console.WriteLine("Se ponen parámetros a CreateCompiler");
+                CompilerParameters loParameters = new CompilerParameters();
+                loParameters.ReferencedAssemblies.Add("System.dll");
+                loParameters.ReferencedAssemblies.Add("System.Xml.dll");
+                loParameters.GenerateInMemory = true;
+
+                Console.WriteLine("Se ejecuta CompileAssemblyFromSource (source es el código en variable string");
+                // *** Medir aquí el tiempo de compilación
+                CompilerResults loCompiled =
+                        loCompiler.CompileAssemblyFromSource(loParameters, strCodigo);
+                // Se comprueba si hubo errores
+                if (loCompiled.Errors.HasErrors)
+                {
+                    string lcErrorMsg = "";
+
+                    lcErrorMsg = loCompiled.Errors.Count.ToString() + " Errors:";
+                    for (int x = 0; x < loCompiled.Errors.Count; x++)
+                        lcErrorMsg = lcErrorMsg + "\r\nLine: " +
+                            loCompiled.Errors[x].Line.ToString() + " - " +
+                            loCompiled.Errors[x].ErrorText;
+
+                    Console.WriteLine(lcErrorMsg + "\r\n\r\n");
+                    return null;
+                }
+
+                Assembly loAssembly = loCompiled.CompiledAssembly;
+                // *** Retrieve an obj ref – generic type only
+                Console.WriteLine("Se crea una instancia del objeto compilado al vuelo");
+                Object loObject = loAssembly.CreateInstance("Serializer." + className + "Codec");
+
+                if (loObject == null)
+                {
+                    Console.WriteLine("Couldn't load class.");
+                    return null;
+                }
+
+                return loObject;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("No se ha podido crear el objeto.");
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
     }
 }
