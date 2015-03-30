@@ -132,21 +132,20 @@ namespace Serializer
             strEncode += @"
         public void encode(object objeto, ref String str){
             " + tipo.Name + " obj = (" + tipo.Name;
-            strEncode += @")objeto;
-            ";
+            strEncode += @")objeto;";
 //            strEncode += "public void encode(object obj, ref string str){";
             strDecode += @"
         public object decode(String str, object obj){";
 
             strEncode += @"
-                string texto = """";
-                texto += """ + abrir("serializacion");
+            string texto = """";
+            texto += """ + abrir("serializacion");
             strEncode += @""";
-                texto += """ + abrir("accesibilidad");
+            texto += """ + abrir("accesibilidad");
             strEncode += @""";
-                texto += """ + getAccesibilidad(tipo);
+            texto += """ + getAccesibilidad(tipo);
             strEncode += @""";
-                texto += """ + cerrar("accesibilidad");
+            texto += """ + cerrar("accesibilidad");
 
             // Modificador, opcional
             bool pintar = false;
@@ -154,18 +153,18 @@ namespace Serializer
             if (pintar)
             {
                 strEncode += @""";
-                texto += """ + abrir("modificador");
+            texto += """ + abrir("modificador");
                 strEncode += @""";
-                texto += """ + modificador;
+            texto += """ + modificador;
                 strEncode += @""";
-                texto += """ + cerrar("modificador");
+            texto += """ + cerrar("modificador");
             }
             strEncode += @""";
-                texto += """ + abrir("tipoDeObjeto");
+            texto += """ + abrir("tipoDeObjeto");
             strEncode += @""";
-                texto += """ + getTipoDeObjeto(tipo);
+            texto += """ + getTipoDeObjeto(tipo);
             strEncode += @""";
-                texto += """ + cerrar("tipoDeObjeto");
+            texto += """ + cerrar("tipoDeObjeto");
             strEncode += @""";";
 
             BindingFlags flags = BindingFlags.Instance
@@ -177,9 +176,7 @@ namespace Serializer
             // Se serializan todos los miembros públicos, privados y estáticos; propios y heredados (CONFIRMAR)
             MemberInfo[] miembros = tipo.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
             strEncode += @"
-                Console.WriteLine(""2"");";
-            strEncode += @"
-                texto += """ + abrir("elementos") + "\";";
+            texto += """ + abrir("elementos") + "\";";
  
             foreach (MemberInfo miembro in miembros)
             {
@@ -195,105 +192,104 @@ namespace Serializer
                             string nombre = propertyInfo.Name;
 
                             strEncode += @"
-                            texto += """ + abrir("elemento");
+            texto += """ + abrir("elemento");
 
                             strEncode += @""";
-                            texto += """ + abrir("nombre");
+            texto += """ + abrir("nombre");
                             strEncode += @""";
-                            texto += """ + mostrarValor(nombre);
+            texto += """ + mostrarValor(nombre);
                             strEncode += @""";
-                            texto += """ + cerrar("nombre");
+            texto += """ + cerrar("nombre");
 
                             strEncode += @""";
-                            texto += """ + abrir("tipo");
+            texto += """ + abrir("tipo");
                             strEncode += @""";
-                            texto += """ + mostrarValor(t.FullName);
+            texto += """ + mostrarValor(t.FullName);
                             strEncode += @""";
-                            texto += """ + cerrar("tipo");
+            texto += """ + cerrar("tipo");
 
                             strEncode += @""";
-                            texto += """ + abrir("valor");
+            texto += """ + abrir("valor");
 
                             if (t.IsPrimitive || t.Name == "String") // Datos primitivos, simplemente cogemos su valor
                             {
                                 strEncode += @""";
-                                texto += obj." + nombre + ".ToString();";
+            texto += obj." + nombre + ".ToString();";
                             }
                             else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
                             {
                                 strEncode += @""";
-                                texto += """ + abrir("count");
+            texto += """ + abrir("count");
                                 strEncode += @""";
-                                texto += obj." + nombre + ".Count;";
+            texto += obj." + nombre + ".Count;";
                                 strEncode += @"
-                                texto += """ + cerrar("count");
+            texto += """ + cerrar("count");
 
                                 strEncode += @""";
-                                texto += """ + abrir("tipoDeElementos");
+            texto += """ + abrir("tipoDeElementos");
                                 strEncode += @""";
-                                texto += """ + t.GetElementType().FullName;
+            texto += """ + t.GetElementType().FullName;
                                 strEncode += @""";
-                                texto += """ + cerrar("tipoDeElementos");
+            texto += """ + cerrar("tipoDeElementos");
 
                                 strEncode += @""";
-                                texto += """ + abrir("rank");
+            texto += """ + abrir("rank");
                                 strEncode += @""";
-                                texto += """ + t.GetArrayRank();
+            texto += """ + t.GetArrayRank();
                                 strEncode += @""";
-                                texto += """ + cerrar("rank");
+            texto += """ + cerrar("rank");
 
                                 strEncode += @""";
-                                texto += """ + abrir("datosDeLosRangos");
-                                strEncode += @""";
-                    ";
+            texto += """ + abrir("datosDeLosRangos");
+                                strEncode += @""";";
 
                                 for(int i=0; i< t.GetArrayRank(); i++)
                                 {
 
                                 strEncode += @"
-                                texto += """ + abrir("datosDeRango");
+            texto += """ + abrir("datosDeRango");
                                 strEncode += @""";
-                                    texto += """ + abrir("longitud");
+            texto += """ + abrir("longitud");
                                 strEncode += @""";
-                                    texto += obj." + nombre + ".GetLength(" + i + ");";
+            texto += obj." + nombre + ".GetLength(" + i + ");";
                                 strEncode += @"
-                                    texto += """ + cerrar("longitud");
+            texto += """ + cerrar("longitud");
 
                                 strEncode += @""";
-                                    texto += """ + abrir("valorMenor");
+            texto += """ + abrir("valorMenor");
                                 strEncode += @""";
-                                    texto += obj." + nombre + ".GetLowerBound(" + i + ");";
+            texto += obj." + nombre + ".GetLowerBound(" + i + ");";
                                 strEncode += @"
-                                    texto += """ + cerrar("longitud");
+            texto += """ + cerrar("longitud");
 
                                 strEncode += @""";
-                                texto += """ + cerrar("datosDeRango");
+            texto += """ + cerrar("datosDeRango");
                                 strEncode += @""";
-                    ";
+            ";
                                 }
                                 strEncode += "texto += \"" + cerrar("datosDeLosRangos") + "";
 
                                 strEncode += @""";
-                                texto += """ + abrir("valores");
+            texto += """ + abrir("valores");
                                 strEncode += @""";
-                                foreach (object elemento in obj." + nombre + ")";
+            foreach (object elemento in obj." + nombre + ")";
                                 strEncode += @"
-                                {
-                                    texto += """ + abrir("cadaValor") + "\";";
+            {
+                texto += """ + abrir("cadaValor") + "\";";
                                 strEncode += @"
-                                    texto += """ + abrir("valor") + "\";";
+                texto += """ + abrir("valor") + "\";";
                                 strEncode += @"
-                                    texto += elemento.ToString();";
+                texto += elemento.ToString();";
                                 strEncode += @"
-                                    texto += """ + cerrar("valor") + "\";";
+                texto += """ + cerrar("valor") + "\";";
                                 strEncode += @"
-                                    texto += """ + cerrar("cadaValor");
+                texto += """ + cerrar("cadaValor");
                                 strEncode += @""";
-                                }";
+            }";
                                 strEncode += @"
-                                texto += """ + cerrar("valores");
+            texto += """ + cerrar("valores");
                                 strEncode += @""";
-                            texto += """ + abrir("valor");
+            texto += """ + abrir("valor");
                             strEncode += @""";";
                             }
                             else if (t.FullName.StartsWith("System.Collections.Generic.List")) // Lista, se codifica con sus parámetros (longitud, tipo de datos, etc.) y sus datos
@@ -316,7 +312,7 @@ namespace Serializer
                 }
             } //foreach
             strEncode += @"
-                texto += """ + cerrar("elementos");
+            texto += """ + cerrar("elementos");
             strEncode += @""";
             texto += """ + cerrar("serializacion");
             strEncode += @""";
