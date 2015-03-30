@@ -452,6 +452,7 @@ Console.WriteLine(""a"");
 Console.WriteLine(""lista: "" + obj.ToString());
 Console.WriteLine(""valor: "" + propertyInfo.ToString());
             IList list = propertyInfo.GetValue(obj, null) as IList;
+            Array miArray;
             return recorrerIListObject(list);
         }
 

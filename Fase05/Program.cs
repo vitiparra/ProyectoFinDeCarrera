@@ -48,6 +48,54 @@ namespace Fase05
             {
                 Type tipo3 = serializador3.GetType();
                 Console.WriteLine(tipo3.FullName);
+                #region Datos Clase03Array
+                c3.var1 = new int[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    c3.var1[i] = i;
+                }
+                c3.var2 = new string[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    c3.var2[i] = "Número " + Convert.ToString(i);
+                }
+                c3.var3 = new int[1, 2];
+                int cont = 0;
+                for (int i = 0; i < 1; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        c3.var3[i, j] = cont;
+                        cont++;
+                    }
+                }
+                c3.var4 = new int[1, 2, 3];
+                cont = 0;
+                for (int i = 0; i < 1; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        for (int k = 0; k < 3; k++)
+                        {
+                            c3.var4[i, j, k] = cont;
+                            cont++;
+                        }
+                    }
+                }
+                c3.var5 = new int[3][];
+                cont = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    int[] aux = new int[4];
+                    for (int j = 0; j < 4; j++)
+                    {
+                        aux[j] = cont;
+                        cont++;
+                    }
+                    c3.var5[i] = aux;
+                }
+
+                #endregion
                 serializador3.encode(c3, ref str);
             }
             else

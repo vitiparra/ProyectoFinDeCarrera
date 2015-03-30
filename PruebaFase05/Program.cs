@@ -13,6 +13,7 @@ namespace PruebaFase05
     {
         static void Main(string[] args)
         {
+            System.Runtime.CompilerServices.DynamicAttribute a = new System.Runtime.CompilerServices.DynamicAttribute();
 /*
             #region Clase01Basica
             Fase02.Clase01Basica c = new Clase01Basica();
