@@ -35,22 +35,22 @@ namespace Fase05
         static void Main(string[] args)
         {
             string str = "";
-/*
+
             ClasePrueba c = new ClasePrueba();
+
             Generador gPrueba = new Generador(c.GetType());
-            dynamic serializadorPrueba = gPrueba.getSerializer();
+            var serializadorPrueba = gPrueba.getSerializer();
             if (serializadorPrueba != null)
             {
-
                 Console.Write(serializadorPrueba.codificar(c));
             }
             else
             {
                 Console.WriteLine("No se ha podido generar el serializador");
             }
- 
+/* 
             #region Clase01Basica
-/*
+
             Fase02.Clase01Basica c1 = new Clase01Basica();
             c1.var1 = 2;
             c1.var2 = "Hola";
@@ -62,7 +62,7 @@ namespace Fase05
                 Type tipo1 = serializador1.GetType();
                 Console.WriteLine(tipo1.FullName);
                 serializador1.encode(c1, ref str);
-/*
+
                 c1 = new Clase01Basica();
                 c1 = serializador1.decode(str, c1);
                 Console.WriteLine(c1.var1);
@@ -74,8 +74,8 @@ namespace Fase05
                 Console.WriteLine("No se ha podido generar el serializador");
             }
             #endregion
-/
 
+/*
             Fase02.Clase03Array c3 = new Clase03Array();
             Generador g3 = new Generador(c3.GetType());
             dynamic serializador3 = g3.getSerializer();
@@ -127,7 +127,7 @@ namespace Fase05
                     for (int j = 0; j < 4; j++)
                     {
                         aux[j] = cont;
-                        cont++;
+                            cont++;
                     }
                     c3.var5[i] = aux;
                 }

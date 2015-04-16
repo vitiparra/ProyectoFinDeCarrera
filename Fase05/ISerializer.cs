@@ -7,7 +7,7 @@ namespace Fase05
 {
     public interface ISerializer
     {
-        void encode();
+        void codificar();
         void decode();
     }
 }
