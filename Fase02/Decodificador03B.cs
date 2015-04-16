@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Decodificador03B : DecodificadorBaseB2
+    class Decodificador03B
     {
 //        public override Object decode(Stream aux)
-        public override void decode(ref Object c, String s)
+        public void decode(ref Clase03Array cOut, String aux)
         {
             int v1 = 0;
             int numEle1 = 0;
             string v2 = "";
             int numEle2 = 0;
 
-            Clase03Array cOut = new Clase03Array();
-            String aux = s.ToString();
+
             String[] parametros = aux.Split(',');
 
             // Se esperan dos parámetros: un int y un string
@@ -41,8 +40,6 @@ namespace Fase02
             {
                 cOut.var2[i] = Convert.ToString(i);
             }
-
-            c = cOut;
         }
     }
 }

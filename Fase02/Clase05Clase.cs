@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Clase05Clase
+    public class Clase05Clase
     {
         public class ClaseInterna
         {

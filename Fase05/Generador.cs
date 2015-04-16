@@ -17,7 +17,7 @@ namespace Fase05
      * La clase generada tiene dos métodos que se rellenan dependiendo de los miembros a serializar de la clase
      * 
      */
-    class Generador
+    public class Generador
     {
         private static string TAB = "\t";
         private static string SALTO = "\r\n";
@@ -36,15 +36,28 @@ namespace Fase05
         private static string strDecode; // El código del método decode
 
         // Variable principal: el tipo del que se va a crear el serializador
+        private Type tipoInicial;
         private Type tipo;
+        private static Dictionary<Type, Object> clases;
 
         public Generador(Type tipo)
         {
+            this.tipoInicial = tipo;
             this.tipo = tipo;
             // Tipo de codificación por defecto
             Generador.tipoDeCodificacion = tiposDeCodificacion.XML;
+            
+            // Inicializar el conjunto de clases que se van a procesar
+            clases = new Dictionary<Type, object>();
+            clases.Add(tipo, null);
 
             // TODO Identificar a partir de un atributo del tipo si hay que codificar de otra manera
+        }
+
+        // Alias de generateSerializer
+        private dynamic crearSerializador()
+        {
+            return this.getSerializer();
         }
 
         /*
@@ -58,14 +71,8 @@ namespace Fase05
             this.generateSerializer();
             Console.WriteLine(strCodigo);
             // 2º Compilar e instanciar la clase serializador
-            serializador = this.compile(this.tipo.Name);
+            serializador = this.compile(this.tipoInicial);
             return serializador;
-        }
-
-        // Alias de generateSerializer
-        private dynamic crearSerializador()
-        {
-            return this.getSerializer();
         }
 
         /*
@@ -77,18 +84,27 @@ namespace Fase05
             // 1º Generar la cabecera de la clase
             this.getCabecera();
 
-            // 2º Generar los métodos encode y decode (se hace a la vez)
-            this.generateEncodeAndDecodeMethods();
-            strCodigo += strEncode;
-            strCodigo += this.newLine();
-            strCodigo += strDecode;
+            bool terminar = false; // quizás no haga falta
+//            while (clases.Count > 0) // el dictionary se puede ir agrandando sobre la marcha
+            for (int i = 0; i < clases.Count; i++) // Se recorren todas clases guardadas en el Dictionary
+            {
+                terminar = true; // quizás no haga falta
+                KeyValuePair<Type, Object> par = clases.ElementAt(i);
+                if(par.Value == null){ // Si la clase aún no se ha generado, se genera
+                    terminar = false; // quizás no haga falta
+                    this.tipo = par.Key;
 
-            // 3º Generar los métodos auxiliares
-            this.generateAuxiliarMethods();
+                    // 2º Generar los métodos encode y decode (se hace a la vez)
+                    this.generateEncodeAndDecodeMethods();
 
-            // 4º Generar los métodos auxiliares
-//            this.generateAuxiliarMethods();
-            this.getCierre();
+                    // 3º Generar los métodos auxiliares
+                    this.generateAuxiliarMethods();
+                }
+
+                // 4º Se cierra la clase en cuestión (puede haber varias)
+                this.getCierre();
+            }
+            this.getCierre(); // Cierre del Namespace
         }
 
         private void getCabecera()
@@ -108,9 +124,19 @@ using System.IO;
 namespace Serializer
 {
 ";
+        }
 
+        private void getCierre()
+        {
+            strCodigo += @"
+    }"; // Cierre de namespace
+        }
+
+        private void generateEncodeAndDecodeMethods()
+        {
             // 2º Cabecera de la clase
-            strCodigo += "    public class ";
+            strCodigo += @"
+    public class ";
             strCodigo += this.tipo.Name + "Codec {";
             strCodigo += @"
         public static Type tipo = Type.GetType(""" + this.tipo.Name;
@@ -119,69 +145,29 @@ namespace Serializer
             strCodigo += @""";
         private static string TAB = ""\t"";
         private static string SALTO = ""\r\n"";";
-        }
-
-        private void getCierre()
-        {
-            strCodigo += "    }"; // Cierre de clase
-            strCodigo += "}"; // Cierre de namespace
-        }
-
-        private void generateEncodeAndDecodeMethods()
-        {
-            strEncode += @"
-        public void encode(object objeto, ref String str){
-            " + tipo.Name + " obj = (" + tipo.Name;
-            strEncode += @")objeto;";
-//            strEncode += "public void encode(object obj, ref string str){";
-            strDecode += @"
-        public object decode(String str, object obj){";
-
-            strEncode += @"
-            string texto = """";
-            texto += """ + abrir("serializacion");
-            strEncode += @""";
-            texto += """ + abrir("accesibilidad");
-            strEncode += @""";
-            texto += """ + getAccesibilidad(tipo);
-            strEncode += @""";
-            texto += """ + cerrar("accesibilidad");
-
-            // Modificador, opcional
-            bool pintar = false;
-            string modificador = getModificador(tipo, ref pintar);
-            if (pintar)
-            {
-                strEncode += @""";
-            texto += """ + abrir("modificador");
-                strEncode += @""";
-            texto += """ + modificador;
-                strEncode += @""";
-            texto += """ + cerrar("modificador");
-            }
-            strEncode += @""";
-            texto += """ + abrir("tipoDeObjeto");
-            strEncode += @""";
-            texto += """ + getTipoDeObjeto(tipo);
-            strEncode += @""";
-            texto += """ + cerrar("tipoDeObjeto");
-            strEncode += @""";";
+            strCodigo += @"
+        public string codificar(" + tipo.FullName.Replace("+", ".") + " obj){";
+            strCodigo += @"
+            return encode(obj);}";
+            strEncode = @"
+        public static string encode(" + tipo.FullName.Replace("+", ".") + " obj){";
+            strDecode = @"
+        public " + tipo.FullName.Replace("+", ".") + " decode(String str, object obj){";
 
             BindingFlags flags = BindingFlags.Instance
                 | BindingFlags.Public
                 | BindingFlags.DeclaredOnly
-                | BindingFlags.NonPublic
                 | BindingFlags.FlattenHierarchy
                 | BindingFlags.Static;
             // Se serializan todos los miembros públicos, privados y estáticos; propios y heredados (CONFIRMAR)
-            MemberInfo[] miembros = tipo.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            MemberInfo[] miembros = tipo.GetMembers(flags);
             strEncode += @"
-            texto += """ + abrir("elementos") + "\";";
+            string texto = """ + abrir("elementos") + "\";";
  
             foreach (MemberInfo miembro in miembros)
             {
                 // FASE 6: miembro.GetCustomAttributes() para capturar los atributos (comprobar atributos para saber si hay que serializar)
-                if (!miembro.Name.Contains("_BackingField")) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
+                if (esSerializable(miembro)) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
                 {
                     if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
                     {
@@ -209,104 +195,14 @@ namespace Serializer
             texto += """ + cerrar("tipo");
 
                             strEncode += @""";
-            texto += """ + abrir("valor");
+            texto += """ + abrir("valor") + "\";";
 
-                            if (t.IsPrimitive || t.Name == "String") // Datos primitivos, simplemente cogemos su valor
-                            {
-                                strEncode += @""";
-            texto += obj." + nombre + ".ToString();";
-                            }
-                            else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
-                            {
-                                strEncode += @""";
-            texto += """ + abrir("count");
-                                strEncode += @""";
-            texto += obj." + nombre + ".Count;";
-                                strEncode += @"
-            texto += """ + cerrar("count");
+                            getValueEncode(t, "obj." + nombre);
 
-                                strEncode += @""";
-            texto += """ + abrir("tipoDeElementos");
-                                strEncode += @""";
-            texto += """ + t.GetElementType().FullName;
-                                strEncode += @""";
-            texto += """ + cerrar("tipoDeElementos");
-
-                                strEncode += @""";
-            texto += """ + abrir("rank");
-                                strEncode += @""";
-            texto += """ + t.GetArrayRank();
-                                strEncode += @""";
-            texto += """ + cerrar("rank");
-
-                                strEncode += @""";
-            texto += """ + abrir("datosDeLosRangos");
-                                strEncode += @""";";
-
-                                for(int i=0; i< t.GetArrayRank(); i++)
-                                {
-
-                                strEncode += @"
-            texto += """ + abrir("datosDeRango");
-                                strEncode += @""";
-            texto += """ + abrir("longitud");
-                                strEncode += @""";
-            texto += obj." + nombre + ".GetLength(" + i + ");";
-                                strEncode += @"
-            texto += """ + cerrar("longitud");
-
-                                strEncode += @""";
-            texto += """ + abrir("valorMenor");
-                                strEncode += @""";
-            texto += obj." + nombre + ".GetLowerBound(" + i + ");";
-                                strEncode += @"
-            texto += """ + cerrar("longitud");
-
-                                strEncode += @""";
-            texto += """ + cerrar("datosDeRango");
-                                strEncode += @""";
-            ";
-                                }
-                                strEncode += "texto += \"" + cerrar("datosDeLosRangos") + "";
-
-                                strEncode += @""";
-            texto += """ + abrir("valores");
-                                strEncode += @""";
-            foreach (object elemento in obj." + nombre + ")";
-                                strEncode += @"
-            {
-                texto += """ + abrir("cadaValor") + "\";";
-                                strEncode += @"
-                texto += """ + abrir("valor") + "\";";
-                                strEncode += @"
-                texto += elemento.ToString();";
-                                strEncode += @"
-                texto += """ + cerrar("valor") + "\";";
-                                strEncode += @"
-                texto += """ + cerrar("cadaValor");
-                                strEncode += @""";
-            }";
-                                strEncode += @"
-            texto += """ + cerrar("valores");
-                                strEncode += @""";
-            texto += """ + abrir("valor");
-                            strEncode += @""";";
-                            }
-                            else if (t.FullName.StartsWith("System.Collections.Generic.List")) // Lista, se codifica con sus parámetros (longitud, tipo de datos, etc.) y sus datos
-                            {
-                            Console.WriteLine("getValue 5");
-                            }
-                            else if (t.FullName.StartsWith("System.Collections.Generic.Dictionary")) // Dictionary (o hashtable), se codifica con sus claves y valores
-                            {
-                            Console.WriteLine("getValue 6");
-                            }
-                            else if (!t.FullName.StartsWith("System.")) // OBJETOS EXTENOS
-                            {
-                            Console.WriteLine("getValue 7");
-                                // Hay que generar o invocar el serializador para esta clase
-                                // Todos los serializadores ya creados están en un dictionary con el nombre del serializador y el objeto
-                                // Si no existe el serializador adecuado en este dictionary, hay que invocarlo, compilarlo, y meterlo en él
-                            }
+                            strEncode += @"
+            texto += """ + cerrar("valor") + "\";";
+                            strEncode += @"
+            texto += """ + cerrar("elemento") + "\";";
                         }
                     }
                 }
@@ -314,16 +210,21 @@ namespace Serializer
             strEncode += @"
             texto += """ + cerrar("elementos");
             strEncode += @""";
-            texto += """ + cerrar("serializacion");
-            strEncode += @""";
-            Console.WriteLine(texto);
-            str = texto;
+            //str = texto;
+            return texto;
         }";
             strDecode += @"
             return null;
         }";
-
+            strCodigo += strEncode;
+            strCodigo += this.newLine();
+            strCodigo += strDecode;
 // strDecode ...
+        }
+
+        private static bool esSerializable(MemberInfo miembro)
+        {
+            return !miembro.Name.Contains("_BackingField") && (miembro.MemberType == MemberTypes.Property || miembro.MemberType == MemberTypes.Field);
         }
 
         private static string abrir(string texto)
@@ -449,255 +350,195 @@ namespace Serializer
             }
         }
 
-        /*
-         * Captura la información de cada miembro de un tipo, incluyendo sus valores
-         * @input MemberInfo[] miembros Conjunto de miembros de un tipo susceptibles de ser serializados tipo.GetMembers(flags)
-         * @input Object obj Objeto instanciado para obtener los valores
-         * @output string Código serializado con todos los miembros del objeto indicado
-         */
-        // Método OK para obtener todos los miembros (propiedades y variables) susceptibles de ser serializados
-/*
-        private string getCodigoByMembers(MemberInfo[] miembros)
+        private static void getValueEncode(Type t, string nombre)
         {
-            codigo += abrir("elementos");
-            foreach (MemberInfo miembro in miembros)
+            if (t.IsPrimitive || t.FullName == "System.String") // Datos primitivos, simplemente cogemos su valor
             {
-                // FASE 6: miembro.GetCustomAttributes() para capturar los atributos (comprobar atributos para saber si hay que serializar)
-                if (!miembro.Name.Contains("_BackingField")) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
-                {
-                    if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
-                    {
-                        PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
-                        if (!propertyInfo.PropertyType.FullName.Contains("Wrapper"))
-                        {
-                            Type t = propertyInfo.PropertyType;
-                            string nombre = propertyInfo.Name;
-
-                            codigo += abrir("elemento");
-
-                            codigo += abrir("nombre");
-                            codigo += mostrarValor(nombre);
-                            codigo += cerrar("nombre");
-
-                            codigo += abrir("tipo");
-                            codigo += mostrarValor(t.FullName);
-                            codigo += cerrar("tipo");
-
-                            codigo += abrir("tipoDeElemento");
-                            codigo += mostrarValor("propiedad");
-                            codigo += cerrar("tipoDeElemento");
-
-                            codigo += @""";
-                ";
-                            codigo += "pi = obj.GetType().GetProperty(\"" + nombre + "\");";
-                            codigo += @"
-                ";
-                            codigo += "tipo = pi.PropertyType;";
-                            codigo += @"
-                ";
-                            codigo += "isArray = tipo.IsArray;";
-                            codigo += @"
-                ";
-                            codigo += "valor = pi.GetValue(obj, null) as Object;";
-                            if t.IsPrimitive || t.Name == "String") // Datos primitivos, simplemente cogemos su valor
-                            {
-                                codigo += "obj." + nombre + ".ToString();";
-                                Console.WriteLine("getValue 3");
-                            }
-                            else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
-                            {
-                            Console.WriteLine("getValue 4");
-                                codigo += abrir("count");
-                                codigo += @""";
-                    ";
-                                codigo += "texto += obj." + nombre + ".Count;";
-                                codigo += @"
-                                texto += """;
-                                codigo += cerrar("count");
-
-                                codigo += abrir("tipoDeElementos");
-                                codigo += mostrarValor(t.GetElementType().FullName);
-                                codigo += cerrar("tipoDeElementos");
-
-                                codigo += abrir("rank");
-                                codigo += @""";
-                    ";
-                                codigo += "int rango = obj." + nombre + ".Rank;";
-                                codigo += "texto += rango;";
-                                codigo += @"
-                                texto += """;
-                                codigo += cerrar("rank");
-
-                                codigo += abrir("datosDeLosRangos");
-                                codigo += @""";
-                    ";
-                                for(int i=0; i< rango; i++)
-                                {
-                                codigo += abrir("longitud");
-                                    texto += abrir(""datosDeRango"");
-
-                                codigo += abrir("longitud");
-                                codigo += @""";
-                    ";
-                                codigo += "texto += obj." + nombre + ".GetLength(i);";
-                                codigo += @"
-                                texto += """;
-                                codigo += cerrar("count");
-
-
-
-                                    codigo += abrir(""valorMenor"");
-                                    codigo += mostrarValor(miArray.GetLowerBound(i));
-                                    codigo += cerrar(""valorMenor"");
-
-                                    codigo += cerrar(""datosDeRango"");
-                                }
-                                codigo += cerrar(""datosDeLosRangos"");
-
-                codigo += abrir(""tipoDeList"");
-                codigo += mostrarValor(tipoList);
-                codigo += cerrar(""tipoDeList"");
+                strEncode += @"
+            texto += " + nombre + ".ToString();";
             }
-
-            codigo += abrir(""valores"");
-            foreach (object elemento in list)
+            else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
             {
-                codigo += abrir(""cadaValor"");
-                IList lista = elemento as IList;
-                if (lista != null)
+                string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
+                strEncode += @"
+            Array aux" + nombreAux + " = " + nombre + " as Array;";
+                strEncode += @"
+            texto += """ + abrir("count");
+                strEncode += @""";
+            texto += aux" + nombreAux + ".Length;";
+                strEncode += @"
+            texto += """ + cerrar("count");
+
+                strEncode += @""";
+            texto += """ + abrir("tipoDeElementos");
+                strEncode += @""";
+            texto += """ + t.GetElementType().Name;
+                strEncode += @""";
+            texto += """ + cerrar("tipoDeElementos");
+
+                strEncode += @""";
+            texto += """ + abrir("rank");
+                strEncode += @""";
+            texto += """ + t.GetArrayRank();
+                strEncode += @""";
+            texto += """ + cerrar("rank");
+
+                strEncode += @""";
+            texto += """ + abrir("datosDeLosRangos");
+                strEncode += @""";";
+
+                for (int i = 0; i < t.GetArrayRank(); i++)
                 {
-                    codigo += abrir(""tipoDeElemento"");
-                    codigo += mostrarValor(""elementoDeArray"");
-                    codigo += cerrar(""tipoDeElemento"");
+                    strEncode += @"
+            texto += """ + abrir("datosDeRango");
+                    strEncode += @""";
+            texto += """ + abrir("longitud");
+                    strEncode += @""";
+            texto += aux" + nombreAux + ".GetLength(" + i + ");";
+                    strEncode += @"
+            texto += """ + cerrar("longitud");
 
-                    codigo += abrir(""tipo"");
-                    codigo += mostrarValor(lista.GetType());
-                    codigo += cerrar(""tipo"");
+                    strEncode += @""";
+            texto += """ + abrir("valorMenor");
+                    strEncode += @""";
+            texto += aux" + nombreAux + ".GetLowerBound(" + i + ");";
+                    strEncode += @"
+            texto += """ + cerrar("valorMenor");
 
-                    codigo += abrir(""isArray"");
-                    codigo += mostrarValor(""True"");
-                    codigo += cerrar(""isArray"");
-
-                    codigo += abrir(""valor"");
-
-                    codigo += recorrerIListObject(lista);
-                    codigo += cerrar(""valor"");
-
-//                    MemberInfo[] miembros = elemento.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-//                    codigo += getCodigoByMembers(miembros, (object)elemento);
+                    strEncode += @""";
+            texto += """ + cerrar("datosDeRango");
+                    strEncode += @""";
+            ";
                 }
-                else
-                {
-                    codigo += abrir(""valor"");
-                    // Aquí hay que ver si el objeto es ""simple"" o es una estructura (clase, list, array, etc.)
-                    codigo += mostrarValor(elemento);
-                    codigo += cerrar(""valor"");
-                }
-                codigo += cerrar(""cadaValor"");
+                strEncode += "texto += \"" + cerrar("datosDeLosRangos") + "";
+
+                strEncode += @""";
+            texto += """ + abrir("valores");
+                strEncode += @""";
+            foreach (object elemento" + nombreAux + " in aux" + nombreAux + ")";
+                strEncode += @"
+            {
+                texto += """ + abrir("cadaValor") + "\";";
+                strEncode += @"
+                texto += """ + abrir("valor") + "\";";
+
+                getValueEncode(t.GetElementType(), "elemento" + nombreAux + "");
+
+                strEncode += @"
+                texto += """ + cerrar("valor") + "\";";
+                strEncode += @"
+                texto += """ + cerrar("cadaValor");
+                strEncode += @""";
+            }";
+                strEncode += @"
+            texto += """ + cerrar("valores") + "\";";
             }
-Console.WriteLine(""f"");
-            codigo += cerrar(""valores"");
+            else if (t.FullName.StartsWith("System.Collections.Generic.List")) // Lista, se codifica con sus parámetros (longitud, tipo de datos, etc.) y sus datos
+            {
+                Type[] arguments = t.GetGenericArguments();
+                string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
+                strEncode += @"
+            Console.WriteLine(""1"");
+            IList aux" + nombreAux + " = " + nombre + " as IList;";
+                strEncode += @"
+            texto += """ + abrir("count");
+                strEncode += @""";
+            texto += aux" + nombreAux + ".Count;";
+                strEncode += @"
+            texto += """ + cerrar("count");
 
-                                Array aux = c as Array;
+                strEncode += @""";
+            Console.WriteLine(""2"");
+            texto += """ + abrir("tipoDeValue"); // Quizás no hace falta
+                strEncode += @""";
+            texto += """ + arguments[0].FullName + "\";";
+                strEncode += @"
+            texto += """ + cerrar("tipoDeValue");
 
-                                // Generar codificador para el tipo y codificarlo
-                //                texto += codificarArray(aux);
-                            }
-                            else if (t.FullName.StartsWith(""System.Collections.Generic.List"")) // Lista, se codifica con sus parámetros (longitud, tipo de datos, etc.) y sus datos
-                            {
-                            Console.WriteLine(""getValue 5"");
-                            }
-                            else if (t.FullName.StartsWith(""System.Collections.Generic.Dictionary"")) // Dictionary (o hashtable), se codifica con sus claves y valores
-                            {
-                            Console.WriteLine(""getValue 6"");
-                            }
-                            else if (!t.FullName.StartsWith(""System."")) // OBJETOS EXTENOS
-                            {
-                            Console.WriteLine(""getValue 7"");
-                                // Hay que generar o invocar el serializador para esta clase
-                                // Todos los serializadores ya creados están en un dictionary con el nombre del serializador y el objeto
-                                // Si no existe el serializador adecuado en este dictionary, hay que invocarlo, compilarlo, y meterlo en él
-                            }
+                strEncode += @""";
+            Console.WriteLine(""3"");
+            texto += """ + abrir("valores");
 
-                            codigo += "valor = obj.val[i];";
+                strEncode += @""";
+            foreach (" + arguments[0].FullName + " item in aux" + nombreAux + ")";
+                strEncode += @"
+            {";
+                strEncode += @"
+            Console.WriteLine(""5"");
+                texto += """ + abrir("valor");
+                strEncode += @""";";
+                getValueEncode(arguments[0], "item");
+                strEncode += @"
+            Console.WriteLine(""6"");
+                texto += """ + cerrar("valor");
+                strEncode += @""";
+            }
+            Console.WriteLine(""7"");
+            texto += """ + cerrar("valores") + "\";";
+            }
+            else if (t.FullName.StartsWith("System.Collections.Generic.Dictionary")) // Dictionary (o hashtable), se codifica con sus claves y valores
+            {
+                Type[] arguments = t.GetGenericArguments();
+                string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
+                strEncode += @"
+            IDictionary aux" + nombreAux + " = " + nombre + " as IDictionary;";
+                strEncode += @"
+            texto += """ + abrir("count");
+                strEncode += @""";
+            texto += aux" + nombreAux + ".Count;";
+                strEncode += @"
+            texto += """ + cerrar("count");
 
-                            codigo += @"
-                Console.WriteLine(""Dos miembros"");
-                ";
-                            codigo += "texto += \"";
-                            codigo += abrir("isArray");
-                            codigo += mostrarValor(propertyInfo.PropertyType.IsArray);
-                            codigo += cerrar("isArray");
+                strEncode += @""";
+            texto += """ + abrir("tipoDeIndex"); // Quizás no hace falta
+                strEncode += @""";
+            texto += """ + arguments[0].FullName + "\";";
+                strEncode += @"
+            texto += """ + cerrar("tipoDeIndex");
 
-                            codigo += abrir("valor");
-                            codigo += "\";";
-                            codigo += @"
-                    Console.WriteLine(""Tres miembros"");
-                    if(valor != null)
-                    {
-                        ";
-                            codigo += "texto += getValue(valor);";
-                            codigo += @"
-                    }
-                        ";
+                strEncode += @""";
+            texto += """ + abrir("tipoDeValue"); // Quizás no hace falta
+                strEncode += @""";
+            texto += """ + arguments[0].FullName + "\";";
+                strEncode += @"
+            texto += """ + cerrar("tipoDeValue");
 
-                            /*
-                             * Comprobaciones adicionales
-                             * Si el tipo de este miembro es un iList, mostramos más valores (length, etc.)
-                             * Si el tipo de este miembro es un IDictionary, tomamos sus valores (de la forma key, values)
-                             * Si el tipo de este miembro es una clase, tendremos que llamar recursivamente a getCodigoByMembers con los miembros de la clase
-                             */
-    /*                        IList list = propertyInfo.GetValue(obj, null) as IList;
-                            if (list != null)
-                            {
-                                codigo += recorrerIList(propertyInfo, obj);
-                            }
-                            else
-                            {
-                                IDictionary dict = propertyInfo.GetValue(obj, null) as IDictionary;
-                                //                            if (propertyInfo.GetType().GetGenericTypeDefinition() == typeof(IDictionary<,>))
-                                if (dict != null)
-                                {
-                                    codigo += recorrerIDictionary(propertyInfo, obj);
-                                }
-                                else if (miembro.GetType().IsInterface)
-                                {
-                                    Object objeto = propertyInfo.GetValue(obj, null) as Object;
-                                    MemberInfo[] miembrosClase = objeto.GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                                    codigo += getCodigoByMembers(miembrosClase, objeto);
-                                }
-                                else
-                                {
-     /
-    //                        codigo += mostrarValor(propertyInfo.GetValue(obj, null));
+                strEncode += @""";
+            texto += """ + abrir("valores");
 
-    //                        codigo += mostrarValor("\"\" + obj.GetType().GetProperty(\"\"" + propertyInfo.Name + "\"\").GetValue(obj, null) + \"");
-    //                           }
-     //                       }
-                            codigo += @"
-                    Console.WriteLine(""Cuatro miembros"");
-                        ";
-                            codigo += "texto += \"";
-                            codigo += cerrar("valor");
-                            codigo += cerrar("elemento");
-                        }
-                        else if (propertyInfo.PropertyType == null) 
-                        {
-                            Console.WriteLine("/* **************************1************************ /");
-                        }
-                        else
-                        {
-                            Console.WriteLine("/* **************************2************************ /");
-                            Console.WriteLine(propertyInfo.PropertyType.ToString());
-                            Console.WriteLine("/* **************************3************************ /");
-                        }
-                    }
-                }
-            } //foreach
-            codigo += cerrar("elementos");
-            return codigo;
-        } //getCodigoByMembers()
-*/
+                strEncode += @""";
+            foreach (DictionaryEntry item in aux" + nombreAux + ")";
+                strEncode += @"
+            {
+                texto += """ + abrir("clave");
+                strEncode += @""";";
+                getValueEncode(arguments[0], "item.Key");
+                strEncode += @"
+                texto += """ + cerrar("clave");
+                
+                strEncode += @""";
+                texto += """ + abrir("valor");
+                strEncode += @""";";
+                getValueEncode(arguments[0], "item.Value");
+                strEncode += @"
+                texto += """ + cerrar("valor");
+                strEncode += @""";
+            }
+            texto += """ + cerrar("valores") + "\";";
+
+            }
+            else //if (!t.FullName.StartsWith("System.")) // OBJETOS EXTENOS (debería ser el caso por defecto
+            {
+                // Hay que generar o invocar el serializador para esta clase
+                // Todos los serializadores ya creados están en un dictionary con el nombre del serializador y el objeto
+                // Si no existe el serializador adecuado en este dictionary, hay que invocarlo, compilarlo, y meterlo en él
+                // Llamar al método encode de la clase SerializadorZZZ
+                strEncode += @"
+            texto += " + t.Name + "Codec.encode(" + nombre + ");";
+                clases.Add(t, null);
+            }
+        }
+
         private string generateAuxiliarMethods()
         {
             strCodigo += this.newLine();
@@ -745,7 +586,7 @@ Console.WriteLine(""f"");
             return strCodigo;
         }
 
-        private Object compile(string className)
+        private Object compile(Type tipo) // Pasar el tipo completo
         {
             // TODO Ejecutar la compilación on tye fly
             // Instanciar un objeto de la clase compilada y devolverlo
@@ -758,6 +599,7 @@ Console.WriteLine(""f"");
                 CompilerParameters loParameters = new CompilerParameters();
                 loParameters.ReferencedAssemblies.Add("System.dll");
                 loParameters.ReferencedAssemblies.Add("System.Xml.dll");
+                loParameters.ReferencedAssemblies.Add(tipo.Assembly.Location);
                 loParameters.GenerateInMemory = true;
 
                 Console.WriteLine("Se ejecuta CompileAssemblyFromSource (source es el código en variable string");
@@ -782,7 +624,7 @@ Console.WriteLine(""f"");
                 Assembly loAssembly = loCompiled.CompiledAssembly;
                 // *** Retrieve an obj ref – generic type only
                 Console.WriteLine("Se crea una instancia del objeto compilado al vuelo");
-                Object loObject = loAssembly.CreateInstance("Serializer." + className + "Codec");
+                Object loObject = loAssembly.CreateInstance("Serializer." + tipo.Name + "Codec");
 
                 if (loObject == null)
                 {

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Codificador04A : CodificadorBaseA2
+    class Codificador04A
     {
-        public override String encode(Object aux)
+        public String encode(Clase04Struct c)
         {
-            Clase04Struct c = (Clase04Struct)aux;
-
             return string.Format("{0},{1}", c.valor3.valor1, c.valor3.valor2);
         }
     }

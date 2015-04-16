@@ -33,6 +33,7 @@ namespace Fase04
             {
                 c3.var2[i] = "Número " + Convert.ToString(i);
             }
+            /*
             c3.var3 = new int[1,2];
             int cont = 0;
             for (int i = 0; i < 1; i++)
@@ -68,7 +69,7 @@ namespace Fase04
                 }
                 c3.var5[i] = aux;
             }
-
+            */
             Fase02.Clase04Struct c4 = new Clase04Struct();
             c4.valor3.valor1 = 1;
             c4.valor3.valor2 = "hola";

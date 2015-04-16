@@ -56,25 +56,111 @@ namespace Fase02
             return string.Format("{0},{1}", obj.metodo1(), obj.metodo2());
         }
 
-        public static String encode (Clase03Array obj)
+        public static String encode (Clase03Array c)
         {
-            return string.Format("{0},{1},{2},{3}", obj.var1[obj.var1.Length - 1], obj.var1.Length, obj.var2[obj.var2.Length - 1], obj.var2.Length);
+            int ele1 = 0;
+            int numEle1 = 0;
+
+            String ele2 = "";
+            int numEle2 = 0;
+
+            foreach (int elemento in c.var1)
+            {
+                ele1 = elemento;
+                numEle1++;
+            }
+
+            foreach (String elemento in c.var2)
+            {
+                ele2 = elemento;
+                numEle2++;
+            }
+            /*
+            foreach (int elemento in c.var3)
+            {
+                ele2 = elemento.ToString();
+                numEle2++;
+            }
+
+            foreach (int elemento in c.var4)
+            {
+                ele2 = elemento.ToString();
+                numEle2++;
+            }
+
+            foreach (int[] elemento in c.var5)
+            {
+                foreach (int elemento2 in elemento)
+                {
+                    ele2 = elemento2.ToString();
+                    numEle2++;
+                }
+            }
+            */
+            return string.Format("{0},{1},{2},{3}", ele1, numEle1, ele2, numEle2);
         }
 
-        public static String encode(Clase04Struct obj)
+        public static String encode(Clase04Struct c)
         {
-            return string.Format("{0},{1}", obj.valor3.valor1, obj.valor3.valor2);
+            return string.Format("{0},{1}", c.valor3.valor1, c.valor3.valor2);
+        }
+
+        public static String encode(Clase05Clase c)
+        {
+            return string.Format("{0},{1}", c.var3.var1, c.var3.var2);
+        }
+
+        public static String encode(Clase06ClaseDerivada c)
+        {
+            return string.Format("{0},{1},{2}", c.var1, c.var2, c.var3);
+        }
+
+        public static String encode(Clase07ClaseConTodo c)
+        {
+            int ele1 = 0;
+            int numEle1 = 0;
+
+            String ele2 = "";
+            int numEle2 = 0;
+
+            ele2 += string.Format("{0},{1}", c.publicInt, c.basePublicInt);
+
+            foreach (int elemento in c.lista)
+            {
+                ele1 += elemento;
+                numEle1++;
+            }
+
+            foreach (int elemento in c.publicArrayInt)
+            {
+                ele2 += elemento;
+                numEle2++;
+            }
+
+            foreach (int elemento in c.publicArray2DInt)
+            {
+                ele2 += elemento;
+                numEle2++;
+            }
+
+            foreach (int[] elemento in c.publicArrayMatrizEscalonadaInt)
+            {
+                foreach (int elemento2 in elemento)
+                {
+                    ele2 += elemento2;
+                    numEle2++;
+                }
+            }
+
+            return string.Format("{0},{1},{2},{3}", ele1, numEle1, ele2, numEle2);
         }
 
 
-        
-
-        public static void decode(ref Clase02Metodos c, String s)
+        public static void decode(ref Clase02Metodos c, String aux)
         {
             int v1 = 0;
             string v2 = "";
 
-            String aux = s.ToString();
             String[] parametros = aux.Split(',');
 
             // Se esperan dos parámetros: un int y un string
@@ -88,14 +174,13 @@ namespace Fase02
             c.metodo2();
         }
 
-        public static void decode(ref Clase03Array c, String s)
+        public static void decode(ref Clase03Array c, String aux)
         {
             int v1 = 0;
             int numEle1 = 0;
             string v2 = "";
             int numEle2 = 0;
 
-            String aux = s.ToString();
             String[] parametros = aux.Split(',');
 
             // Se esperan dos parámetros: un int y un string
@@ -120,12 +205,11 @@ namespace Fase02
             }
         }
 
-        public static void decode(ref Clase04Struct c, String s)
+        public static void decode(ref Clase04Struct c, String aux)
         {
             int v1 = 0;
             string v2 = "";
 
-            String aux = s.ToString();
             String[] parametros = aux.Split(',');
 
             // Se esperan dos parámetros: un int y un string
@@ -139,11 +223,94 @@ namespace Fase02
             c.valor3.valor2 = v2;
         }
 
-        /*
-                        static tipo decode(obj)
-                        {
-                            //
-                        }
-                 */ 
+        public static void decode(ref Clase05Clase c, String aux)
+        {
+            int v1 = 0;
+            string v2 = "";
+
+            String[] parametros = aux.Split(',');
+
+            // Se esperan dos parámetros: un int y un string
+            if (parametros.Length == 2)
+            {
+                v1 = Convert.ToInt16(parametros[0]);
+                v2 = parametros[1];
+            }
+
+            c.var3.var1 = v1;
+            c.var3.var2 = v2;
+        }
+
+        public static void decode(ref Clase06ClaseDerivada c, String aux)
+        {
+            int v1 = 0;
+            string v2 = "";
+            int v3 = 0;
+
+            String[] parametros = aux.Split(',');
+
+            // Se esperan dos parámetros: un int y un string
+            if (parametros.Length == 3)
+            {
+                v1 = Convert.ToInt16(parametros[0]);
+                v2 = parametros[1];
+                v3 = Convert.ToInt16(parametros[2]);
+            }
+
+            c.var1 = v1;
+            c.var2 = v2;
+            c.var3 = v1;
+        }
+
+        public static void decode(ref Clase07ClaseConTodo c, String aux)
+        {
+            int v1 = 0;
+            int v2 = 0;
+            int numEle1 = 0;
+            int numEle2 = 0;
+
+            String[] parametros = aux.Split(',');
+
+            // Se esperan dos parámetros: un int y un string
+            if (parametros.Length == 4)
+            {
+                v1 = Convert.ToInt16(parametros[0]);
+                v2 = Convert.ToInt16(parametros[1]);
+                numEle1 = Convert.ToInt16(parametros[2]);
+                numEle2 = Convert.ToInt16(parametros[3]);
+            }
+
+            c.basePublicInt = v1;
+            c.publicInt = v2;
+            c.publicArrayInt = new int[numEle1];
+            for(int i = 0; i < numEle1; i++)
+            {
+                c.publicArrayInt[i] = numEle1;
+            }
+
+            c.publicArray2DInt = new int[numEle1, numEle2];
+            for(int i = 0; i < numEle1; i++)
+            {
+                for(int j = 0; j < numEle2; j++)
+                {
+                    c.publicArray2DInt[i, j] = numEle2;
+                }
+            }
+
+            c.publicArrayMatrizEscalonadaInt = new int[numEle1][];
+            for(int i = 0; i < numEle1; i++)
+            {
+                int[] arrayAux = new int[numEle2];
+                for(int j = 0; j < numEle2; j++)
+                {
+                    arrayAux[j] = numEle2;
+                }
+                c.publicArrayMatrizEscalonadaInt[i] = arrayAux;
+            }
+
+            c.lista = new List<int>();
+            c.lista.Add(numEle1);
+            c.lista.Add(numEle2);
+        }
     }
 }

@@ -6,15 +6,11 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Codificador06B : CodificadorBaseB
+    class Codificador06B
     {
-        public override void encode(ref Object aux)
+        public String encode(ref Clase06ClaseDerivada c)
         {
-            Clase06ClaseDerivada c = (Clase06ClaseDerivada)aux;
-
-            Console.WriteLine(c.var1);
-            Console.WriteLine(c.var2);
-            Console.WriteLine(c.var3);
+            return string.Format("{0},{1},{2}", c.var1, c.var2, c.var3);
         }
     }
 }

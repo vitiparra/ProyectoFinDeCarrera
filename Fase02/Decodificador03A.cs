@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
-    class Decodificador03A : DecodificadorBaseA2
+    class Decodificador03A
     {
 //        public override Object decode(Stream aux)
-        public override Object decode(String s)
+        public Clase03Array decode(String s)
         {
             int v1 = 0;
             int numEle1 = 0;

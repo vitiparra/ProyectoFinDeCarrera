@@ -46,11 +46,11 @@ namespace Fase02
 
             Console.WriteLine("Clase con dos métodos");
             s = p.codificarClase02(c2);
-            c2decoded = (Clase02Metodos)p.decodificarClase02(s);
+            c2decoded = p.decodificarClase02(s);
             Console.WriteLine("==================");
 
             /*
-             * 03. Clase con dos arrays
+             * 03. Clase con arrays
              */
             Clase03Array c3 = new Clase03Array();
             Clase03Array c3decoded;
@@ -64,8 +64,40 @@ namespace Fase02
             {
                 c3.var2[i] = Convert.ToString(i);
             }
+            /*
+            c3.var3 = new int[3, 4];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    c3.var3[i,j] = i+j;
+                }
+            }
 
-            Console.WriteLine("Clase con dos arrays");
+            c3.var4 = new int[4, 5, 6];
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    for (int k = 0; k < 6; k++)
+                    {
+                        c3.var4[i, j, k] = i + j + k;
+                    }
+                }
+            }
+
+            c3.var5 = new int[4][];
+            for (int i = 0; i < 4; i++)
+            {
+                int[] aux = new int[5];
+                for (int j = 0; j < 5; j++)
+                {
+                    aux[j] = j;
+                }
+                c3.var5[i] = aux;
+            }
+            */
+            Console.WriteLine("Clase con cinco arrays");
             s = p.codificarClase03(c3);
             c3decoded = (Clase03Array)p.decodificarClase03(s);
             Console.WriteLine("==================");
@@ -80,46 +112,67 @@ namespace Fase02
 
             Console.WriteLine("Clase con un atributo Struct");
             s = p.codificarClase04(c4);
-            c4decoded = (Clase04Struct)p.decodificarClase04(s);
+            c4decoded = p.decodificarClase04(s);
             Console.WriteLine("==================");
 
             /*
              * 05. Clase con una clase
+             */
             Clase05Clase c5 = new Clase05Clase();
             Clase05Clase.ClaseInterna c5int = new Clase05Clase.ClaseInterna();
             c5int.var1 = 1;
             c5int.var2 = "2";
             c5.var3 = c5int;
 
-            p.codificarClase05(c5);
-            Object c5decodedAux = p.decodificarClase05(1, "2");
+            Clase05Clase c5decoded;
 
-            // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
-            // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
-            p.watch.Restart();
-            Clase05Clase c5decoded = (Clase05Clase)c5decodedAux;
-            p.watch.Stop();
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
-
+            s = p.codificarClase05(c5);
+            c5decoded = p.decodificarClase05(s);
             Console.WriteLine("==================");
 
             /*
              * 06. Clase con una clase derivada
+             */ 
             Clase06ClaseDerivada c6 = new Clase06ClaseDerivada();
             c6.var1 = 1;
             c6.var2 = "2";
             c6.var3 = 3;
 
-            p.codificarClase06(c6);
-            Object c6decodedAux = p.decodificarClase06(1, "2");
+            Clase06ClaseDerivada c6decoded;
 
-            // Cálculo del tiempo de conversión del objeto genérico recibido por el decodificador al objeto real
-            // Este tiempo se sumará al tiempo de ejecución del método decodificarClase04
-            p.watch.Restart();
-            Clase06ClaseDerivada c6decoded = (Clase06ClaseDerivada)c6decodedAux;
-            p.watch.Stop();
-            Console.WriteLine("Tiempo de conversión de objeto: " + p.watch.ElapsedMilliseconds + " milisegundos");
+            s = p.codificarClase06(c6);
+            c6decoded = p.decodificarClase06(s);
+            Console.WriteLine("==================");
 
+            /*
+             * 07. Clase con todo
+             */
+            Clase07ClaseConTodo c7 = new Clase07ClaseConTodo();
+            c7.basePublicInt = 1;
+            c7.lista = new List<int>();
+            c7.lista.Add(1);
+            c7.lista.Add(2);
+            c7.publicArray2DInt = new int[1,2];
+            c7.publicArray2DInt[0,0] = 1;
+            c7.publicArray2DInt[0,1] = 1;
+            c7.publicArrayInt = new int[3];
+            c7.publicArrayInt[0] = 1;
+            c7.publicArrayInt[1] = 2;
+            c7.publicArrayInt[2] = 3;
+            c7.publicArrayMatrizEscalonadaInt = new int[2][];
+            int[] arrayAaux = new int[3];
+            arrayAaux[0] = 1;
+            arrayAaux[1] = 2;
+            arrayAaux[2] = 3;
+            c7.publicArrayMatrizEscalonadaInt[0] = arrayAaux;
+            c7.publicArrayMatrizEscalonadaInt[1] = arrayAaux;
+            c7.publicInt = 30;
+
+            Clase07ClaseConTodo c7decoded;
+
+            Console.WriteLine("Clase con todo");
+            s = p.codificarClase07(c7);
+            c7decoded = p.decodificarClase07(s);
             Console.WriteLine("==================");
 
             /*
@@ -139,7 +192,7 @@ namespace Fase02
             Console.ReadLine();
         }
 
-        protected String codificarClase01(Object c)
+        protected String codificarClase01(Clase01Basica c)
         {
             String sAux = "";
 
@@ -172,7 +225,7 @@ namespace Fase02
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
             {
-                sAux = SerializerStatic.encode((Clase01Basica)c);
+                sAux = SerializerStatic.encode(c);
             }
             watch.Stop();
             Console.WriteLine("Codificación básica D: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -199,9 +252,7 @@ namespace Fase02
             Decodificador01B dec1B = new Decodificador01B();
             for (int i = 0; i < this.veces; i++)
             {
-                Object cAux1B = null;
-                dec1B.decode(ref cAux1B, s);
-                cOut = (Clase01Basica)cAux1B;
+                dec1B.decode(ref cOut, s);
             }
             watch.Stop();
             Console.WriteLine("Decodificación básica B: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -227,7 +278,7 @@ namespace Fase02
         }
 
 
-        protected String codificarClase02(Object c)
+        protected String codificarClase02(Clase02Metodos c)
         {
             String sAux = "";
 
@@ -260,7 +311,7 @@ namespace Fase02
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
             {
-                sAux = SerializerStatic.encode((Clase02Metodos)c);
+                sAux = SerializerStatic.encode(c);
             }
             watch.Stop();
             Console.WriteLine("Codificación con métodos D: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -268,7 +319,7 @@ namespace Fase02
             return sAux;
         }
 
-        protected Object decodificarClase02(String s)
+        protected Clase02Metodos decodificarClase02(String s)
         {
             Clase02Metodos cOut = null;
 
@@ -314,7 +365,7 @@ namespace Fase02
             return cOut;
         }
 
-        protected String codificarClase03(Object c)
+        protected String codificarClase03(Clase03Array c)
         {
             String sAux = "";
 
@@ -325,7 +376,7 @@ namespace Fase02
                 sAux = codA.encode(c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con dos arrays A: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays A: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             Codificador03B codB = new Codificador03B();
@@ -334,7 +385,7 @@ namespace Fase02
                 sAux = codB.encode(ref c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con dos arrays B: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays B: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
@@ -342,20 +393,20 @@ namespace Fase02
                 sAux = c.codificar();
             }
             watch.Stop();
-            Console.WriteLine("Codificación con dos arrays C: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays C: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
             {
-                sAux = SerializerStatic.encode((Clase03Array)c);
+                sAux = SerializerStatic.encode(c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con dos arrays D: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays D: " + watch.ElapsedMilliseconds + " milisegundos");
 
             return sAux;
         }
 
-        protected Object decodificarClase03(String s)
+        protected Clase03Array decodificarClase03(String s)
         {
             Clase03Array cOut = null;
 
@@ -374,9 +425,7 @@ namespace Fase02
             Decodificador03B decB = new Decodificador03B();
             for (int i = 0; i < this.veces; i++)
             {
-                Object cAuxB = null;
-                decB.decode(ref cAuxB, s);
-                cOut = (Clase03Array)cAuxB;
+                decB.decode(ref cOut, s);
             }
             watch.Stop();
             Console.WriteLine("Decodificación con arrays B: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -401,7 +450,7 @@ namespace Fase02
             return cOut;
         }
 
-        protected String codificarClase04(Object c)
+        protected String codificarClase04(Clase04Struct c)
         {
             String sAux = "";
 
@@ -434,7 +483,7 @@ namespace Fase02
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
             {
-                sAux = SerializerStatic.encode((Clase04Struct)c);
+                sAux = SerializerStatic.encode(c);
             }
             watch.Stop();
             Console.WriteLine("Codificación de clase con un atributo Struct D: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -442,7 +491,7 @@ namespace Fase02
             return sAux;
         }
 
-        protected Object decodificarClase04(String s)
+        protected Clase04Struct decodificarClase04(String s)
         {
             Clase04Struct cOut = null;
 
@@ -450,7 +499,7 @@ namespace Fase02
             Decodificador04A dec1A = new Decodificador04A();
             for (int i = 0; i < this.veces; i++)
             {
-                Object cAux1A = null;
+                Clase04Struct cAux1A = null;
                 cAux1A = dec1A.decode(s);
                 cOut = (Clase04Struct)cAux1A;
             }
@@ -461,9 +510,8 @@ namespace Fase02
             Decodificador04B dec1B = new Decodificador04B();
             for (int i = 0; i < this.veces; i++)
             {
-                Object cAux1B = null;
+                Clase04Struct cAux1B = null;
                 dec1B.decode(ref cAux1B, s);
-                cOut = (Clase04Struct)cAux1B;
             }
             watch.Stop();
             Console.WriteLine("Decodificación clase con atributo Struct B: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -488,85 +536,257 @@ namespace Fase02
             return cOut;
         }
 
-        protected void codificarClase05(Object c)
+        protected String codificarClase05(Clase05Clase c)
         {
-            Console.WriteLine("Codificación con estructuras complejas A. Clase con otra clase en su interior");
-            Codificador05A cod = new Codificador05A();
+            String sAux = "";
 
             watch.Restart();
-            cod.encode(c);
+            Codificador05A cod5A = new Codificador05A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = cod5A.encode(c);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
-
-            Console.WriteLine("Codificación con estructuras complejas B. Clase con otra clase en su interior");
-            Codificador05B cod2 = new Codificador05B();
+            Console.WriteLine("Codificación de clase con otra clase dentro A: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
-            cod2.encode(ref c);
+            Codificador05B cod5B = new Codificador05B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = cod5B.encode(ref c);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
-
-            Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
+            Console.WriteLine("Codificación de clase con otra clase dentro B: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
-            String aux = c.codificar();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = c.codificar();
+            }
             watch.Stop();
-            Console.WriteLine("Codificado: " + aux);
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación de clase con otra clase dentro C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = SerializerStatic.encode(c);
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación de clase con otra clase dentro D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return sAux;
         }
 
-        protected Object decodificarClase05(int v1, string v2)
+        protected Clase05Clase decodificarClase05(string s)
         {
-            Console.WriteLine("Decodificación con estructuras complejas. Clase con una clase en su interior");
-            Decodificador05A dec = new Decodificador05A();
+            Clase05Clase cOut = new Clase05Clase();
 
             watch.Restart();
-            Object cAux = dec.decode(v1, v2);
+            Decodificador05A dec5A = new Decodificador05A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                cOut = dec5A.decode(s);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación clase con miembro de clase A: " + watch.ElapsedMilliseconds + " milisegundos");
 
-            return cAux;
+            watch.Restart();
+            Decodificador05B dec5B = new Decodificador05B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                dec5B.decode(ref cOut, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con miembro de clase B: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            Type t = typeof(Fase02.Clase05Clase);
+            for (int i = 0; i < this.veces; i++)
+            {
+                Clase05Clase aux = (Clase05Clase)s.decodificar(t);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con miembro de clase C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                SerializerStatic.decode(ref cOut, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con atributo Struct D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return cOut;
         }
 
-        protected void codificarClase06(Object c)
+        protected String codificarClase06(Clase06ClaseDerivada c)
         {
-            Console.WriteLine("Codificación con estructuras complejas A. Clase que deriva de otra clase");
-            Codificador06A cod = new Codificador06A();
+            String sAux = "";
 
             watch.Restart();
-            cod.encode(c);
+            Codificador06A cod6A = new Codificador06A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = cod6A.encode(c);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
-
-            Console.WriteLine("Codificación con estructuras complejas B. Clase que deriva de otra clase");
-            Codificador06B cod2 = new Codificador06B();
+            Console.WriteLine("Codificación con clases derivadas A: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
-            cod2.encode(ref c);
+            Codificador06B cod6B = new Codificador06B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = cod6B.encode(ref c);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
-
-            Console.WriteLine("Codificación con estructuras complejas C. Clase con otra clase en su interior");
+            Console.WriteLine("Codificación con clases derivadas B: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
-            String aux = c.codificar();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = c.codificar();
+            }
             watch.Stop();
-            Console.WriteLine("Codificado: " + aux);
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con clases derivadas C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = SerializerStatic.encode(c);
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación con clases derivadas D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return sAux;
         }
 
-        protected Object decodificarClase06(int v1, string v2)
+        protected Clase06ClaseDerivada decodificarClase06(string s)
         {
-            Console.WriteLine("Decodificación con clases derivadas. Clase derivada de otra");
-            Decodificador06A dec = new Decodificador06A();
+            Clase06ClaseDerivada cOut = new Clase06ClaseDerivada();
 
             watch.Restart();
-            Object cAux = dec.decode(v1, v2);
+            Decodificador06A dec6A = new Decodificador06A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                cOut = dec6A.decode(s);
+            }
             watch.Stop();
-            Console.WriteLine("Tiempo: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación clase con clase derivada A: " + watch.ElapsedMilliseconds + " milisegundos");
 
-            return cAux;
+            watch.Restart();
+            Decodificador06B dec6B = new Decodificador06B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                Clase06ClaseDerivada cAux6B = new Clase06ClaseDerivada();
+                dec6B.decode(ref cAux6B, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con clase derivada B: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            Type t = typeof(Fase02.Clase06ClaseDerivada);
+            for (int i = 0; i < this.veces; i++)
+            {
+                Clase06ClaseDerivada aux = (Clase06ClaseDerivada)s.decodificar(t);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con clase derivada C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                SerializerStatic.decode(ref cOut, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return cOut;
         }
+
+        protected String codificarClase07(Clase07ClaseConTodo c)
+        {
+            String sAux = "";
+
+            watch.Restart();
+            Codificador07A codA = new Codificador07A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = codA.encode(c);
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación de clase con todo A: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            Codificador07B codB = new Codificador07B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = codB.encode(ref c);
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación de clase con todo B: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = c.codificar();
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación de clase con todo C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                sAux = SerializerStatic.encode(c);
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación de clase con todo D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return sAux;
+        }
+
+        protected Clase07ClaseConTodo decodificarClase07(String s)
+        {
+            Clase07ClaseConTodo cOut = new Clase07ClaseConTodo();
+
+            watch.Restart();
+            Decodificador07A dec1A = new Decodificador07A();
+            for (int i = 0; i < this.veces; i++)
+            {
+                cOut = dec1A.decode(s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con todo A: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            Decodificador07B dec1B = new Decodificador07B();
+            for (int i = 0; i < this.veces; i++)
+            {
+                Clase07ClaseConTodo cAux1B = new Clase07ClaseConTodo();
+                dec1B.decode(ref cAux1B, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con todo B: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            Type t = typeof(Fase02.Clase07ClaseConTodo);
+            for (int i = 0; i < this.veces; i++)
+            {
+                Clase07ClaseConTodo aux = (Clase07ClaseConTodo)s.decodificar(t);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con todo C: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            watch.Restart();
+            for (int i = 0; i < this.veces; i++)
+            {
+                SerializerStatic.decode(ref cOut, s);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación clase con todo D: " + watch.ElapsedMilliseconds + " milisegundos");
+
+            return cOut;
+        }
+
         protected void codificarStruct01(Object c)
         {
             Console.WriteLine("Codificación básica A. Struct con dos atributos simples");

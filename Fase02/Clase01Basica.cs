@@ -8,7 +8,7 @@ namespace Fase02
 {
     public class Clase01Basica
     {
-        public Wrapper<int> val { get; set; } // se espera que isGenericçType devuelva FALSE
+//        public Wrapper<int> val { get; set; } // se espera que isGenericçType devuelva FALSE
         public int var1 { get; set;}
         public string var2 { get; set; }
     }

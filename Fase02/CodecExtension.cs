@@ -39,13 +39,13 @@ namespace CodecExtensions
                     ele1 = elemento;
                     numEle1++;
                 }
-
+                /*
                 foreach (string elemento in c.var2)
                 {
                     ele2 = elemento;
                     numEle2++;
                 }
-
+                */
                 return string.Format("{0},{1},{2},{3}", ele1, c.var1.Length, ele2, c.var2.Length);
             }
             else if(obj.GetType() == typeof(Fase02.Clase04Struct))

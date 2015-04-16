@@ -932,7 +932,6 @@ Console.WriteLine(""No hay valores"");
          */
         private Object compile(string className)
         {
-            // TODO Ejecutar la compilación on tye fly
             // Instanciar un objeto de la clase compilada y devolverlo
             try
             {
