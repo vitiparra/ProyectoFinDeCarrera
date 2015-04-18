@@ -134,6 +134,7 @@ namespace Serializer
 
         private void generateEncodeAndDecodeMethods()
         {
+
             // 2º Cabecera de la clase
             strCodigo += @"
     public class ";
@@ -149,10 +150,16 @@ namespace Serializer
         public string codificar(" + tipo.FullName.Replace("+", ".") + " obj){";
             strCodigo += @"
             return encode(obj);}";
+
             strEncode = @"
         public static string encode(" + tipo.FullName.Replace("+", ".") + " obj){";
+
             strDecode = @"
-        public " + tipo.FullName.Replace("+", ".") + " decode(String str, object obj){";
+        public static void decode(String str, ref " + tipo.FullName.Replace("+", ".") + " obj){";
+            strDecode += @"
+            int count;
+            Type tipo;
+            int rango;";
 
             BindingFlags flags = BindingFlags.Instance
                 | BindingFlags.Public
@@ -169,6 +176,22 @@ namespace Serializer
             strEncode += @"
             StringBuilder texto = new StringBuilder(""" + abrir("elementos") + "\");";
 
+            switch (this.tipoDeCodificacion) 
+            {
+                // Aquí vendrán todas las modalidades de codificación (JSON, CSV, Binary, etc.)
+                case tiposDeCodificacion.XML:
+                default:
+                    strDecode += @"
+            XmlDocument xml = new XmlDocument();
+            /*
+             * Aquí va el control de errores del documento XML
+            */
+            xml.LoadXml(str);
+            XmlNode nodoPrincipal = xml.SelectSingleNode(""elementos"");
+            XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);";
+                    break;
+            }
+
             foreach (MemberInfo miembro in miembros)
             {
                 // FASE 6: miembro.GetCustomAttributes() para capturar los atributos (comprobar atributos para saber si hay que serializar)
@@ -184,6 +207,10 @@ namespace Serializer
 
                             strEncode += @"
             texto.Append(""" + abrir("elemento");
+
+                            strDecode += @"
+            nr.Read();
+            ";
 
                             strEncode += @""");
             texto.Append(""" + abrir("nombre");
@@ -202,7 +229,7 @@ namespace Serializer
                             strEncode += @""");
             texto.Append(""" + abrir("valor") + "\");";
 
-                            getValueEncode(t, "obj." + nombre);
+                            getValueEncode(t, "obj." + nombre, nombre);
 
                             strEncode += @"
             texto.Append(""" + cerrar("valor") + "\");";
@@ -219,7 +246,6 @@ namespace Serializer
             return texto.ToString();
         }";
             strDecode += @"
-            return null;
         }";
             strCodigo += strEncode;
             strCodigo += this.newLine();
@@ -356,29 +382,53 @@ namespace Serializer
             }
         }
 
-        private void getValueEncode(Type t, string nombre)
+        protected void getValueEncode(Type t, string nombre, string nombreCampo, bool isArrayOrList = false)
         {
             if (t.IsPrimitive || t.FullName == "System.String") // Datos primitivos, simplemente cogemos su valor
             {
                 strEncode += @"
             texto.Append(" + nombre + ".ToString());";
+                if(isArrayOrList)
+                {
+                    strDecode += @"
+            nr.Read();";
+                    strDecode += @"
+            " + nombre + ".SetValue(" + t.Name + ".Parse(nr.Value), i" + nombreCampo + ");";
+                    strDecode += @"";
+                }
+                else
+                {
+                    strDecode += @"
+            " + nombre + " = " + t.Name + ".Parse(nr.Value);";
+                }
             }
             else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
             {
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
                 strEncode += @"
             Array aux" + nombreAux + " = " + nombre + " as Array;";
+                strDecode += @"
+
+            Array aux" + nombreAux + " = " + nombre + " as Array;";
+
                 strEncode += @"
             texto.Append(""" + abrir("count");
+
                 strEncode += @""");
             texto.Append(aux" + nombreAux + ".Length);";
+                strDecode += @"
+            nr.Read();
+            count = Int32.Parse(nr.Value);";
                 strEncode += @"
             texto.Append(""" + cerrar("count");
 
                 strEncode += @""");
             texto.Append(""" + abrir("tipoDeElementos");
                 strEncode += @""");
-            texto.Append(""" + t.GetElementType().Name;
+            texto.Append(""" + t.GetElementType().FullName;
+                strDecode += @"
+            nr.Read();
+            tipo = Type.GetType(nr.Value);";
                 strEncode += @""");
             texto.Append(""" + cerrar("tipoDeElementos");
 
@@ -386,6 +436,9 @@ namespace Serializer
             texto.Append(""" + abrir("rank");
                 strEncode += @""");
             texto.Append(""" + t.GetArrayRank();
+                strDecode += @"
+            nr.Read();
+            rango = Int32.Parse(nr.Value);";
                 strEncode += @""");
             texto.Append(""" + cerrar("rank");
 
@@ -421,14 +474,16 @@ namespace Serializer
                 strEncode += @""");
             texto.Append(""" + abrir("valores");
                 strEncode += @""");
-            foreach (object elemento" + nombreAux + " in aux" + nombreAux + ")";
+            foreach (object elementoAux" + nombreAux + " in aux" + nombreAux + ")";
                 strEncode += @"
             {
                 texto.Append(""" + abrir("cadaValor") + "\");";
-                strEncode += @"
-                texto.Append(""" + abrir("valor") + "\");";
+                strDecode += @"
+            for (int i" + nombreAux + " = 0; i" + nombreAux + " < count; i" + nombreAux + "++)";
+                strDecode += @"
+            {";
 
-                getValueEncode(t.GetElementType(), "elemento" + nombreAux + "");
+                getValueEncode(t.GetElementType(), "aux" + nombreAux, nombreAux, true);
 
                 strEncode += @"
                 texto.Append(""" + cerrar("valor") + "\");";
@@ -436,6 +491,10 @@ namespace Serializer
                 texto.Append(""" + cerrar("cadaValor");
                 strEncode += @""");
             }";
+                strDecode += @"
+            }
+            // Volcar el array auxiliar a su correspondiente en el objeto
+            " + nombre + " = aux" + nombreAux + " as " + t.FullName + ";";
                 strEncode += @"
             texto.Append(""" + cerrar("valores") + "\");";
             }
@@ -473,7 +532,7 @@ namespace Serializer
             Console.WriteLine(""5"");
                 texto.Append(""" + abrir("valor");
                 strEncode += @""");";
-                getValueEncode(arguments[0], "item");
+                getValueEncode(arguments[0], nombre, nombreCampo);
                 strEncode += @"
             Console.WriteLine(""6"");
                 texto.Append(""" + cerrar("valor");
@@ -518,14 +577,14 @@ namespace Serializer
             {
                 texto.Append(""" + abrir("clave");
                 strEncode += @""");";
-                getValueEncode(arguments[0], "item.Key");
+                getValueEncode(arguments[0], nombre, nombreCampo);
                 strEncode += @"
                 texto.Append(""" + cerrar("clave");
                 
                 strEncode += @""");
                 texto.Append(""" + abrir("valor");
                 strEncode += @""");";
-                getValueEncode(arguments[0], "item.Value");
+                getValueEncode(arguments[0], nombre, nombreCampo);
                 strEncode += @"
                 texto.Append(""" + cerrar("valor");
                 strEncode += @""");
@@ -541,6 +600,14 @@ namespace Serializer
                 // Llamar al método encode de la clase SerializadorZZZ
                 strEncode += @"
             texto.Append(" + t.Name + "Codec.encode(" + nombre + "));";
+
+                strDecode += @"
+            " + t.FullName.Replace("+", ".") +" objAux = new " + t.FullName.Replace("+", ".") + "();";
+                strDecode += @"
+            " + t.Name + "Codec.decode(nr.Value, ref objAux);";
+                strDecode += @"
+            " + nombre + " = objAux;";
+
                 clases.Add(t, null);
             }
         }
