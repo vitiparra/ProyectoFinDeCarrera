@@ -44,11 +44,13 @@
   <ItemGroup>
     <Compile Include="Clase02Metodos.cs" />
     <Compile Include="Clase03Array.cs" />
+    <Compile Include="Clase03aUnArray.cs" />
     <Compile Include="Clase04Struct.cs" />
     <Compile Include="Clase07ClaseConTodo.cs" />
     <Compile Include="Clase05Clase.cs" />
     <Compile Include="Clase08List.cs" />
     <Compile Include="Clase09MiembroClase.cs" />
+    <Compile Include="ClaseViti.cs" />
     <Compile Include="CodecExtension.cs" />
     <Compile Include="Codificador01A.cs" />
     <Compile Include="Codificador01AStruct.cs" />

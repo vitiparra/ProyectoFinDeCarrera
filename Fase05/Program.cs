@@ -42,11 +42,110 @@ namespace Fase05
             var serializadorPrueba = gPrueba.getSerializer();
             if (serializadorPrueba != null)
             {
-                Console.Write(serializadorPrueba.codificar(c));
+//                Console.Write(serializadorPrueba.codificar(c));
+                string codigo = serializadorPrueba.codificar(c);
+                Console.WriteLine(codigo);
+                ClasePrueba aux = new ClasePrueba();
+                serializadorPrueba.decodificar(codigo, ref aux);
+                Console.WriteLine(aux.var1 + "," + aux.var2.varB1);
             }
             else
             {
                 Console.WriteLine("No se ha podido generar el serializador");
+            }
+
+            Fase02.Clase03aUnArray c3 = new Clase03aUnArray();
+            Generador g3 = new Generador(c3.GetType());
+            dynamic serializador3 = g3.getSerializer();
+            if (serializador3 != null)
+            {
+/*
+                c3.var1 = new int[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    c3.var1[i] = i;
+                }
+
+                c3.var2 = new int[3, 2, 2];
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        for (int k = 0; k < 2; k++)
+                        {
+                            c3.var2[i, j, k] = i * (j + 3) + (k * 3);
+                        }
+                    }
+                }
+
+                c3.var3 = new int[3][];
+                for (int i = 0; i < 3; i++)
+                {
+                    int[] aux = new int[4];
+                    for (int j = 0; j < 4; j++)
+                    {
+                        aux[j] = i * (j + 3);
+                    }
+                    c3.var3[i] = aux;
+                }
+                Console.WriteLine("Antes");
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Console.WriteLine(c3.var3[i][j]);
+                    }
+                }
+*/
+                c3.var4 = new List<Fase02.ClaseViti>();
+                Fase02.ClaseViti clase = new Fase02.ClaseViti();
+                clase.v1 = "uno";
+                clase.v2 = 1;
+                c3.var4.Add(clase);
+                Fase02.ClaseViti clase2 = new Fase02.ClaseViti();
+                clase2.v1 = "dos";
+                clase2.v2 = 2;
+                c3.var4.Add(clase2);
+                Fase02.ClaseViti clase3 = new Fase02.ClaseViti();
+                clase3.v1 = "tres";
+                clase3.v2 = 3;
+                c3.var4.Add(clase3);
+
+                string codigo = serializador3.codificar(c3);
+                Console.WriteLine(codigo);
+                Fase02.Clase03aUnArray c3aux = new Clase03aUnArray();
+                serializador3.decodificar(codigo, ref c3aux);
+
+                foreach (Fase02.ClaseViti i in c3aux.var4)
+                {
+                    Console.WriteLine(i.v1.ToString() + "," + i.v2.ToString());
+                }
+/*
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(c3aux.var1[i]);
+                }
+                Console.WriteLine("Después");
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        for (int k = 0; k < 2; k++)
+                        {
+                            Console.WriteLine(c3.var2[i, j, k]);
+                        }
+                    }
+                }
+
+                Console.WriteLine("Antes (v3)");
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Console.WriteLine(c3.var3[i][j]);
+                    }
+                }
+ */ 
             }
 /* 
             #region Clase01Basica
@@ -146,7 +245,7 @@ namespace Fase05
                 Console.WriteLine("No se ha podido generar el serializador");
             }
 
-*/
+/
             Fase02.Clase07ClaseConTodo c7 = new Clase07ClaseConTodo();
             Generador g7 = new Generador(c7.GetType());
             dynamic serializador7 = g7.getSerializer();
@@ -162,7 +261,7 @@ namespace Fase05
                 Console.WriteLine("No se ha podido generar el serializador");
             }
 
-
+*/
             Console.ReadKey();
         }
     }
