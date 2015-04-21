@@ -111,6 +111,11 @@ namespace Fase05
                 clase3.v2 = 3;
                 c3.var4.Add(clase3);
 
+                c3.var5 = new Dictionary<int, string>();
+                c3.var5.Add(4, "cuatro");
+                c3.var5.Add(5, "cinco");
+                c3.var5.Add(6, "seis");
+
                 string codigo = serializador3.codificar(c3);
                 Console.WriteLine(codigo);
                 Fase02.Clase03aUnArray c3aux = new Clase03aUnArray();
@@ -120,6 +125,12 @@ namespace Fase05
                 {
                     Console.WriteLine(i.v1.ToString() + "," + i.v2.ToString());
                 }
+
+                foreach (KeyValuePair<int, string> i in c3aux.var5)
+                {
+                    Console.WriteLine(i.Key.ToString() + "," + i.Value.ToString());
+                }
+
 /*
                 for (int i = 0; i < 3; i++)
                 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Xml;
 using System.Collections.Generic;
 //using System.Linq;
@@ -20,7 +21,6 @@ namespace Serializer
             return encode(obj);}
         public void decodificar(string codigo, ref Fase02.Clase03aUnArray obj){
             decode(ref codigo, ref obj);
-            Console.WriteLine("PRUEBA 6");
         }
         public static string encode(Fase02.Clase03aUnArray obj){
             StringBuilder texto = new StringBuilder();
@@ -33,55 +33,67 @@ namespace Serializer
             {
             texto.Append(ClaseVitiCodec.encode( elementoAuxobjvar4));
             }
+//            texto.Append("var5,");
+//            texto.Append("System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]],");
+            IDictionary auxobjvar5 = obj.var5 as IDictionary;
+            texto.Append(auxobjvar5.Count + ",");
+            texto.Append("System.Int32" + ",");
+            texto.Append("System.String" + ",");
+            foreach (KeyValuePair<System.Int32, System.String> elementoAuxobjvar5 in obj.var5)
+            {
+            texto.Append( elementoAuxobjvar5.ToString() + ",");
+            texto.Append( elementoAuxobjvar5.ToString() + ",");
+            }
             return texto.ToString();
         }
 
         public static void decode(ref String codigo, ref Fase02.Clase03aUnArray obj){
             int count;
             Type tipo;
+            Type type;
             int rango;
             string nombre;
-            Console.WriteLine("PRUEBA 1");
             Queue<string> elementos = new Queue<string>(codigo.Split(','));
-            Console.WriteLine("PRUEBA 2");
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
-            Console.WriteLine("PRUEBA 3");
-            Console.WriteLine("ele:1");
-                Console.WriteLine("PRUEBA d1");
             int lengthobjvar4 = Int32.Parse(elementos.Dequeue());
-                Console.WriteLine("PRUEBA d2");
-                Console.WriteLine("PRUEBA d3");
             tipo = Type.GetType(elementos.Dequeue());
-                Console.WriteLine("PRUEBA d4");
-                Console.WriteLine("PRUEBA d4");
-                var type = Type.GetType(typeof (List<Fase02.ClaseViti>).AssemblyQualifiedName);
-                Console.WriteLine("PRUEBA d5");
+                type = Type.GetType(typeof (List<Fase02.ClaseViti>).AssemblyQualifiedName);
                 IList<Fase02.ClaseViti> listaAuxobjvar4 = (IList<Fase02.ClaseViti>)Activator.CreateInstance(type);
-                Console.WriteLine("PRUEBA d6");
                 Fase02.ClaseViti elementoAuxobjvar4 = new Fase02.ClaseViti();
-                Console.WriteLine("PRUEBA d7");
+                // Instanciación del miembro (si es una clase instanciable es imperativo)
+                obj.var4 = new List<Fase02.ClaseViti>();
             for (int iauxobjvar4 = 0; iauxobjvar4 < lengthobjvar4; iauxobjvar4++)
             {
-                Console.WriteLine("PRUEBA e1");
             Fase02.ClaseViti objAuxauxobjvar4 = new Fase02.ClaseViti();
-                Console.WriteLine("PRUEBA e2");
             string aux = string.Join(",", elementos.ToArray());
-            Console.WriteLine(aux);
             ClaseVitiCodec.decode(ref aux, ref objAuxauxobjvar4);
-                Console.WriteLine("PRUEBA e3");
             elementos = new Queue<string>(aux.Split(','));
-                Console.WriteLine("PRUEBA e4");
              elementoAuxobjvar4 = objAuxauxobjvar4 as Fase02.ClaseViti;
-                Console.WriteLine("PRUEBA e5");
-                Console.WriteLine("PRUEBA d8");
                 obj.var4.Add(elementoAuxobjvar4);
-                Console.WriteLine("PRUEBA d9");
             }
-            Console.WriteLine("PRUEBA 4");
+//            nombre = elementos.Dequeue();
+//            tipo = Type.GetType(elementos.Dequeue());
+            int lengthobjvar5 = Int32.Parse(elementos.Dequeue());
+            Type tipoIndice = Type.GetType(elementos.Dequeue());
+            Type tipoValor = Type.GetType(elementos.Dequeue());
+                type = Type.GetType(typeof (Dictionary<System.Int32, System.String>).AssemblyQualifiedName);
+                IDictionary<System.Int32, System.String> dictAuxobjvar5 = (IDictionary<System.Int32, System.String>)Activator.CreateInstance(type);
+                // Instanciación del miembro (si es una clase instanciable es imperativo)
+                obj.var5 = new Dictionary<System.Int32,System.String>();
+            for (int iauxobjvar5 = 0; iauxobjvar5 < lengthobjvar5; iauxobjvar5++)
+            {
+                System.Int32 indiceAuxobjvar5 = new System.Int32();
+                {System.Int32 elementoAuxobjvar5 = new System.Int32();
+             elementoAuxobjvar5 = Int32.Parse(elementos.Dequeue());
+                indiceAuxobjvar5 = elementoAuxobjvar5;
+                }
+                {System.String elementoAuxobjvar5 = "";
+             elementoAuxobjvar5 = elementos.Dequeue();
+                obj.var5.Add(indiceAuxobjvar5, elementoAuxobjvar5);
+                }
+            }
             codigo = string.Join(",", elementos.ToArray());
-            Console.WriteLine("PRUEBA 5");
-            Console.WriteLine("FIN");
         }
     }
     public class ClaseVitiCodec {
@@ -93,7 +105,6 @@ namespace Serializer
             return encode(obj);}
         public void decodificar(string codigo, ref Fase02.ClaseViti obj){
             decode(ref codigo, ref obj);
-            Console.WriteLine("PRUEBA 6");
         }
         public static string encode(Fase02.ClaseViti obj){
             StringBuilder texto = new StringBuilder();
@@ -109,30 +120,17 @@ namespace Serializer
         public static void decode(ref String codigo, ref Fase02.ClaseViti obj){
             int count;
             Type tipo;
+            Type type;
             int rango;
             string nombre;
-            Console.WriteLine("PRUEBA 1");
             Queue<string> elementos = new Queue<string>(codigo.Split(','));
-            Console.WriteLine("PRUEBA 2");
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
-            Console.WriteLine("PRUEBA 3");
-            Console.WriteLine("ele:1");
-            Console.WriteLine("PRUEBA b1");
             obj.v1 = elementos.Dequeue();
-            Console.WriteLine("PRUEBA b2");
-            Console.WriteLine("PRUEBA 2");
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
-            Console.WriteLine("PRUEBA 3");
-            Console.WriteLine("ele:1");
-            Console.WriteLine("PRUEBA b1");
             obj.v2 = Int32.Parse(elementos.Dequeue());
-            Console.WriteLine("PRUEBA b2");
-            Console.WriteLine("PRUEBA 4");
             codigo = string.Join(",", elementos.ToArray());
-            Console.WriteLine("PRUEBA 5");
-            Console.WriteLine("FIN");
         }
 
         static void Main(string[] args)
@@ -153,6 +151,11 @@ namespace Serializer
             clase3.v1 = "tres";
             clase3.v2 = 3;
             c3.var4.Add(clase3);
+
+            c3.var5 = new Dictionary<int, string>();
+            c3.var5.Add(4, "cuatro");
+            c3.var5.Add(5, "cinco");
+            c3.var5.Add(6, "seis");
 
             string codigo = serializador3.codificar(c3);
             Console.WriteLine(codigo);

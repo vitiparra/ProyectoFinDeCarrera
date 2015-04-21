@@ -11,6 +11,7 @@ namespace Fase02
 //        public int[, ,] var2 { get; set; }
 //        public int[][] var3 { get; set; }
         public List<ClaseViti> var4 { get; set; }
+        public Dictionary<int, string> var5 { get; set; }
 
     }
 }

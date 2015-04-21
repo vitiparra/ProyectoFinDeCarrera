@@ -170,6 +170,7 @@ namespace Serializer
             strDecode += @"
             int count;
             Type tipo;
+            Type type;
             int rango;
             string nombre;";
 
@@ -570,9 +571,9 @@ namespace Serializer
             strCodigo += strDecode;
         }
 
-        protected void getValueCSV(Type t, string nombre, string nombreCampo, bool isArray = false, bool isList = false)
+        protected void getValueCSV(Type t, string nombre, string nombreCampo, bool isArray = false, bool isList = false, bool isDictionaryIndex= false, bool isDictionaryValue = false)
         {
-            if (t.IsPrimitive || t.FullName == "System.String") // Datos primitivos, simplemente cogemos su valor
+            if (t.IsPrimitive || t.FullName == "System.String" || isDictionaryIndex || isDictionaryValue) // Datos primitivos, simplemente cogemos su valor
             {
                 strEncode += @"
             texto.Append(" + nombre + ".ToString() + \",\");";
@@ -694,14 +695,14 @@ namespace Serializer
                 strEncode += @"
             {";
                 strDecode += @"
-                var type = Type.GetType(typeof (List<" + arguments[0].FullName + ">).AssemblyQualifiedName);";
+                type = Type.GetType(typeof (List<" + arguments[0].FullName + ">).AssemblyQualifiedName);";
                 strDecode += @"
                 IList<" + arguments[0].FullName + "> listaAux" + nombreAux + " = (IList<" + arguments[0].FullName + ">)Activator.CreateInstance(type);";
                 strDecode += @"
                 " + arguments[0].FullName + " elementoAux" + nombreAux + " = new " + arguments[0].FullName + "();";
                 strDecode += @"
                 // Instanciación del miembro (si es una clase instanciable es imperativo)
-                " + nombre + " = (List<" + arguments[0].FullName + ">)Activator.CreateInstance(type);";
+                " + nombre + " = new List<" + arguments[0].FullName + ">();";
                 strDecode += @"
             for (int iaux" + nombreAux + " = 0; iaux" + nombreAux + " < length" + nombreAux + "; iaux" + nombreAux + "++)";
                 strDecode += @"
@@ -718,52 +719,77 @@ namespace Serializer
             {
                 Type[] arguments = t.GetGenericArguments();
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
+
                 strEncode += @"
             IDictionary aux" + nombreAux + " = " + nombre + " as IDictionary;";
                 strEncode += @"
-            texto.Append(""" + abrir("count");
-                strEncode += @""");
-            texto.Append(aux" + nombreAux + ".Count);";
-                strEncode += @"
-            texto.Append(""" + cerrar("count");
+            texto.Append(aux" + nombreAux + ".Count + \",\");";
+                strDecode += @"
+            int length" + nombreAux + " = Int32.Parse(elementos.Dequeue());";
 
-                strEncode += @""");
-            texto.Append(""" + abrir("tipoDeIndex"); // Quizás no hace falta
-                strEncode += @""");
-            texto.Append(""" + arguments[0].FullName + "\");";
+                // Tipo del índice
                 strEncode += @"
-            texto.Append(""" + cerrar("tipoDeIndex");
+            texto.Append(""" + arguments[0].FullName + "\" + \",\");";
+                strDecode += @"
+            Type tipoIndice = Type.GetType(elementos.Dequeue());";
 
-                strEncode += @""");
-            texto.Append(""" + abrir("tipoDeValue"); // Quizás no hace falta
-                strEncode += @""");
-            texto.Append(""" + arguments[0].FullName + "\");";
+                // Tipo del valor
                 strEncode += @"
-            texto.Append(""" + cerrar("tipoDeValue");
+            texto.Append(""" + arguments[1].FullName + "\" + \",\");";
+                strDecode += @"
+            Type tipoValor = Type.GetType(elementos.Dequeue());";
 
-                strEncode += @""");
-            texto.Append(""" + abrir("valores");
-
-                strEncode += @""");
-            foreach (DictionaryEntry item in aux" + nombreAux + ")";
                 strEncode += @"
-            {
-                texto.Append(""" + abrir("clave");
-                strEncode += @""");";
-                getValueCSV(arguments[0], nombre, nombreCampo);
+            foreach (KeyValuePair<" + arguments[0].FullName + ", " + arguments[1].FullName + "> par" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
-                texto.Append(""" + cerrar("clave");
-
-                strEncode += @""");
-                texto.Append(""" + abrir("valor");
-                strEncode += @""");";
-                getValueCSV(arguments[0], nombre, nombreCampo);
+            {";
                 strEncode += @"
-                texto.Append(""" + cerrar("valor");
-                strEncode += @""");
-            }
-            texto.Append(""" + cerrar("valores") + "\");";
+                {" + arguments[0].FullName + " elementoAux" + nombreAux + " = par" + nombreAux + ".Key;";
 
+                strDecode += @"
+                type = Type.GetType(typeof (Dictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + ">).AssemblyQualifiedName);";
+                strDecode += @"
+                IDictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + "> dictAux" + nombreAux + " = (IDictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + ">)Activator.CreateInstance(type);";
+                strDecode += @"
+                // Instanciación del miembro (si es una clase instanciable es imperativo)
+                " + nombre + " = new Dictionary<" + arguments[0].FullName + "," + arguments[1].FullName + ">();";
+                strDecode += @"
+            for (int iaux" + nombreAux + " = 0; iaux" + nombreAux + " < length" + nombreAux + "; iaux" + nombreAux + "++)";
+                strDecode += @"
+            {";
+                strDecode += @"
+                "+ arguments[0].FullName + " indiceAux" + nombreAux + " = new " + arguments[0].FullName + "();";
+                strDecode += @"
+                {" + arguments[0].FullName + " elementoAux" + nombreAux + " = new " + arguments[0].FullName + "();";
+
+                getValueCSV(arguments[0], " elementoAux" + nombreAux, "aux" + nombreAux, false, false, true, false);
+
+                strEncode += @"}
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = par" + nombreAux + ".Value;";
+                strDecode += @"
+                indiceAux" + nombreAux + " = elementoAux" + nombreAux + ";";
+                if (arguments[1].FullName == "System.String")
+                {
+                    strDecode += @"
+                }
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = \"\";";
+                }
+                else
+                {
+                    strDecode += @"
+                }
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = new " + arguments[1].FullName + "();";
+                }
+
+                getValueCSV(arguments[1], " elementoAux" + nombreAux, "aux" + nombreAux, false, false, false, true);
+
+                strDecode += @"
+                " + nombre + ".Add(indiceAux" + nombreAux + ", elementoAux" + nombreAux + ");";
+                strDecode += @"
+                }
+            }";
+                strEncode += @"}
+            }";
             }
             else //if (!t.FullName.StartsWith("System.")) // OBJETOS EXTENOS (debería ser el caso por defecto
             {
