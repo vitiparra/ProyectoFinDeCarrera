@@ -34,12 +34,12 @@ namespace Fase02
             {
                 cOut.var1[i] = i;
             }
-
+/*
             cOut.var2 = new string[numEle2];
             for (int i = 0; i < numEle2; i++)
             {
                 cOut.var2[i] = Convert.ToString(i);
             }
-        }
+*/        }
     }
 }
