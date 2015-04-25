@@ -22,6 +22,7 @@ namespace Fase05
         public class ClasePrueba
         {
             public int var1 { get; set; }
+            [System.Obsolete]
             public ClaseB var2 { get; set; }
 
             public ClasePrueba()
@@ -46,6 +47,7 @@ namespace Fase05
                 string codigo = serializadorPrueba.codificar(c);
                 Console.WriteLine(codigo);
                 ClasePrueba aux = new ClasePrueba();
+                aux.var1 = 0;
                 serializadorPrueba.decodificar(codigo, ref aux);
                 Console.WriteLine(aux.var1 + "," + aux.var2.varB1);
             }
@@ -132,9 +134,16 @@ namespace Fase05
                 }
                 Console.WriteLine("");
 
-                for (int i = 0; i < 3; i++)
+                if(c3aux.var2 == null)
                 {
-                    Console.Write(c3aux.var2[i]);
+                    Console.Write("¡var2 no se ha serializado!");
+                }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Console.Write(c3aux.var2[i]);
+                    }
                 }
                 Console.WriteLine("");
 

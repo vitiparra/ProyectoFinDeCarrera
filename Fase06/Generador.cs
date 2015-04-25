@@ -185,14 +185,13 @@ namespace Serializer
             MemberInfo[] miembros = tipo.GetMembers(flags);
             switch (this.tipoDeCodificacion)
             {
-                case tiposDeCodificacion.XML:
-                    GenerateCodeXML(miembros);
-                    break;
                 case tiposDeCodificacion.CSV:
-                default:
                     GenerateCodeCSV(miembros);
                     break;
-
+                case tiposDeCodificacion.XML:
+                default:
+                    GenerateCodeXML(miembros);
+                    break;
             }
         }
 
@@ -211,13 +210,9 @@ namespace Serializer
             /*
              * Aquí va el control de errores del documento XML
             */
-            Console.WriteLine(""2"");
-            xml.LoadXml(str);
-            Console.WriteLine(""3"");
+            xml.LoadXml(codigo);
             XmlNode nodoPrincipal = xml.SelectSingleNode(""elementos"");
-            Console.WriteLine(""4"");
-            XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);
-            Console.WriteLine(""5"");";
+            XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);";
                     break;
             }
 
@@ -239,7 +234,6 @@ namespace Serializer
 
                             strDecode += @"
 
-            Console.WriteLine(""6"");
             nr.Read();";
 
                             strEncode += @""");
@@ -294,20 +288,30 @@ namespace Serializer
                 if (isArrayOrList)
                 {
                     strDecode += @"
-            Console.WriteLine(""7"");
             nr.Read();";
-                    strDecode += @"
+                    if (t.FullName == "System.String")
+                    {
+                        strDecode += @"
+            " + nombre + ".SetValue(nr.Value, i" + nombreCampo + ");";
+                    }
+                    else
+                    {
+                        strDecode += @"
             " + nombre + ".SetValue(" + t.Name + ".Parse(nr.Value), i" + nombreCampo + ");";
-                    strDecode += @"";
+                    }
                 }
                 else
                 {
-                    strDecode += @"
-            Console.WriteLine(""8"");
-            Console.WriteLine(nr.Value);
+                    if (t.FullName == "System.String")
+                    {
+                        strDecode += @"
+            " + nombre + " = nr.Value;";
+                    }
+                    else
+                    {
+                        strDecode += @"
             " + nombre + " = " + t.Name + ".Parse(nr.Value);";
-                    strDecode += @"
-            Console.WriteLine(""8b"");";
+                    }
                 }
             }
             else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
@@ -621,17 +625,15 @@ namespace Serializer
             }
             else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
             {
+                string tipoElemento = t.GetElementType().FullName; // Tipo de los elementos del array
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
                 strEncode += @"
-            Array aux" + nombreAux + " = " + nombre + " as Array;";
-
-                strEncode += @"
-            texto.Append(aux" + nombreAux + ".Length + \",\");";
+            texto.Append(" + nombre + ".Length + \",\");";
                 strDecode += @"
             int length" + nombreAux + " = Int32.Parse(elementos.Dequeue());";
 
                 strEncode += @"
-            texto.Append(""" + t.GetElementType().FullName + "\" + \",\");";
+            texto.Append(""" + tipoElemento + "\" + \",\");";
                 strDecode += @"
             tipo = Type.GetType(elementos.Dequeue());";
 
@@ -640,21 +642,18 @@ namespace Serializer
                 strDecode += @"
             rango = Int32.Parse(elementos.Dequeue());";
 
-                string indices = "[";
-                string longitudes = "[";
-
                 // Definir la longitud de cada rango, y sus límites inferior y superior
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
                     strEncode += @"
-            texto.Append(aux" + nombreAux + ".GetLength(" + i + ") + \",\");";
+            texto.Append(" + nombre + ".GetLength(" + i + ") + \",\");";
                     strDecode += @"
             int aux" + nombreAux + "Length" + i + " = Int32.Parse(elementos.Dequeue());";
 
                     strEncode += @"
-            texto.Append(aux" + nombreAux + ".GetLowerBound(" + i + ") + \",\");";
+            texto.Append(" + nombre + ".GetLowerBound(" + i + ") + \",\");";
                     strEncode += @"
-            texto.Append(aux" + nombreAux + ".GetUpperBound(" + i + ") + \",\");";
+            texto.Append(" + nombre + ".GetUpperBound(" + i + ") + \",\");";
                     strDecode += @"
             int aux" + nombreAux + "GetLowerBound" + i + " = Int32.Parse(elementos.Dequeue());";
                     strDecode += @"
@@ -662,6 +661,8 @@ namespace Serializer
                 }
 
                 // Montar tantos FOR anidados como dimensiones tenga el array
+                string indices = "[";
+                string longitudes = "[";
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
                     strDecode += @"
@@ -675,9 +676,9 @@ namespace Serializer
                 longitudes += "]";
 
                 strDecode += @"
-            if(" + nombre + " == null) " + nombre + " = new " + t.GetElementType().FullName + longitudes + ";";
+            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
                 strEncode += @"
-            foreach (" + t.GetElementType().FullName + " elementoAux" + nombreAux + " in aux" + nombreAux + ")";
+            foreach (" + tipoElemento + " elementoAux" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
             {";
 
@@ -698,9 +699,9 @@ namespace Serializer
                 Type[] arguments = t.GetGenericArguments();
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
                 strEncode += @"
-            IList aux" + nombreAux + " = " + nombre + " as IList;";
+//            IList aux" + nombreAux + " = " + nombre + " as IList;";
                 strEncode += @"
-            texto.Append(aux" + nombreAux + ".Count + \",\");";
+            texto.Append(" + nombre + ".Count + \",\");";
                 strDecode += @"
             int length" + nombreAux + " = Int32.Parse(elementos.Dequeue());";
 
@@ -726,7 +727,7 @@ namespace Serializer
             for (int iaux" + nombreAux + " = 0; iaux" + nombreAux + " < length" + nombreAux + "; iaux" + nombreAux + "++)";
                 strDecode += @"
             {";
-                getValueCSV(arguments[0], " elementoAux" + nombreAux, "aux" + nombreAux, false, true);
+                getValueCSV(arguments[0], " elementoAux" + nombreAux, nombre, false, true);
                 strEncode += @"
             }";
                 strDecode += @"
@@ -740,9 +741,9 @@ namespace Serializer
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
 
                 strEncode += @"
-            IDictionary aux" + nombreAux + " = " + nombre + " as IDictionary;";
+//            IDictionary aux" + nombreAux + " = " + nombre + " as IDictionary;";
                 strEncode += @"
-            texto.Append(aux" + nombreAux + ".Count + \",\");";
+            texto.Append(" + nombre + ".Count + \",\");";
                 strDecode += @"
             int length" + nombreAux + " = Int32.Parse(elementos.Dequeue());";
 
@@ -798,7 +799,7 @@ namespace Serializer
                 {" + arguments[0].FullName + " elementoAux" + nombreAux + " = new " + arguments[0].FullName + "();";
                 }
 
-                getValueCSV(arguments[0], " elementoAux" + nombreAux, "aux" + nombreAux, false, false, true, false);
+                getValueCSV(arguments[0], " elementoAux" + nombreAux, nombre, false, false, true, false);
 
                 strEncode += @"}
                 {" + arguments[1].FullName + " elementoAux" + nombreAux + " = par" + nombreAux + ".Value;";
@@ -817,7 +818,7 @@ namespace Serializer
                 {" + arguments[1].FullName + " elementoAux" + nombreAux + " = new " + arguments[1].FullName + "();";
                 }
 
-                getValueCSV(arguments[1], " elementoAux" + nombreAux, "aux" + nombreAux, false, false, false, true);
+                getValueCSV(arguments[1], " elementoAux" + nombreAux, nombre, false, false, false, true);
 
                 strDecode += @"
                 " + nombre + ".Add(indiceAux" + nombreAux + ", elementoAux" + nombreAux + ");";
@@ -851,7 +852,17 @@ namespace Serializer
 
         private bool esSerializable(MemberInfo miembro)
         {
-            return !miembro.Name.Contains("_BackingField") && (miembro.MemberType == MemberTypes.Property || miembro.MemberType == MemberTypes.Field);
+            bool serializar = true;
+            if (miembro.Name.Contains("_BackingField")) return false;
+            if (miembro.MemberType != MemberTypes.Property && miembro.MemberType != MemberTypes.Field) return false;
+            // Identificar atributos estándar de serialización 
+            IEnumerable<System.Attribute> attrs = miembro.GetCustomAttributes();
+            foreach (System.Attribute attr in attrs)
+            {
+                if (attr is NonSerializedAttribute) return false;
+                if (attr is ObsoleteAttribute) return false;
+            }
+            return serializar;
         }
 
         private string abrir(string texto)

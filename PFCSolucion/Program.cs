@@ -27,13 +27,13 @@ namespace Serializer
 //            texto.Append("var1,");
 //            texto.Append("System.Int32[],");
             Array auxobjvar1 = obj.var1 as Array;
-            texto.Append(auxobjvar1.Length + ",");
+            texto.Append(obj.var1.Length + ",");
             texto.Append("System.Int32" + ",");
             texto.Append("1" + ",");
-            texto.Append(auxobjvar1.GetLength(0) + ",");
-            texto.Append(auxobjvar1.GetLowerBound(0) + ",");
-            texto.Append(auxobjvar1.GetUpperBound(0) + ",");
-            foreach (System.Int32 elementoAuxobjvar1 in auxobjvar1)
+            texto.Append(obj.var1.GetLength(0) + ",");
+            texto.Append(obj.var1.GetLowerBound(0) + ",");
+            texto.Append(obj.var1.GetUpperBound(0) + ",");
+            foreach (System.Int32 elementoAuxobjvar1 in obj.var1)
             {
             texto.Append(elementoAuxobjvar1.ToString() + ",");
             }
