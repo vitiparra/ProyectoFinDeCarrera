@@ -90,28 +90,25 @@ namespace Fase05
          */
         private void generateSerializer()
         {
-            // 1º Generar la cabecera de la clase
+            // Generar la cabecera de la clase
             this.getCabecera();
 
-            //            while (clases.Count > 0) // el dictionary se puede ir agrandando sobre la marcha
             for (int i = 0; i < clases.Count; i++) // Se recorren todas clases guardadas en el Dictionary
             {
                 KeyValuePair<Type, Object> par = clases.ElementAt(i);
-                if (par.Value == null)
-                { // Si la clase aún no se ha generado, se genera
+                if (par.Value == null) // Si la clase aún no se ha generado, se genera
+                { 
                     this.tipo = par.Key;
 
-                    // 2º Generar los métodos encode y decode (se hace a la vez)
+                    // Generar los métodos encode y decode (se hace a la vez)
                     this.generateEncodeAndDecodeMethods();
-
-                    // 3º Generar los métodos auxiliares
-                    //                    this.generateAuxiliarMethods();
                 }
 
-                // 4º Se cierra la clase en cuestión (puede haber varias)
+                // Se cierra la clase en cuestión (puede haber varias)
                 this.getCierre();
             }
-            this.getCierre(); // Cierre del Namespace
+            // Cierre del Namespace
+            this.getCierre(); 
         }
 
         private void getCabecera()
@@ -141,8 +138,7 @@ namespace Serializer
 
         private void generateEncodeAndDecodeMethods()
         {
-
-            // 2º Cabecera de la clase
+            // Cabecera de la clase
             strCodigo += @"
     public class ";
             strCodigo += this.tipo.Name + "Codec {";
@@ -183,6 +179,7 @@ namespace Serializer
                 | BindingFlags.Static;
             // Se serializan todos los miembros públicos; propios y heredados (CONFIRMAR)
             MemberInfo[] miembros = tipo.GetMembers(flags);
+            // Se invoca el tipo de serialización correspondiente
             switch (this.tipoDeCodificacion)
             {
                 case tiposDeCodificacion.CSV:
@@ -541,27 +538,31 @@ namespace Serializer
 
             foreach (MemberInfo miembro in miembros)
             {
-                // FASE 6: miembro.GetCustomAttributes() para capturar los atributos (comprobar atributos para saber si hay que serializar)
-                if (esSerializable(miembro)) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
+                if (esSerializable(miembro))
                 {
+                    Type t;
+                    string nombre;
                     if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
                     {
                         PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
-                        if (!propertyInfo.PropertyType.FullName.Contains("Wrapper"))
-                        {
-                            Type t = propertyInfo.PropertyType;
-                            string nombre = propertyInfo.Name;
+                        t = propertyInfo.PropertyType;
+                        nombre = propertyInfo.Name;
+                    }
+                    else //if(miembro.MemberType == MemberTypes.Field)
+                    {
+                        FieldInfo fieldInfo = miembro as FieldInfo; // Conversión para obtener los datos del tipo de campo
+                        t = fieldInfo.FieldType;
+                        nombre = fieldInfo.Name;
+                    }
 
-                            strEncode += @"
+                    strEncode += @"
 //            texto.Append(""" + nombre + ",\");";
-                            strEncode += @"
+                    strEncode += @"
 //            texto.Append(""" + t.FullName + ",\");";
-                            strDecode += @"
+                    strDecode += @"
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());";
-                            getValueCSV(t, "obj." + nombre, nombre);
-                        }
-                    }
+                    getValueCSV(t, "obj." + nombre, nombre);
                 }
             } //foreach
             strEncode += @"

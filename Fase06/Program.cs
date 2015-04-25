@@ -21,14 +21,15 @@ namespace Fase05
 
         public class ClasePrueba
         {
-            public int var1 { get; set; }
-            [System.Obsolete]
+//            [NonSerialized]
+            public int var1;
             public ClaseB var2 { get; set; }
 
             public ClasePrueba()
             {
                 var1 = 33;
                 ClaseB b = new ClaseB();
+                b.varB1 = 200;
                 var2 = b;
             }
         }
