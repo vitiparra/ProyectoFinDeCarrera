@@ -5,50 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Fase02;
+using Fase06;
 
-namespace Fase05
+namespace Fase06
 {
     public class Program
     {
-        public class ClaseB
-        {
-            public int varB1 { get; set; }
-            public ClaseB()
-            {
-                varB1 = 1;
-            }
-        }
-
-        public class ClasePrueba
-        {
-//            [NonSerialized]
-            public int var1;
-            public ClaseB var2 { get; set; }
-            public string var3;
-
-            public ClasePrueba()
-            {
-                var1 = 33;
-                ClaseB b = new ClaseB();
-                b.varB1 = 200;
-                var2 = b;
-                var3 = "adios";
-            }
-        }
-
         static void Main(string[] args)
         {
             string str = "";
 
             #region ClasePrueba+ClaseB
-            ClasePrueba c = new ClasePrueba();
+/*
+            Fase02.ClasePrueba c = new Fase02.ClasePrueba();
             Generador gPrueba = new Generador(c.GetType());
             var serializadorPrueba = gPrueba.getSerializer();
             if (serializadorPrueba != null)
             {
                 string codigo = serializadorPrueba.codificar(c);
                 Console.WriteLine(codigo);
-                ClasePrueba aux = new ClasePrueba();
+                Fase02.ClasePrueba aux = new Fase02.ClasePrueba();
                 aux.var1 = 0;
                 serializadorPrueba.decodificar(codigo, ref aux);
                 Console.WriteLine(aux.var1 + "," + aux.var2.varB1 + "," + aux.var3);
@@ -57,6 +33,7 @@ namespace Fase05
             {
                 Console.WriteLine("No se ha podido generar el serializador");
             }
+*/
             #endregion
 
             #region Clase03Array
@@ -240,7 +217,7 @@ namespace Fase05
                             string codigo = serializador3a.codificar(c3a);
                             Console.WriteLine(codigo);
                             Clase03Array aux3a = new Clase03Array();
-                            serializadorPrueba.decodificar(codigo, ref aux3a);
+                            serializador3a.decodificar(codigo, ref aux3a);
 
                             for (int i = 0; i < 3; i++)
                             {
@@ -274,7 +251,7 @@ namespace Fase05
                                 }
                             }
                             Console.WriteLine();
-
+/*
                             for (int i = 0; i < 3; i++)
                             {
                                 int[] aux = new int[4];
@@ -286,7 +263,7 @@ namespace Fase05
                                 Console.WriteLine();
                             }
                             Console.WriteLine();
-
+*/
                             foreach(KeyValuePair<string, int> par in c3a.var6)
                             {
                                 Console.WriteLine(par.Key + "=>" + par.Value);

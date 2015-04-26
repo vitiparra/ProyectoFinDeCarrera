@@ -10,7 +10,7 @@ using System.IO;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 
-namespace Fase05
+namespace Fase06
 {
     /*
      * Clase que genera el código de una clase codificador/decodificador para una determinada clase cuyo tipo se recibe como parámetro

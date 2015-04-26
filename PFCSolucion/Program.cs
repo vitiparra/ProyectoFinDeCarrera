@@ -190,6 +190,7 @@ namespace Serializer
             }
             codigo = string.Join(",", elementos.ToArray());
         }
+
         static void Main(string[] args)
         {
 

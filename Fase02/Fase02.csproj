@@ -50,6 +50,7 @@
     <Compile Include="Clase05Clase.cs" />
     <Compile Include="Clase08List.cs" />
     <Compile Include="Clase09MiembroClase.cs" />
+    <Compile Include="ClasePrueba.cs" />
     <Compile Include="ClaseViti.cs" />
     <Compile Include="CodecExtension.cs" />
     <Compile Include="Codificador01A.cs" />
