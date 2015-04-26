@@ -26,7 +26,6 @@ namespace Serializer
             StringBuilder texto = new StringBuilder();
 //            texto.Append("var1,");
 //            texto.Append("System.Int32[],");
-            Array auxobjvar1 = obj.var1 as Array;
             texto.Append(obj.var1.Length + ",");
             texto.Append("System.Int32" + ",");
             texto.Append("1" + ",");
@@ -39,40 +38,53 @@ namespace Serializer
             }
 //            texto.Append("var2,");
 //            texto.Append("System.String[],");
-            Array auxobjvar2 = obj.var2 as Array;
-            texto.Append(auxobjvar2.Length + ",");
+            texto.Append(obj.var2.Length + ",");
             texto.Append("System.String" + ",");
             texto.Append("1" + ",");
-            texto.Append(auxobjvar2.GetLength(0) + ",");
-            texto.Append(auxobjvar2.GetLowerBound(0) + ",");
-            texto.Append(auxobjvar2.GetUpperBound(0) + ",");
-            foreach (System.String elementoAuxobjvar2 in auxobjvar2)
+            texto.Append(obj.var2.GetLength(0) + ",");
+            texto.Append(obj.var2.GetLowerBound(0) + ",");
+            texto.Append(obj.var2.GetUpperBound(0) + ",");
+            foreach (System.String elementoAuxobjvar2 in obj.var2)
             {
             texto.Append(elementoAuxobjvar2.ToString() + ",");
             }
+//            texto.Append("var3,");
+//            texto.Append("System.Int32[,],");
+            texto.Append(obj.var3.Length + ",");
+            texto.Append("System.Int32" + ",");
+            texto.Append("2" + ",");
+            texto.Append(obj.var3.GetLength(0) + ",");
+            texto.Append(obj.var3.GetLowerBound(0) + ",");
+            texto.Append(obj.var3.GetUpperBound(0) + ",");
+            texto.Append(obj.var3.GetLength(1) + ",");
+            texto.Append(obj.var3.GetLowerBound(1) + ",");
+            texto.Append(obj.var3.GetUpperBound(1) + ",");
+            foreach (System.Int32 elementoAuxobjvar3 in obj.var3)
+            {
+            texto.Append(elementoAuxobjvar3.ToString() + ",");
+            }
 //            texto.Append("var4,");
 //            texto.Append("System.Int32[,,],");
-            Array auxobjvar4 = obj.var4 as Array;
-            texto.Append(auxobjvar4.Length + ",");
+            texto.Append(obj.var4.Length + ",");
             texto.Append("System.Int32" + ",");
             texto.Append("3" + ",");
-            texto.Append(auxobjvar4.GetLength(0) + ",");
-            texto.Append(auxobjvar4.GetLowerBound(0) + ",");
-            texto.Append(auxobjvar4.GetUpperBound(0) + ",");
-            texto.Append(auxobjvar4.GetLength(1) + ",");
-            texto.Append(auxobjvar4.GetLowerBound(1) + ",");
-            texto.Append(auxobjvar4.GetUpperBound(1) + ",");
-            texto.Append(auxobjvar4.GetLength(2) + ",");
-            texto.Append(auxobjvar4.GetLowerBound(2) + ",");
-            texto.Append(auxobjvar4.GetUpperBound(2) + ",");
-            foreach (System.Int32 elementoAuxobjvar4 in auxobjvar4)
+            texto.Append(obj.var4.GetLength(0) + ",");
+            texto.Append(obj.var4.GetLowerBound(0) + ",");
+            texto.Append(obj.var4.GetUpperBound(0) + ",");
+            texto.Append(obj.var4.GetLength(1) + ",");
+            texto.Append(obj.var4.GetLowerBound(1) + ",");
+            texto.Append(obj.var4.GetUpperBound(1) + ",");
+            texto.Append(obj.var4.GetLength(2) + ",");
+            texto.Append(obj.var4.GetLowerBound(2) + ",");
+            texto.Append(obj.var4.GetUpperBound(2) + ",");
+            foreach (System.Int32 elementoAuxobjvar4 in obj.var4)
             {
             texto.Append(elementoAuxobjvar4.ToString() + ",");
             }
 //            texto.Append("var6,");
 //            texto.Append("System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]],");
-            IDictionary auxobjvar6 = obj.var6 as IDictionary;
-            texto.Append(auxobjvar6.Count + ",");
+//            IDictionary auxobjvar6 = obj.var6 as IDictionary;
+            texto.Append(obj.var6.Count + ",");
             texto.Append("System.String" + ",");
             texto.Append("System.Int32" + ",");
             foreach (KeyValuePair<System.String, System.Int32> parobjvar6 in obj.var6)
@@ -101,8 +113,8 @@ namespace Serializer
             int auxobjvar1GetLowerBound0 = Int32.Parse(elementos.Dequeue());
             int auxobjvar1GetUpperBound0 = Int32.Parse(elementos.Dequeue());
             for(int auxIndice0 = auxobjvar1GetLowerBound0; auxIndice0 <= auxobjvar1GetUpperBound0; auxIndice0++){
-                if(obj.var1 == null) obj.var1 = new System.Int32[auxobjvar1Length0];
-                obj.var1[auxIndice0] = Int32.Parse(elementos.Dequeue());
+            if(obj.var1 == null) obj.var1 = new System.Int32[auxobjvar1Length0];
+            obj.var1[auxIndice0] = Int32.Parse(elementos.Dequeue());
             }
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
@@ -113,8 +125,25 @@ namespace Serializer
             int auxobjvar2GetLowerBound0 = Int32.Parse(elementos.Dequeue());
             int auxobjvar2GetUpperBound0 = Int32.Parse(elementos.Dequeue());
             for(int auxIndice0 = auxobjvar2GetLowerBound0; auxIndice0 <= auxobjvar2GetUpperBound0; auxIndice0++){
-                if(obj.var2 == null) obj.var2 = new System.String[auxobjvar2Length0];
-                obj.var2[auxIndice0] = elementos.Dequeue();
+            if(obj.var2 == null) obj.var2 = new System.String[auxobjvar2Length0];
+            obj.var2[auxIndice0] = elementos.Dequeue();
+            }
+//            nombre = elementos.Dequeue();
+//            tipo = Type.GetType(elementos.Dequeue());
+            int lengthobjvar3 = Int32.Parse(elementos.Dequeue());
+            tipo = Type.GetType(elementos.Dequeue());
+            rango = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3Length0 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3GetLowerBound0 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3GetUpperBound0 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3Length1 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3GetLowerBound1 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar3GetUpperBound1 = Int32.Parse(elementos.Dequeue());
+            for(int auxIndice0 = auxobjvar3GetLowerBound0; auxIndice0 <= auxobjvar3GetUpperBound0; auxIndice0++){
+            for(int auxIndice1 = auxobjvar3GetLowerBound1; auxIndice1 <= auxobjvar3GetUpperBound1; auxIndice1++){
+            if(obj.var3 == null) obj.var3 = new System.Int32[auxobjvar3Length0,auxobjvar3Length1];
+            obj.var3[auxIndice0,auxIndice1] = Int32.Parse(elementos.Dequeue());
+            }
             }
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
@@ -124,19 +153,19 @@ namespace Serializer
             int auxobjvar4Length0 = Int32.Parse(elementos.Dequeue());
             int auxobjvar4GetLowerBound0 = Int32.Parse(elementos.Dequeue());
             int auxobjvar4GetUpperBound0 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4Length1 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4GetLowerBound1 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4GetUpperBound1 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4Length2 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4GetLowerBound2 = Int32.Parse(elementos.Dequeue());
+            int auxobjvar4GetUpperBound2 = Int32.Parse(elementos.Dequeue());
             for(int auxIndice0 = auxobjvar4GetLowerBound0; auxIndice0 <= auxobjvar4GetUpperBound0; auxIndice0++){
-                int auxobjvar4Length1 = Int32.Parse(elementos.Dequeue());
-                int auxobjvar4GetLowerBound1 = Int32.Parse(elementos.Dequeue());
-                int auxobjvar4GetUpperBound1 = Int32.Parse(elementos.Dequeue());
-                for(int auxIndice1 = auxobjvar4GetLowerBound1; auxIndice1 <= auxobjvar4GetUpperBound1; auxIndice1++){
-                    int auxobjvar4Length2 = Int32.Parse(elementos.Dequeue());
-                    int auxobjvar4GetLowerBound2 = Int32.Parse(elementos.Dequeue());
-                    int auxobjvar4GetUpperBound2 = Int32.Parse(elementos.Dequeue());
-                    for(int auxIndice2 = auxobjvar4GetLowerBound2; auxIndice2 <= auxobjvar4GetUpperBound2; auxIndice2++){
-                    if(obj.var4 == null) obj.var4 = new System.Int32[auxobjvar4Length0,auxobjvar4Length1,auxobjvar4Length2];
-                        obj.var4[auxIndice0,auxIndice1,auxIndice2] = Int32.Parse(elementos.Dequeue());
-                    }
-                }
+            for(int auxIndice1 = auxobjvar4GetLowerBound1; auxIndice1 <= auxobjvar4GetUpperBound1; auxIndice1++){
+            for(int auxIndice2 = auxobjvar4GetLowerBound2; auxIndice2 <= auxobjvar4GetUpperBound2; auxIndice2++){
+            if(obj.var4 == null) obj.var4 = new System.Int32[auxobjvar4Length0,auxobjvar4Length1,auxobjvar4Length2];
+            obj.var4[auxIndice0,auxIndice1,auxIndice2] = Int32.Parse(elementos.Dequeue());
+            }
+            }
             }
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());
@@ -164,6 +193,84 @@ namespace Serializer
         static void Main(string[] args)
         {
 
+            Fase02.Clase03Array c3a = new Fase02.Clase03Array();
+            #region Datos Clase03Array
+            c3a.var1 = new int[3];
+            for (int i = 0; i < 3; i++)
+            {
+                c3a.var1[i] = i;
+            }
+                
+            c3a.var2 = new string[3];
+            for (int i = 0; i < 3; i++)
+            {
+                c3a.var2[i] = "Número " + Convert.ToString(i);
+            }
+                
+            c3a.var3 = new int[1, 2];
+            int cont = 0;
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    c3a.var3[i, j] = cont;
+                    cont++;
+                }
+            }
+                
+            c3a.var4 = new int[1, 2, 3];
+            cont = 0;
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        c3a.var4[i, j, k] = cont;
+                        cont++;
+                    }
+                }
+            }
+                
+            c3a.var5 = new int[3][];
+            cont = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                int[] aux = new int[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    aux[j] = cont;
+                        cont++;
+                }
+                c3a.var5[i] = aux;
+            }
+
+            c3a.var6 = new Dictionary<string, int>();
+            c3a.var6.Add("uno", 1);
+            c3a.var6.Add("dos", 2);
+            c3a.var6.Add("tres", 3);
+
+                            #endregion
+
+            Clase03ArrayCodec serializador1 = new Clase03ArrayCodec();
+            if (serializador1 != null)
+            {
+                Type tipo1 = serializador1.GetType();
+                Console.WriteLine(tipo1.FullName);
+                string codigo = serializador1.codificar(c3a);
+                Console.WriteLine(codigo);
+
+                c3a = new Fase02.Clase03Array();
+                serializador1.decodificar(codigo, ref c3a);
+            }
+            else
+            {
+                Console.WriteLine("No se ha podido generar el serializador");
+            }
+            Console.ReadLine();
+            return;
+
+/*
             Fase02.Clase03Array c3 = new Fase02.Clase03Array();
             Clase03ArrayCodec serializador3 = new Clase03ArrayCodec();
             if (serializador3 != null)
@@ -225,7 +332,7 @@ namespace Serializer
                                 clase3.v2 = 3;
                                 c3.var4.Add(clase3);
                 */
-                c3.var6 = new Dictionary<string, int>();
+/*                c3.var6 = new Dictionary<string, int>();
                 c3.var6.Add("cuatro", 4);
                 c3.var6.Add("cinco", 5);
                 c3.var6.Add("seis", 6);
@@ -236,10 +343,8 @@ namespace Serializer
                 serializador3.decodificar(codigo, ref c3aux);
 
                 serializador3.ToString();
-
-                Console.ReadKey();
-            }
+*/
+                Console.ReadLine();
         }
-
     }
 }

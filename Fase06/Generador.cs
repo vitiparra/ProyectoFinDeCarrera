@@ -113,7 +113,7 @@ namespace Fase05
 
         private void getCabecera()
         {
-            // 1º Incluir los paquetes necesarios
+            // Incluir los paquetes necesarios
             strCodigo = @"
 using System;
 using System.Xml;
@@ -197,21 +197,15 @@ namespace Serializer
             strEncode += @"
             StringBuilder texto = new StringBuilder(""" + abrir("elementos") + "\");";
 
-            switch (this.tipoDeCodificacion)
-            {
-                // Aquí vendrán todas las modalidades de codificación (JSON, CSV, Binary, etc.)
-                case tiposDeCodificacion.XML:
-                default:
-                    strDecode += @"
+            strDecode += @"
             XmlDocument xml = new XmlDocument();
             /*
              * Aquí va el control de errores del documento XML
             */
             xml.LoadXml(codigo);
             XmlNode nodoPrincipal = xml.SelectSingleNode(""elementos"");
-            XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);";
-                    break;
-            }
+            XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);
+            nr.Read(); // Elementos";
 
             foreach (MemberInfo miembro in miembros)
             {
@@ -230,38 +224,57 @@ namespace Serializer
             texto.Append(""" + abrir("elemento");
 
                             strDecode += @"
-
-            nr.Read();";
+            nr.Read(); // Elemento";
 
                             strEncode += @""");
             texto.Append(""" + abrir("nombre");
+                            strDecode += @"
+            nr.Read(); // Nombre";
                             strEncode += @""");
             texto.Append(""" + mostrarValor(nombre);
+                            strDecode += @"
+            nr.Read(); // Nombre";
                             strEncode += @""");
             texto.Append(""" + cerrar("nombre");
+                            strDecode += @"
+            nr.Read(); // Nombre";
 
                             strEncode += @""");
             texto.Append(""" + abrir("tipo");
+                            strDecode += @"
+            nr.Read(); // Tipo";
                             strEncode += @""");
             texto.Append(""" + mostrarValor(t.FullName);
+                            strDecode += @"
+            nr.Read(); // Tipo";
                             strEncode += @""");
             texto.Append(""" + cerrar("tipo");
+                            strDecode += @"
+            nr.Read(); // Tipo";
 
                             strEncode += @""");
             texto.Append(""" + abrir("valor") + "\");";
+                            strDecode += @"
+            nr.Read(); // Valor";
 
                             getValueXML(t, "obj." + nombre, nombre);
 
                             strEncode += @"
             texto.Append(""" + cerrar("valor") + "\");";
+                            strDecode += @"
+            nr.Read(); // Valor";
                             strEncode += @"
             texto.Append(""" + cerrar("elemento") + "\");";
+                            strDecode += @"
+            nr.Read(); // Elemento";
                         }
                     }
                 }
             } //foreach
             strEncode += @"
             texto.Append(""" + cerrar("elementos");
+            strDecode += @"
+            nr.Read(); // Elementos";
             strEncode += @""");
             //str = texto;
             return texto.ToString();
@@ -276,25 +289,39 @@ namespace Serializer
 
         }
 
-        protected void getValueXML(Type t, string nombre, string nombreCampo, bool isArrayOrList = false)
+        protected void getValueXML(Type t, string nombre, string nombreCampo, bool isArray = false, bool isList = false, bool isDictionaryIndex = false, bool isDictionaryValue = false)
         {
-            if (t.IsPrimitive || t.FullName == "System.String") // Datos primitivos, simplemente cogemos su valor
+            if (t.IsPrimitive || t.FullName == "System.String" || isDictionaryValue) // Datos primitivos, simplemente cogemos su valor
             {
                 strEncode += @"
             texto.Append(" + nombre + ".ToString());";
-                if (isArrayOrList)
+                strDecode += @"
+            nr.Read(); // Valor del campo o propiedad";
+
+                if (isArray)
                 {
-                    strDecode += @"
-            nr.Read();";
                     if (t.FullName == "System.String")
                     {
                         strDecode += @"
-            " + nombre + ".SetValue(nr.Value, i" + nombreCampo + ");";
+            " + nombreCampo + " = nr.Value;";
                     }
                     else
                     {
                         strDecode += @"
-            " + nombre + ".SetValue(" + t.Name + ".Parse(nr.Value), i" + nombreCampo + ");";
+            " + nombreCampo + " = " + t.Name + ".Parse(nr.Value);";
+                    }
+                }
+                else if (isList)
+                {
+                    if (t.FullName == "System.String")
+                    {
+                        strDecode += @"
+            " + nombreCampo + ".Add(nr.Value);";
+                    }
+                    else
+                    {
+                        strDecode += @"
+            " + nombreCampo + ".Add(" + t.Name + ".Parse(nr.Value));";
                     }
                 }
                 else
@@ -313,106 +340,167 @@ namespace Serializer
             }
             else if (t.IsArray) // Array, se codifica con sus parámetros (longitud, tipo de datos, rango, etc.) y sus datos
             {
+                string tipoElemento = t.GetElementType().FullName;
                 string nombreAux = nombre.Replace(".", ""); // Necesario para evitar que se procesen nombres con puntos
                 strEncode += @"
-            Array aux" + nombreAux + " = " + nombre + " as Array;";
-                strDecode += @"
-            Console.WriteLine(""9"");
-            Array aux" + nombreAux + " = " + nombre + " as Array;";
-
-                strEncode += @"
             texto.Append(""" + abrir("count");
-
-                strEncode += @""");
-            texto.Append(aux" + nombreAux + ".Length);";
                 strDecode += @"
-            Console.WriteLine(""10"");
-            nr.Read();
-            count = Int32.Parse(nr.Value);";
+            nr.Read(); // Count";
+                strEncode += @""");
+            texto.Append(" + nombre + ".Length);";
+                strDecode += @"
+            nr.Read(); // Length
+            int length" + nombreAux + " = Int32.Parse(nr.Value);";
                 strEncode += @"
             texto.Append(""" + cerrar("count");
+                strDecode += @"
+            nr.Read(); // Count";
 
                 strEncode += @""");
             texto.Append(""" + abrir("tipoDeElementos");
-                strEncode += @""");
-            texto.Append(""" + t.GetElementType().FullName;
                 strDecode += @"
-            Console.WriteLine(""11"");
+            nr.Read(); // Tipo de elementos";
+                strEncode += @""");
+            texto.Append(""" + tipoElemento;
+                strDecode += @"
             nr.Read();
             tipo = Type.GetType(nr.Value);";
                 strEncode += @""");
             texto.Append(""" + cerrar("tipoDeElementos");
+                strDecode += @"
+            nr.Read(); // Tipo de elementos";
 
                 strEncode += @""");
             texto.Append(""" + abrir("rank");
+                strDecode += @"
+            nr.Read(); // Rank";
                 strEncode += @""");
             texto.Append(""" + t.GetArrayRank();
                 strDecode += @"
-            Console.WriteLine(""12"");
             nr.Read();
             rango = Int32.Parse(nr.Value);";
                 strEncode += @""");
             texto.Append(""" + cerrar("rank");
+                strDecode += @"
+            nr.Read(); // Rank";
 
                 strEncode += @""");
             texto.Append(""" + abrir("datosDeLosRangos");
+                strDecode += @"
+            nr.Read(); // Datos de los rangos";
                 strEncode += @""");";
 
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
                     strEncode += @"
             texto.Append(""" + abrir("datosDeRango");
+                    strDecode += @"
+            nr.Read(); // Datos de rango";
                     strEncode += @""");
             texto.Append(""" + abrir("longitud");
+                    strDecode += @"
+            nr.Read(); // Longitud";
                     strEncode += @""");
-            texto.Append(aux" + nombreAux + ".GetLength(" + i + "));";
+            texto.Append(" + nombre + ".GetLength(" + i + "));";
+                    strDecode += @"
+            nr.Read();
+            int aux" + nombreAux + "Length" + i + " = Int32.Parse(nr.Value);";
                     strEncode += @"
             texto.Append(""" + cerrar("longitud");
-
+                    strDecode += @"
+            nr.Read(); // Longitud";
+ 
                     strEncode += @""");
             texto.Append(""" + abrir("valorMenor");
+                    strDecode += @"
+            nr.Read(); // Valor menor";
                     strEncode += @""");
-            texto.Append(aux" + nombreAux + ".GetLowerBound(" + i + "));";
+            texto.Append(" + nombre + ".GetLowerBound(" + i + "));";
+                    strDecode += @"
+            nr.Read();
+            int aux" + nombreAux + "GetLowerBound" + i + " = Int32.Parse(nr.Value);";
                     strEncode += @"
             texto.Append(""" + cerrar("valorMenor");
+                    strDecode += @"
+            nr.Read(); // Valor menor";
+
+                    strEncode += @""");
+            texto.Append(""" + abrir("valorMayor");
+                    strDecode += @"
+            nr.Read(); // Valor mayor";
+                    strEncode += @""");
+            texto.Append(" + nombre + ".GetUpperBound(" + i + "));";
+                    strDecode += @"
+            nr.Read();
+            int aux" + nombreAux + "GetUpperBound" + i + " = Int32.Parse(nr.Value);";
+                    strEncode += @"
+            texto.Append(""" + cerrar("valorMayor");
+                    strDecode += @"
+            nr.Read(); // Valor mayor";
 
                     strEncode += @""");
             texto.Append(""" + cerrar("datosDeRango");
+                    strDecode += @"
+            nr.Read(); // Datos de rango";
                     strEncode += @""");
             ";
+
                 }
+
                 strEncode += "texto.Append(\"" + cerrar("datosDeLosRangos") + "";
+                strDecode += @"
+            nr.Read(); // Datos de los rangos";
+                strDecode += @"
+            nr.Read(); // Valores";
+
+                // Montar tantos FOR anidados como dimensiones tenga el array
+                string indices = "[";
+                string longitudes = "[";
+                for (int i = 0; i < t.GetArrayRank(); i++)
+                {
+                    strDecode += @"
+            for(int auxIndice" + i + " = aux" + nombreAux + "GetLowerBound" + i + "; auxIndice" + i + " <= aux" + nombreAux + "GetUpperBound" + i + "; auxIndice" + i + "++){";
+                    indices += "auxIndice" + i + ",";
+                    longitudes += "aux" + nombreAux + "Length" + i + ",";
+                }
+                indices = indices.Substring(0, indices.Length - 1);
+                indices += "]";
+                longitudes = longitudes.Substring(0, longitudes.Length - 1);
+                longitudes += "]";
+
+                strDecode += @"
+            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
+//            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", "  + longitudes + ");";
 
                 strEncode += @""");
             texto.Append(""" + abrir("valores");
                 strEncode += @""");
-            foreach (object elementoAux" + nombreAux + " in aux" + nombreAux + ")";
+            foreach (" + tipoElemento + " elementoAux" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
             {
-                texto.Append(""" + abrir("cadaValor") + "\");";
+                texto.Append(""" + abrir("valor") + "\");";
                 strDecode += @"
-            Console.WriteLine(""13"");
-            for (int i" + nombreAux + " = 0; i" + nombreAux + " < count; i" + nombreAux + "++)";
-                strDecode += @"
-            {";
+            nr.Read(); // Valor";
 
-                getValueXML(t.GetElementType(), "aux" + nombreAux, nombreAux, true);
+                getValueXML(t.GetElementType(), "elementoAux" + nombreAux, nombre + indices, true);
 
                 strEncode += @"
                 texto.Append(""" + cerrar("valor") + "\");";
-                strEncode += @"
-                texto.Append(""" + cerrar("cadaValor");
-                strEncode += @""");
+                strDecode += @"
+            nr.Read(); // Valor";
+                strEncode += @";
             }";
 
+                for (int i = 0; i < t.GetArrayRank(); i++)
+                {
+                    strDecode += @"
+            }";
+                }
 
-                strDecode += @"
-            Console.WriteLine(""14"");
-            }
-            // Volcar el array auxiliar a su correspondiente en el objeto
-            " + nombre + " = aux" + nombreAux + " as " + t.FullName + ";";
                 strEncode += @"
             texto.Append(""" + cerrar("valores") + "\");";
+                strDecode += @"
+            nr.Read(); // Valores";
             }
             else if (t.FullName.StartsWith("System.Collections.Generic.List")) // Lista, se codifica con sus parámetros (longitud, tipo de datos, etc.) y sus datos
             {
@@ -465,47 +553,145 @@ namespace Serializer
             IDictionary aux" + nombreAux + " = " + nombre + " as IDictionary;";
                 strEncode += @"
             texto.Append(""" + abrir("count");
+                strDecode += @"
+            nr.Read(); // Count";
                 strEncode += @""");
-            texto.Append(aux" + nombreAux + ".Count);";
+            texto.Append(" + nombre + ".Count);";
+                strDecode += @"
+            nr.Read();
+            int length" + nombreAux + " = Int32.Parse(nr.Value);";
                 strEncode += @"
             texto.Append(""" + cerrar("count");
+                strDecode += @"
+            nr.Read(); // Count;";
 
+                // Tipo de índice
                 strEncode += @""");
-            texto.Append(""" + abrir("tipoDeIndex"); // Quizás no hace falta
+            texto.Append(""" + abrir("tipoDeIndex");
+                strDecode += @"
+            nr.Read();// Tipo de index";
                 strEncode += @""");
             texto.Append(""" + arguments[0].FullName + "\");";
+                strDecode += @"
+            nr.Read();
+            Type tipoIndice" + nombreAux + " = Type.GetType(nr.Value);";
                 strEncode += @"
             texto.Append(""" + cerrar("tipoDeIndex");
+                strDecode += @"
+            nr.Read(); // Tipo de index";
 
+                // Tipo de valor
                 strEncode += @""");
-            texto.Append(""" + abrir("tipoDeValue"); // Quizás no hace falta
+            texto.Append(""" + abrir("tipoDeValue");
+                strDecode += @"
+            nr.Read(); // Tipo de value";
                 strEncode += @""");
-            texto.Append(""" + arguments[0].FullName + "\");";
+            texto.Append(""" + arguments[1].FullName + "\");";
+                strDecode += @"
+            nr.Read();
+            Type tipoValor" + nombreAux + " = Type.GetType(nr.Value);";
                 strEncode += @"
             texto.Append(""" + cerrar("tipoDeValue");
+                strDecode += @"
+            nr.Read(); // Tipo de value";
 
                 strEncode += @""");
             texto.Append(""" + abrir("valores");
+                strDecode += @"
+            nr.Read(); // Valores";
 
                 strEncode += @""");
-            foreach (DictionaryEntry item in aux" + nombreAux + ")";
+            foreach (KeyValuePair<" + arguments[0].FullName + ", " + arguments[1].FullName + "> par" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
             {
                 texto.Append(""" + abrir("clave");
-                strEncode += @""");";
-                getValueXML(arguments[0], nombre, nombreCampo);
-                strEncode += @"
+                strEncode += @""");
+                {" + arguments[0].FullName + " elementoAux" + nombreAux + " = par" + nombreAux + ".Key;";
+
+                strDecode += @"
+            type = Type.GetType(typeof (Dictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + ">).AssemblyQualifiedName);";
+                strDecode += @"
+            IDictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + "> dictAux" + nombreAux + " = (IDictionary<" + arguments[0].FullName + ", " + arguments[1].FullName + ">)Activator.CreateInstance(type);";
+                strDecode += @"
+            // Instanciación del miembro (si es una clase instanciable es imperativo)
+            " + nombre + " = new Dictionary<" + arguments[0].FullName + "," + arguments[1].FullName + ">();";
+                strDecode += @"
+            for (int iaux" + nombreAux + " = 0; iaux" + nombreAux + " < length" + nombreAux + "; iaux" + nombreAux + "++){";
+                strDecode += @"
+            nr.Read(); // Clave";
+                if (arguments[0].FullName == "System.String")
+                {
+                    strDecode += @"
+                " + arguments[0].FullName + " indiceAux" + nombreAux + " = \"\";";
+                }
+                else
+                {
+                    strDecode += @"
+                " + arguments[0].FullName + " indiceAux" + nombreAux + " = new " + arguments[0].FullName + "();";
+                }
+
+                if (arguments[0].FullName == "System.String")
+                {
+                    strDecode += @"
+                {" + arguments[0].FullName + " elementoAux" + nombreAux + " = \"\";";
+                }
+                else
+                {
+                    strDecode += @"
+                {" + arguments[0].FullName + " elementoAux" + nombreAux + " = new " + arguments[0].FullName + "();";
+                }
+
+
+                getValueXML(arguments[0], " elementoAux" + nombreAux, nombre, false, false, true, false);
+
+                strEncode += @"}
                 texto.Append(""" + cerrar("clave");
+                strDecode += @"
+            nr.Read(); // Clave";
 
                 strEncode += @""");
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = par" + nombreAux + ".Value;";
+                strDecode += @"
+                indiceAux" + nombreAux + " = elementoAux" + nombreAux + ";";
+                if (arguments[1].FullName == "System.String")
+                {
+                    strDecode += @"
+                }";
+                strDecode += @"
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = \"\";";
+                }
+                else
+                {
+                    strDecode += @"
+                }
+                {" + arguments[1].FullName + " elementoAux" + nombreAux + " = new " + arguments[1].FullName + "();";
+                }
+
+                strEncode += @"
                 texto.Append(""" + abrir("valor");
                 strEncode += @""");";
-                getValueXML(arguments[0], nombre, nombreCampo);
+                strDecode += @"
+            nr.Read(); // Valor";
+
+                getValueXML(arguments[1], " elementoAux" + nombreAux, nombre, false, false, false, true);
+
+                strDecode += @"
+                " + nombre + ".Add(indiceAux" + nombreAux + ", elementoAux" + nombreAux + ");";
+                strDecode += @"
+            nr.Read(); // Valor";
+                strDecode += @"
+                }
+            }";
+                strEncode += @"
+            }";
+
                 strEncode += @"
                 texto.Append(""" + cerrar("valor");
                 strEncode += @""");
             }
             texto.Append(""" + cerrar("valores") + "\");";
+                strDecode += @"
+            nr.Read(); // Valores";
 
             }
             else //if (!t.FullName.StartsWith("System.")) // OBJETOS EXTENOS (debería ser el caso por defecto
@@ -520,9 +706,10 @@ namespace Serializer
                 strDecode += @"
             " + t.FullName.Replace("+", ".") + " objAux = new " + t.FullName.Replace("+", ".") + "();";
                 strDecode += @"
-            " + t.Name + "Codec.decode(nr, ref objAux);";
+            string restoXML = nr.ReadInnerXml().ToString();
+            " + t.Name + "Codec.decode(ref restoXML, ref objAux);";
                 strDecode += @"
-            cont++;
+//            cont++;
             " + nombre + " = objAux;";
 
                 clases.Add(t, null);
@@ -538,7 +725,11 @@ namespace Serializer
 
             foreach (MemberInfo miembro in miembros)
             {
-                if (esSerializable(miembro))
+                if (!esSerializable(miembro))
+                {
+                    continue;
+                }
+                else
                 {
                     Type t;
                     string nombre;
@@ -678,6 +869,7 @@ namespace Serializer
 
                 strDecode += @"
             if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
+//            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", "  + longitudes + ");";
                 strEncode += @"
             foreach (" + tipoElemento + " elementoAux" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
@@ -856,6 +1048,7 @@ namespace Serializer
             bool serializar = true;
             if (miembro.Name.Contains("_BackingField")) return false;
             if (miembro.MemberType != MemberTypes.Property && miembro.MemberType != MemberTypes.Field) return false;
+
             // Identificar atributos estándar de serialización 
             IEnumerable<System.Attribute> attrs = miembro.GetCustomAttributes();
             foreach (System.Attribute attr in attrs)
