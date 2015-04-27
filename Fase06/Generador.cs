@@ -455,7 +455,7 @@ namespace Serializer
 
                 // Montar tantos FOR anidados como dimensiones tenga el array
                 string indices = "[";
-                string longitudes = "[";
+                string longitudes = "";
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
                     strDecode += @"
@@ -466,11 +466,10 @@ namespace Serializer
                 indices = indices.Substring(0, indices.Length - 1);
                 indices += "]";
                 longitudes = longitudes.Substring(0, longitudes.Length - 1);
-                longitudes += "]";
 
                 strDecode += @"
-            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
-//            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", "  + longitudes + ");";
+            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", "  + longitudes + ");";
+//            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
 
                 strEncode += @""");
             texto.Append(""" + abrir("valores");
@@ -833,10 +832,13 @@ namespace Serializer
             texto.Append(""" + t.GetArrayRank() + "\" + \",\");";
                 strDecode += @"
             rango = Int32.Parse(elementos.Dequeue());";
+                // Array con los valores de longitud de cada rango, para definir el array correctamente
+                string longitudes = "Int32[] lengthOfRange" + nombreAux + " = new Int32[length" + nombreAux + "] {";
 
                 // Definir la longitud de cada rango, y sus límites inferior y superior
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
+                    longitudes += nombre + ".GetLength(" + i + "),"; // Se añade al array la longitud de cada rango
                     strEncode += @"
             texto.Append(" + nombre + ".GetLength(" + i + ") + \",\");";
                     strDecode += @"
@@ -851,10 +853,13 @@ namespace Serializer
                     strDecode += @"
             int aux" + nombreAux + "GetUpperBound" + i + " = Int32.Parse(elementos.Dequeue());";
                 }
+                longitudes = longitudes.Substring(0, longitudes.Length - 1);
+                longitudes += "};";
+                strDecode += @"
+            " + longitudes;
 
                 // Montar tantos FOR anidados como dimensiones tenga el array
                 string indices = "[";
-                string longitudes = "[";
                 for (int i = 0; i < t.GetArrayRank(); i++)
                 {
                     strDecode += @"
@@ -864,12 +869,10 @@ namespace Serializer
                 }
                 indices = indices.Substring(0, indices.Length - 1);
                 indices += "]";
-                longitudes = longitudes.Substring(0, longitudes.Length - 1);
-                longitudes += "]";
 
                 strDecode += @"
-            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
-//            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", "  + longitudes + ");";
+            if(" + nombre + " == null) " + nombre + " = Array.CreateInstance(" + tipoElemento + ", lengthOfRange" + nombreAux + ");";
+//            if(" + nombre + " == null) " + nombre + " = new " + tipoElemento + longitudes + ";";
                 strEncode += @"
             foreach (" + tipoElemento + " elementoAux" + nombreAux + " in " + nombre + ")";
                 strEncode += @"
