@@ -1031,13 +1031,13 @@ namespace Serializer
             texto.Append(" + t.Name + "Codec.encode(" + nombre + "));";
 
                 strDecode += @"
-            " + t.FullName.Replace("+", ".") + " objAux" + nombreCampo + " = new " + t.FullName.Replace("+", ".") + "();";
+            " + t.FullName.Replace("+", ".") + " objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]","") + " = new " + t.FullName.Replace("+", ".") + "();";
                 strDecode += @"
             string aux = string.Join("","", elementos.ToArray());
-            " + t.Name + "Codec.decode(ref aux, ref objAux" + nombreCampo + ");";
+            " + t.Name + "Codec.decode(ref aux, ref objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + ");";
                 strDecode += @"
             elementos = new Queue<string>(aux.Split(','));
-            " + nombre + " = objAux" + nombreCampo + " as " + t.FullName.Replace("+", ".") + ";";
+            " + nombreCampo + " = objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + " as " + t.FullName.Replace("+", ".") + ";";
 
                 clases.Add(t, null);
             }

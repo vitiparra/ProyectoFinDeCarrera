@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
+    public class DentroDelArray
+    {
+        public int uno;
+        public string dos;
+    }
+
     public class Clase03Array
     {
         public int[] var1 { get; set; }
@@ -15,5 +21,6 @@ namespace Fase02
         [Obsolete]
         public int[][] var5 { get; set; }
         public Dictionary<string, int> var6 { get; set; }
+        public DentroDelArray[] var7;
     }
 }
