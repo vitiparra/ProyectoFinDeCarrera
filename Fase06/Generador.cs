@@ -177,8 +177,9 @@ namespace Serializer
                 | BindingFlags.DeclaredOnly
                 | BindingFlags.FlattenHierarchy
                 | BindingFlags.Static;
-            // Se serializan todos los miembros públicos; propios y heredados (CONFIRMAR)
+            // Se serializan todos los miembros públicos; propios y heredados
             MemberInfo[] miembros = tipo.GetMembers(flags);
+
             // Se invoca el tipo de serialización correspondiente
             switch (this.tipoDeCodificacion)
             {
@@ -210,67 +211,76 @@ namespace Serializer
             foreach (MemberInfo miembro in miembros)
             {
                 // FASE 6: miembro.GetCustomAttributes() para capturar los atributos (comprobar atributos para saber si hay que serializar)
-                if (esSerializable(miembro)) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
+                if (!esSerializable(miembro)) // Quitamos los BackingFields (TODO: ver como evitamos estos miembros al instanciar ""miembros"")
                 {
-                    if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
-                    {
-                        PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
-                        if (!propertyInfo.PropertyType.FullName.Contains("Wrapper"))
-                        {
-                            Type t = propertyInfo.PropertyType;
-                            string nombre = propertyInfo.Name;
+                    continue;
+                }
 
-                            strEncode += @"
+                Type t;
+                string nombre;
+                if (miembro.MemberType == MemberTypes.Property)
+                {
+                    PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
+                    t = propertyInfo.PropertyType;
+                    nombre = propertyInfo.Name;
+                }
+                else //if(miembro.MemberType == MemberTypes.Field)
+                {
+                    FieldInfo fieldInfo = miembro as FieldInfo; // Conversión para obtener los datos del tipo de campo
+                    t = fieldInfo.FieldType;
+                    nombre = fieldInfo.Name;
+                }
+
+
+                strEncode += @"
             texto.Append(""" + abrir("elemento");
 
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Elemento";
 
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + abrir("nombre");
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Nombre";
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + mostrarValor(nombre);
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Nombre";
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + cerrar("nombre");
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Nombre";
 
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + abrir("tipo");
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Tipo";
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + mostrarValor(t.FullName);
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Tipo";
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + cerrar("tipo");
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Tipo";
 
-                            strEncode += @""");
+                strEncode += @""");
             texto.Append(""" + abrir("valor") + "\");";
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Valor";
 
-                            getValueXML(t, "obj." + nombre, nombre);
+                getValueXML(t, "obj." + nombre, nombre);
 
-                            strEncode += @"
+                strEncode += @"
             texto.Append(""" + cerrar("valor") + "\");";
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Valor";
-                            strEncode += @"
+                strEncode += @"
             texto.Append(""" + cerrar("elemento") + "\");";
-                            strDecode += @"
+                strDecode += @"
             nr.Read(); // Elemento";
-                        }
-                    }
-                }
             } //foreach
+
             strEncode += @"
             texto.Append(""" + cerrar("elementos");
             strDecode += @"
@@ -285,8 +295,6 @@ namespace Serializer
             strCodigo += strEncode;
             strCodigo += this.newLine();
             strCodigo += strDecode;
-            // strDecode ...
-
         }
 
         protected void getValueXML(Type t, string nombre, string nombreCampo, bool isArray = false, bool isList = false, bool isDictionaryIndex = false, bool isDictionaryValue = false)
@@ -729,32 +737,57 @@ namespace Serializer
                 {
                     continue;
                 }
-                else
-                {
-                    Type t;
-                    string nombre;
-                    if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
-                    {
-                        PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
-                        t = propertyInfo.PropertyType;
-                        nombre = propertyInfo.Name;
-                    }
-                    else //if(miembro.MemberType == MemberTypes.Field)
-                    {
-                        FieldInfo fieldInfo = miembro as FieldInfo; // Conversión para obtener los datos del tipo de campo
-                        t = fieldInfo.FieldType;
-                        nombre = fieldInfo.Name;
-                    }
 
-                    strEncode += @"
+                Type t;
+                string nombre;
+                if (miembro.MemberType == MemberTypes.Property) // Propiedades (variables con GETTER y SETTER)
+                {
+                    PropertyInfo propertyInfo = miembro as PropertyInfo; // Conversión para obtener los datos del tipo de campo
+                    t = propertyInfo.PropertyType;
+                    nombre = propertyInfo.Name;
+                }
+                else //if(miembro.MemberType == MemberTypes.Field)
+                {
+                    FieldInfo fieldInfo = miembro as FieldInfo; // Conversión para obtener los datos del tipo de campo
+                    t = fieldInfo.FieldType;
+                    nombre = fieldInfo.Name;
+                }
+
+                strEncode += @"
+              if(obj." + nombre + " == null)";
+                strEncode += @"
+              {
+                texto.Append(""NULL,"");
+              }
+              else
+              {
 //            texto.Append(""" + nombre + ",\");";
-                    strEncode += @"
+                strEncode += @"
 //            texto.Append(""" + t.FullName + ",\");";
-                    strDecode += @"
+                strDecode += @"
+              string comprobarNull" + nombre + " = elementos.Peek();";
+                strDecode += @"
+              if(comprobarNull" + nombre + " == \"NULL\")";
+                strDecode += @"
+              {";
+
+                strDecode += @"
+                elementos.Dequeue(); // Quitamos el NULL
+              }
+              else
+              {
 //            nombre = elementos.Dequeue();
 //            tipo = Type.GetType(elementos.Dequeue());";
-                    getValueCSV(t, "obj." + nombre, nombre);
-                }
+
+                getValueCSV(t, "obj." + nombre, nombre);
+
+                strEncode += @"
+              } // if(obj.nombre == null) ";
+
+                strDecode += @"
+              }// if(comprobarNull" + nombre + " == \"NULL\")";
+
+
             } //foreach
             strEncode += @"
             return texto.ToString();

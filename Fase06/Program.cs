@@ -213,6 +213,11 @@ namespace Fase06
                             c3a.var6.Add("dos", 2);
                             c3a.var6.Add("tres", 3);
 
+                            #endregion
+                            string codigo = serializador3a.codificar(c3a);
+                            Console.WriteLine(codigo);
+                            Clase03Array aux3a = new Clase03Array();
+
                             Fase02.DentroDelArray auxDentro = new DentroDelArray();
                             auxDentro.uno = 1;
                             auxDentro.dos = "dos";
@@ -220,13 +225,10 @@ namespace Fase06
                             auxDentro2.uno = 3;
                             auxDentro2.dos = "cuatro";
 
-                            c3a.var7 = new DentroDelArray[2];
-                            c3a.var7[0] = auxDentro;
-                            c3a.var7[1] = auxDentro2;
-                            #endregion
-                            string codigo = serializador3a.codificar(c3a);
-                            Console.WriteLine(codigo);
-                            Clase03Array aux3a = new Clase03Array();
+                            aux3a.var7 = new DentroDelArray[2];
+                            aux3a.var7[0] = auxDentro;
+                            aux3a.var7[1] = auxDentro2;
+
                             serializador3a.decodificar(codigo, ref aux3a);
 
                             for (int i = 0; i < 3; i++)
