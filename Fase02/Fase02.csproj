@@ -86,11 +86,11 @@
     <Compile Include="Decodificador03A.cs" />
     <Compile Include="Decodificador02A.cs" />
     <Compile Include="Decodificador06B.cs" />
-    <Compile Include="Decodificador07A.cs" />
     <Compile Include="Decodificador07B.cs" />
     <Compile Include="DecodificadorBaseA2.cs" />
     <Compile Include="DecodificadorBaseB2.cs" />
     <Compile Include="DecodificadorBaseB.cs" />
+    <Compile Include="Decodificador07A.cs" />
     <Compile Include="SerializerStatic.cs" />
     <Compile Include="Struct01Basica.cs" />
     <Compile Include="Clase01Basica.cs" />

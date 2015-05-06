@@ -711,7 +711,7 @@ namespace Fase02
             Codificador07A codA = new Codificador07A();
             for (int i = 0; i < this.veces; i++)
             {
-                sAux = codA.encode(c);
+                sAux = codA.encode(ref c);
             }
             watch.Stop();
             Console.WriteLine("Codificación de clase con todo A: " + watch.ElapsedMilliseconds + " milisegundos");
