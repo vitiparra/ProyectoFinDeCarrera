@@ -41,12 +41,24 @@ namespace Fase06
         private Type tipo;
         private static Dictionary<Type, Object> clases;
 
-        public Generador(Type tipo)
+        public Generador(Type tipo, string strTipoDeCodificacion = "CSV")
         {
             this.tipoInicial = tipo;
             this.tipo = tipo;
             // Tipo de codificación por defecto
-            tipoDeCodificacion = tiposDeCodificacion.CSV;
+            if(strTipoDeCodificacion == "CSV")
+            {
+                tipoDeCodificacion = tiposDeCodificacion.CSV;
+            }
+            else if (strTipoDeCodificacion == "XML")
+            {
+                tipoDeCodificacion = tiposDeCodificacion.XML;
+            }
+            else
+            {
+                tipoDeCodificacion = tiposDeCodificacion.CSV;
+            }
+
 
             // Inicializar el conjunto de clases que se van a procesar
             clases = new Dictionary<Type, object>();
@@ -71,6 +83,7 @@ namespace Fase06
             // 1º Generar el código de la clase. Se guarda en strCodigo
             this.generateSerializer();
             #region mostrarCodigo
+/*
             // Mostrar por pantalla el código generado
             Console.WriteLine(strCodigo);
             // Sacar el código generado a un archivo de texto (en <proyecto>/bin/Debug)
@@ -78,6 +91,7 @@ namespace Fase06
             {
                 writer.Write(strCodigo);
             }
+*/ 
             #endregion
             // 2º Compilar e instanciar la clase serializador
             serializador = this.compile(this.tipoInicial);
@@ -290,7 +304,6 @@ namespace Serializer
             return texto.ToString();
         }";
             strDecode += @"
-            Console.WriteLine(""n"");
         }";
             strCodigo += strEncode;
             strCodigo += this.newLine();
@@ -1237,17 +1250,17 @@ namespace Serializer
             // Instanciar un objeto de la clase compilada y devolverlo
             try
             {
-                Console.WriteLine("Se ejecuta CreateCompiler");
+//                Console.WriteLine("Se ejecuta CreateCompiler");
                 ICodeCompiler loCompiler = new CSharpCodeProvider().CreateCompiler();
 
-                Console.WriteLine("Se ponen parámetros a CreateCompiler");
+//                Console.WriteLine("Se ponen parámetros a CreateCompiler");
                 CompilerParameters loParameters = new CompilerParameters();
                 loParameters.ReferencedAssemblies.Add("System.dll");
                 loParameters.ReferencedAssemblies.Add("System.Xml.dll");
                 loParameters.ReferencedAssemblies.Add(tipo.Assembly.Location);
                 loParameters.GenerateInMemory = true;
 
-                Console.WriteLine("Se ejecuta CompileAssemblyFromSource (source es el código en variable string");
+//                Console.WriteLine("Se ejecuta CompileAssemblyFromSource (source es el código en variable string");
                 // *** Medir aquí el tiempo de compilación
                 CompilerResults loCompiled =
                         loCompiler.CompileAssemblyFromSource(loParameters, strCodigo);
@@ -1268,7 +1281,7 @@ namespace Serializer
 
                 Assembly loAssembly = loCompiled.CompiledAssembly;
                 // *** Retrieve an obj ref – generic type only
-                Console.WriteLine("Se crea una instancia del objeto compilado al vuelo");
+ //               Console.WriteLine("Se crea una instancia del objeto compilado al vuelo");
                 Object loObject = loAssembly.CreateInstance("Serializer." + tipo.Name + "Codec");
 
                 if (loObject == null)

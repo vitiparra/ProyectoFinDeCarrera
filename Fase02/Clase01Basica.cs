@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fase02
 {
+    [Serializable]
     public class Clase01Basica
     {
 //        public Wrapper<int> val { get; set; } // se espera que isGenericçType devuelva FALSE
