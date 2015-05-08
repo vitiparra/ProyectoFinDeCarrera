@@ -86,12 +86,13 @@ namespace Fase06
 /*
             // Mostrar por pantalla el código generado
             Console.WriteLine(strCodigo);
+*/
             // Sacar el código generado a un archivo de texto (en <proyecto>/bin/Debug)
             using (StreamWriter writer = new StreamWriter("filename.txt"))
             {
                 writer.Write(strCodigo);
             }
-*/ 
+ 
             #endregion
             // 2º Compilar e instanciar la clase serializador
             serializador = this.compile(this.tipoInicial);
@@ -245,7 +246,19 @@ namespace Serializer
                     nombre = fieldInfo.Name;
                 }
 
-
+                strEncode += @"
+              if(obj." + nombre + " == null)";
+                strEncode += @"
+              {
+                texto.Append(""" + abrir("elemento");
+                strEncode += @""");
+                texto.Append(""null"");";
+                strEncode += @"
+                texto.Append(""" + cerrar("elemento");
+                strEncode += @""");
+              }
+              else
+              {";
                 strEncode += @"
             texto.Append(""" + abrir("elemento");
 
@@ -255,7 +268,9 @@ namespace Serializer
                 strEncode += @""");
             texto.Append(""" + abrir("nombre");
                 strDecode += @"
-            nr.Read(); // Nombre";
+            nr.Read(); // Nombre o null (si el miembro es null no hay más información de él)
+            if(nr.Value != ""null""){";
+
                 strEncode += @""");
             texto.Append(""" + mostrarValor(nombre);
                 strDecode += @"
@@ -291,7 +306,10 @@ namespace Serializer
             nr.Read(); // Valor";
                 strEncode += @"
             texto.Append(""" + cerrar("elemento") + "\");";
+                strEncode += @"
+            }";
                 strDecode += @"
+            }
             nr.Read(); // Elemento";
             } //foreach
 
@@ -729,9 +747,27 @@ namespace Serializer
                 strDecode += @"
             string restoXML = nr.ReadInnerXml().ToString();
             " + t.Name + "Codec.decode(ref restoXML, ref objAux);";
+
                 strDecode += @"
-//            cont++;
-            " + nombre + " = objAux;";
+            // Convertir textoXML en un XML
+            // Obtener el número de elementos (etiquetas y valores)
+            // Ejecutar sobre nr tantos Read como elementos haya en el XML
+            XmlDocument xmlAux = new XmlDocument();
+            xmlAux.LoadXml(restoXML);
+            XmlNode nodoPrincipal2 = xml.SelectSingleNode(""elementos"");
+            XmlNodeReader nr2 = new XmlNodeReader(nodoPrincipal2);
+            while (nr2.Read())
+            {
+                nr.Read(); // Saltar todos los nodos del objeto ya procesado
+            }
+            nr.Read(); // Valor";
+
+                if (isArray)
+                {
+                    strDecode += @"
+            " + nombreCampo + " = objAux;";
+                }
+
 
                 clases.Add(t, null);
             }
