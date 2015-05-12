@@ -525,8 +525,12 @@ namespace Serializer
 
                 strEncode += @"
                 texto.Append(""" + cerrar("valor") + "\");";
-                strDecode += @"
+                if (t.GetElementType().IsPrimitive || t.GetElementType().FullName == "System.String")
+                {
+                    strDecode += @"
             nr.Read(); // Valor";
+                }
+
                 strEncode += @";
             }";
 
@@ -745,27 +749,19 @@ namespace Serializer
                 strDecode += @"
             " + t.FullName.Replace("+", ".") + " objAux = new " + t.FullName.Replace("+", ".") + "();";
                 strDecode += @"
-            string restoXML = nr.ReadInnerXml().ToString();
+            nr.Read(); // Elementos
+            string restoXML = nr.ReadOuterXml().ToString();
             " + t.Name + "Codec.decode(ref restoXML, ref objAux);";
-
-                strDecode += @"
-            // Convertir textoXML en un XML
-            // Obtener el número de elementos (etiquetas y valores)
-            // Ejecutar sobre nr tantos Read como elementos haya en el XML
-            XmlDocument xmlAux = new XmlDocument();
-            xmlAux.LoadXml(restoXML);
-            XmlNode nodoPrincipal2 = xml.SelectSingleNode(""elementos"");
-            XmlNodeReader nr2 = new XmlNodeReader(nodoPrincipal2);
-            while (nr2.Read())
-            {
-                nr.Read(); // Saltar todos los nodos del objeto ya procesado
-            }
-            nr.Read(); // Valor";
 
                 if (isArray)
                 {
                     strDecode += @"
             " + nombreCampo + " = objAux;";
+                }
+                else 
+                {
+                    strDecode += @"
+            " + nombre + " = objAux;";
                 }
 
 

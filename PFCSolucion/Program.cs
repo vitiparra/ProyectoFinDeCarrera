@@ -726,20 +726,10 @@ namespace Serializer
                     if (obj.var7 == null) obj.var7 = new Fase02.DentroDelArray[auxobjvar7Length0];
                     nr.Read(); // Valor
                     Fase02.DentroDelArray objAux = new Fase02.DentroDelArray();
-                    string restoXML = nr.ReadInnerXml().ToString();
-//                    if(restoXML.Substring(0,11) == "<elementos>")
+                    nr.Read(); // Elementos
+                    string restoXML = nr.ReadOuterXml().ToString();
                     DentroDelArrayCodec.decode(ref restoXML, ref objAux);
                     obj.var7[auxIndice0] = objAux;
-                    // Convertir textoXML en un XML
-                    // Obtener el número de elementos (etiquetas y valores)
-                    // Ejecutar sobre nr tantos Read como elementos haya en el XML
-                    XmlDocument xmlAux = new XmlDocument();
-                    xmlAux.LoadXml(restoXML);
-                    Console.WriteLine(xmlAux.FirstChild);
-                    XmlNodeList nodeAux = xmlAux.ChildNodes;
-                    for (int i = 0; i < nodeAux.Count; i++)
-                        nr.Read(); // Todos los nodos del objeto ya procesado
-                    nr.Read(); // Valor
                 }
                 nr.Read(); // Valores
                 nr.Read(); // Valor
@@ -858,11 +848,13 @@ namespace Serializer
             nr.Read(); // Elementos
         }
 
+
         static void Main(string[] args)
         {
 
             Fase02.Clase03Array c3a = new Fase02.Clase03Array();
             #region Datos Clase03Array
+
             c3a.var1 = new int[3];
             for (int i = 0; i < 3; i++)
             {
@@ -924,8 +916,8 @@ namespace Serializer
             aux1.dos = "dos";
             c3a.var7[0] = aux1;
             Fase02.DentroDelArray aux2 = new Fase02.DentroDelArray();
-            aux2.uno = 1;
-            aux2.dos = "dos";
+            aux2.uno = 3;
+            aux2.dos = "cuatro";
             c3a.var7[1] = aux2;
 
             #endregion
@@ -946,98 +938,6 @@ namespace Serializer
                 Console.WriteLine("No se ha podido generar el serializador");
             }
             Console.ReadLine();
-            return;
-
-            Fase02.Clase03Array c3 = new Fase02.Clase03Array();
-            Clase03ArrayCodec serializador3 = new Clase03ArrayCodec();
-            if (serializador3 != null)
-            {
-                c3.var1 = new int[3];
-                for (int i = 0; i < 3; i++)
-                {
-                    c3.var1[i] = i;
-                }
-
-                c3.var2 = new string[3];
-                for (int i = 0; i < 3; i++)
-                {
-                    c3.var2[i] = i.ToString();
-                }
-
-                c3.var4 = new int[3, 2, 2];
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int j = 0; j < 2; j++)
-                    {
-                        for (int k = 0; k < 2; k++)
-                        {
-                            c3.var4[i, j, k] = i * (j + 3) + (k * 3);
-                        }
-                    }
-                }
-
-            c3.var5 = new int[3][];
-            cont = 0;
-            for (int i = 0; i < 3; i++)
-            {
-                int[] aux = new int[4];
-                for (int j = 0; j < 4; j++)
-                {
-                    aux[j] = cont;
-                    cont++;
-                }
-                c3.var5[i] = aux;
-            }
-
-            c3.var6 = new Dictionary<string, int>();
-            c3.var6.Add("uno", 1);
-            c3.var6.Add("dos", 2);
-            c3.var6.Add("tres", 3);
-
-/*
-                c3.var3 = new int[3][];
-                for (int i = 0; i < 3; i++)
-                {
-                    int[] aux = new int[4];
-                    for (int j = 0; j < 4; j++)
-                    {
-                        aux[j] = i * (j + 3);
-                    }
-                    c3.var3[i] = aux;
-                }
-                Console.WriteLine("Antes");
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int j = 0; j < 2; j++)
-                    {
-                        Console.WriteLine(c3.var3[i][j]);
-                    }
-                }
-
-                c3.var4 = new List<Fase02.ClaseViti>();
-                Fase02.ClaseViti clase = new Fase02.ClaseViti();
-                clase.v1 = "uno";
-                clase.v2 = 1;
-                c3.var4.Add(clase);
-                Fase02.ClaseViti clase2 = new Fase02.ClaseViti();
-                clase2.v1 = "dos";
-                clase2.v2 = 2;
-                c3.var4.Add(clase2);
-                Fase02.ClaseViti clase3 = new Fase02.ClaseViti();
-                clase3.v1 = "tres";
-                clase3.v2 = 3;
-                c3.var4.Add(clase3);
-*/
-
-                string codigo = serializador3.codificar(c3);
-                Console.WriteLine(codigo);
-                Fase02.Clase03Array c3aux = new Fase02.Clase03Array();
-                serializador3.decodificar(codigo, ref c3aux);
-
-                serializador3.ToString();
-
-                Console.ReadLine();
-            }
         }
     }
 }

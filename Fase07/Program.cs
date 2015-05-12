@@ -31,6 +31,7 @@ namespace Fase07
             watch = new System.Diagnostics.Stopwatch();
 
             cuadro += p.benchmarkClase01Basica();
+            cuadro += "\r\n";
             cuadro += p.benchmarkClase03Arrays();
 
             using (TextWriter comparativaCSV = File.CreateText("comparativa.csv"))
@@ -393,9 +394,9 @@ namespace Fase07
             /*
              * 03. Clase con arrays
              */
-            linea1 += "Clase01Basica (Encode);";
-            linea2 += "Clase01Basica (Decode);";
-            Console.WriteLine("============== Clase con dos campos (Clase01Basica) ==============\r\n");
+            linea1 += "Clase03Arrays (Encode);";
+            linea2 += "Clase03Arrays (Decode);";
+            Console.WriteLine("============== Clase con distintos tipos de array (Clase03Array) ==============\r\n");
 
             // Instanciando y rellenando campos
             Clase03Array c = new Clase03Array();
@@ -471,6 +472,9 @@ namespace Fase07
             // - XMLSerializer
             #region XMLSerializer
             FileStream fs;
+            linea1 += ";";
+            linea2 += ";";
+
 /*
  *** Este serializador no admite arrays complejos
             XmlSerializer serializer = new XmlSerializer(typeof(Clase03Array));
@@ -554,6 +558,9 @@ namespace Fase07
 
             // - SOAPFormatter
             #region SOAPFormatter
+            linea1 += ";";
+            linea2 += ";";
+
 /*
             Console.WriteLine("Serialización con SOAPFormatter");
 
@@ -611,6 +618,9 @@ namespace Fase07
             #region DataContractSerializer
             MemoryStream stream1 = new MemoryStream();
             MemoryStream stream2 = new MemoryStream();
+            linea1 += ";";
+            linea2 += ";";
+
 /*
             Console.WriteLine("Serialización con DataContractSerializer");
 
@@ -694,6 +704,8 @@ namespace Fase07
 
             // Protobuf
             #region Protobuf
+            linea1 += ";";
+            linea2 += ";";
 /*
             Console.WriteLine("Serialización con Protobuf");
 
