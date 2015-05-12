@@ -51,9 +51,9 @@ namespace Fase02
     
     public static partial class SerializerStatic
     {
-        public static String encode(Clase02Metodos obj)
+        public static String encode(Clase02ArrayNormal obj)
         {
-            return string.Format("{0},{1}", obj.metodo1(), obj.metodo2());
+            return string.Format("{0},{1}", obj.var1.Length, obj.var2.Length);
         }
 
         public static String encode (Clase03Array c)
@@ -156,7 +156,7 @@ namespace Fase02
         }
 
 
-        public static void decode(ref Clase02Metodos c, String aux)
+        public static void decode(ref Clase02ArrayNormal c, String aux)
         {
             int v1 = 0;
             string v2 = "";
@@ -169,9 +169,6 @@ namespace Fase02
                 v1 = Convert.ToInt16(parametros[0]);
                 v2 = parametros[1];
             }
-
-            c.metodo1();
-            c.metodo2();
         }
 
         public static void decode(ref Clase03Array c, String aux)

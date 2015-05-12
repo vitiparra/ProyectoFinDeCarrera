@@ -19,10 +19,10 @@ namespace CodecExtensions
                 Fase02.Clase01Basica c = (Fase02.Clase01Basica)obj;
                 return string.Format("{0},{1}", c.var1, c.var2);
             }
-            else if(obj.GetType() == typeof(Fase02.Clase02Metodos))
+            else if (obj.GetType() == typeof(Fase02.Clase02ArrayNormal))
             {
-                Fase02.Clase02Metodos c = (Fase02.Clase02Metodos)obj;
-                return string.Format("{0},{1}", c.metodo1(), c.metodo2());
+                Fase02.Clase02ArrayNormal c = (Fase02.Clase02ArrayNormal)obj;
+                return string.Format("{0},{1}", c.var1.Length, c.var2.Length);
             }
             else if(obj.GetType() == typeof(Fase02.Clase03Array))
             {
@@ -105,9 +105,9 @@ namespace CodecExtensions
 
                 obj = c;
             }
-            else if (tipo == typeof(Fase02.Clase02Metodos))
+            else if (tipo == typeof(Fase02.Clase02ArrayNormal))
             {
-                Fase02.Clase02Metodos c = new Fase02.Clase02Metodos();
+                Fase02.Clase02ArrayNormal c = new Fase02.Clase02ArrayNormal();
                 int v1 = 0;
                 string v2 = "";
 

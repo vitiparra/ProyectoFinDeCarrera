@@ -10,8 +10,8 @@ namespace Fase02
     {
         public override String encode(Object aux)
         {
-            Clase02Metodos c = (Clase02Metodos)aux;
-            return string.Format("{0},{1}", c.metodo1(), c.metodo2());
+            Clase02ArrayNormal c = (Clase02ArrayNormal)aux;
+            return string.Format("{0},{1}", c.var1.Length, c.var2.Length);
         }
     }
 }

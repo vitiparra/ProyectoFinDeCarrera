@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clase02Metodos.cs" />
+    <Compile Include="Clase02ArrayNormal.cs" />
     <Compile Include="Clase03Array.cs" />
     <Compile Include="Clase03aUnArray.cs" />
     <Compile Include="Clase04Struct.cs" />

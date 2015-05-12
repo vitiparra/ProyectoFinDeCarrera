@@ -15,7 +15,7 @@ namespace Fase02
             int v1 = 0;
             string v2 = "";
 
-            Clase02Metodos cOut = new Clase02Metodos();
+            Clase02ArrayNormal cOut = new Clase02ArrayNormal();
             String aux = s.ToString();
             String[] parametros = aux.Split(',');
 

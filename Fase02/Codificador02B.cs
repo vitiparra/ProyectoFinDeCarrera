@@ -8,9 +8,10 @@ namespace Fase02
 {
     class Codificador02B
     {
-        public String encode(ref Clase02Metodos c)
+        public String encode(ref Clase02ArrayNormal c)
         {
-            return string.Format("{0},{1}", c.metodo1(), c.metodo2());
+//            return string.Format("{0},{1}", c.var1.Count, c.var2.Count);
+            return "";
         }
     }
 }

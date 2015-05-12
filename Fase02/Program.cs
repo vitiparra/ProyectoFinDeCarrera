@@ -39,12 +39,12 @@ namespace Fase02
             Console.WriteLine("==================");
 
             /*
-             * 02. Clase con métodos
+             * 02. Clase con arrays
              */
-            Clase02Metodos c2 = new Clase02Metodos();
-            Clase02Metodos c2decoded;
+            Clase02ArrayNormal c2 = new Clase02ArrayNormal();
+            Clase02ArrayNormal c2decoded;
 
-            Console.WriteLine("Clase con dos métodos");
+            Console.WriteLine("Clase con arrays");
             s = p.codificarClase02(c2);
             c2decoded = p.decodificarClase02(s);
             Console.WriteLine("==================");
@@ -278,7 +278,7 @@ namespace Fase02
         }
 
 
-        protected String codificarClase02(Clase02Metodos c)
+        protected String codificarClase02(Clase02ArrayNormal c)
         {
             String sAux = "";
 
@@ -289,7 +289,7 @@ namespace Fase02
                 sAux = cod1A.encode(c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con métodos A: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays A: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             Codificador02B cod1B = new Codificador02B();
@@ -298,7 +298,7 @@ namespace Fase02
                 sAux = cod1B.encode(ref c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con métodos B: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays B: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
@@ -306,7 +306,7 @@ namespace Fase02
                 sAux = c.codificar();
             }
             watch.Stop();
-            Console.WriteLine("Codificación con métodos C: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays C: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
@@ -314,14 +314,14 @@ namespace Fase02
                 sAux = SerializerStatic.encode(c);
             }
             watch.Stop();
-            Console.WriteLine("Codificación con métodos D: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Codificación con arrays D: " + watch.ElapsedMilliseconds + " milisegundos");
 
             return sAux;
         }
 
-        protected Clase02Metodos decodificarClase02(String s)
+        protected Clase02ArrayNormal decodificarClase02(String s)
         {
-            Clase02Metodos cOut = null;
+            Clase02ArrayNormal cOut = null;
 
             watch.Restart();
             Decodificador02A dec = new Decodificador02A();
@@ -329,10 +329,10 @@ namespace Fase02
             {
                 Object cAux1A = null;
                 cAux1A = dec.decode(s);
-                cOut = (Clase02Metodos)cAux1A;
+                cOut = (Clase02ArrayNormal)cAux1A;
             }
             watch.Stop();
-            Console.WriteLine("Decodificación con métodos A: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación con arrays A: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             Decodificador02B dec1B = new Decodificador02B();
@@ -340,19 +340,19 @@ namespace Fase02
             {
                 Object cAux1B = null;
                 dec1B.decode(ref cAux1B, s);
-                cOut = (Clase02Metodos)cAux1B;
+                cOut = (Clase02ArrayNormal)cAux1B;
             }
             watch.Stop();
-            Console.WriteLine("Decodificación con métodos B: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación con arrays B: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
-            Type t = typeof(Fase02.Clase02Metodos);
+            Type t = typeof(Fase02.Clase02ArrayNormal);
             for (int i = 0; i < this.veces; i++)
             {
                 Object aux = s.decodificar(t);
             }
             watch.Stop();
-            Console.WriteLine("Decodificación con métodos C: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación con arrays C: " + watch.ElapsedMilliseconds + " milisegundos");
 
             watch.Restart();
             for (int i = 0; i < this.veces; i++)
@@ -360,7 +360,7 @@ namespace Fase02
                 SerializerStatic.decode(ref cOut, s);
             }
             watch.Stop();
-            Console.WriteLine("Decodificación con métodos D: " + watch.ElapsedMilliseconds + " milisegundos");
+            Console.WriteLine("Decodificación con arrays D: " + watch.ElapsedMilliseconds + " milisegundos");
 
             return cOut;
         }
