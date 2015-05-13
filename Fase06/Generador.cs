@@ -246,19 +246,24 @@ namespace Serializer
                     nombre = fieldInfo.Name;
                 }
 
-                strEncode += @"
+                if ((t.IsClass || t.IsEnum || t.IsPrimitive) && !t.IsValueType) // Si es una estructura, esta comprobación no se hace
+                {
+                    strEncode += @"
               if(obj." + nombre + " == null)";
-                strEncode += @"
+                    strEncode += @"
               {
                 texto.Append(""" + abrir("elemento");
-                strEncode += @""");
+                    strEncode += @""");
                 texto.Append(""null"");";
-                strEncode += @"
+                    strEncode += @"
                 texto.Append(""" + cerrar("elemento");
-                strEncode += @""");
+                    strEncode += @""");
               }
-              else
+              else";
+                }
+                strEncode += @"
               {";
+
                 strEncode += @"
             texto.Append(""" + abrir("elemento");
 
@@ -798,13 +803,18 @@ namespace Serializer
                     nombre = fieldInfo.Name;
                 }
 
+                if ((t.IsClass || t.IsEnum || t.IsPrimitive) && !t.IsValueType) // Si es una estructura, esta comprobación no se hace
+                {
+
                 strEncode += @"
               if(obj." + nombre + " == null)";
                 strEncode += @"
               {
                 texto.Append(""NULL,"");
               }
-              else
+              else";
+                }
+                strEncode += @"
               {
 //            texto.Append(""" + nombre + ",\");";
                 strEncode += @"
@@ -1114,8 +1124,17 @@ namespace Serializer
             string aux = string.Join("","", elementos.ToArray());
             " + t.Name + "Codec.decode(ref aux, ref objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + ");";
                 strDecode += @"
-            elementos = new Queue<string>(aux.Split(','));
-            " + nombreCampo + " = objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + " as " + t.FullName.Replace("+", ".") + ";";
+            elementos = new Queue<string>(aux.Split(','));";
+                if ((t.IsClass || t.IsEnum || t.IsPrimitive) && !t.IsValueType && !t.IsNested) // Si es una estructura, esta comprobación no se hace
+                {
+                    strDecode += @"
+            " + nombreCampo + " = objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + ";";
+                }
+                else 
+                {
+                    strDecode += @"
+            obj." + nombreCampo + " = objAux" + nombreCampo.Replace(".", "").Replace("[", "").Replace("]", "") + ";";
+                }
 
                 clases.Add(t, null);
             }
