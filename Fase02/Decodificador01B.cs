@@ -20,8 +20,8 @@ namespace Fase02
             v1 = Convert.ToInt16(parametros[0]);
             v2 = parametros[1];
 
-            cOut.var1 = v1;
+/*            cOut.var1 = v1;
             cOut.var2 = v2;
-        }
+*/        }
     }
 }

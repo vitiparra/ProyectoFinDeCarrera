@@ -22,9 +22,9 @@ namespace Fase02
             v2 = parametros[1];
 
             Clase01Basica c = new Clase01Basica();
-            c.var1 = v1;
+/*            c.var1 = v1;
             c.var2 = v2;
-
+            */
             return c;
         }
     }

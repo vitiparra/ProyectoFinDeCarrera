@@ -29,10 +29,10 @@ namespace Fase02
              */
             Clase01Basica c1 = new Clase01Basica();
             Clase01Basica c1decoded;
-
+            /*
             c1.var1 = 1;
             c1.var2 = "2";
-
+            */
             Console.WriteLine("Clase con dos atributos");
             s = p.codificarClase01(c1);
             c1decoded = p.decodificarClase01(s);

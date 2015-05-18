@@ -4,15 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ProtoBuf;
+
 namespace Fase02
 {
+    [ProtoContract]
+    [Serializable]
     public class ClaseBase2
     {
+        [ProtoMember(1)]
         public int basePublicInt { get; set; }
+        [ProtoMember(2)]
         protected string baseProtectedString { get; set; }
     }
 
-    public class Clase07ClaseConTodo: ClaseBase2
+    [ProtoContract]
+    [Serializable]
+    public class Clase07ClaseConTodo : ClaseBase2
     {
         public enum colores
         {
@@ -20,21 +28,41 @@ namespace Fase02
             AMARILLO,
             VERDE
         }
-        public static colores publicStaticColores;
-        public List<int> lista { get; set; }
-        public int publicInt { get; set; }
-        public int[] publicArrayInt { get; set; }
-        public int[,] publicArray2DInt { get; set; }
-        public int[][] publicArrayMatrizEscalonadaInt { get; set; }
+        [ProtoMember(1)]
+        public colores publicStaticColores;
 
+        [ProtoMember(2)]
+        [NonSerialized]
+        public List<int> lista;
+
+        [ProtoMember(3)]
+        public int publicInt { get; set; }
+
+        [ProtoMember(4)]
+        public int[] publicArrayInt { get; set; }
+
+        [ProtoMember(5)]
+        [NonSerialized]
+        public int[,] publicArray2DInt;
+
+        [ProtoMember(6)]
+        [NonSerialized]
+        public int[][] publicArrayMatrizEscalonadaInt;
+
+        [ProtoMember(7)]
         protected string protectedString { get; set; } // Falta esto
 
+        [ProtoMember(8)]
         private static int privateStaticInt;
+
+        [ProtoMember(9)]
         private float privateFloat { get; set; } // Falta esto
 //        public static colores privateStaticColores;
 
         public Clase07ClaseConTodo()
         {
+            this.publicStaticColores = colores.AMARILLO;
+
             this.basePublicInt = 1;
             this.baseProtectedString = "hola";
             this.publicInt = 2;
@@ -68,10 +96,11 @@ namespace Fase02
             this.publicArrayMatrizEscalonadaInt[1][3] = 4;
             this.publicArrayMatrizEscalonadaInt[1][4] = 5;
 
-
             this.lista = new List<int>();
             this.lista.Add(1);
             this.lista.Add(2);
+
+            Clase07ClaseConTodo.privateStaticInt = 1000;
         }
     }
 }

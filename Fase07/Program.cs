@@ -39,6 +39,12 @@ namespace Fase07
             cuadro += p.benchmarkClase04Struct();
             cuadro += "\r\n";
             cuadro += p.benchmarkClase05Clase();
+            cuadro += "\r\n";
+            cuadro += p.benchmarkClase06ClaseDerivada();
+            cuadro += "\r\n";
+            cuadro += p.benchmarkClase07ClaseConTodo();
+//            cuadro += "\r\n";
+//            cuadro += p.benchmarkClase08List();
 
             using (TextWriter comparativaCSV = File.CreateText("comparativa.csv"))
             {
@@ -64,8 +70,6 @@ namespace Fase07
             // Instanciando y rellenando campos
             Clase01Basica c1 = new Clase01Basica();
             Clase01Basica c1decoded;
-            c1.var1 = 1;
-            c1.var2 = "2";
 
             // - XMLSerializer
             #region XMLSerializer
@@ -1593,7 +1597,7 @@ namespace Fase07
             string linea2 = "";
 
             /*
-             * 01. Clase con clase interna
+             * 05. Clase con clase interna
              */
             linea1 += "Clase05Clase (Encode);";
             linea2 += "Clase05Clase (Decode);";
@@ -1931,6 +1935,1134 @@ namespace Fase07
                 }
                 watch.Stop();
                 Console.WriteLine("Decodificación Clase05Clase con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+
+            return linea1 + "\r\n" + linea2;
+
+            #endregion NuestroProyecto(XML)
+        }
+
+        public string benchmarkClase06ClaseDerivada()
+        {
+            string linea1 = "";
+            string linea2 = "";
+
+            /*
+             * 06. Clase con clase derivada
+             */
+            linea1 += "Clase06ClaseDerivada (Encode);";
+            linea2 += "Clase06ClaseDerivada (Decode);";
+            Console.WriteLine("============== Clase con otra clase derivada dentro (Clase06ClaseDerivada) ==============\r\n");
+
+            // Instanciando y rellenando campos
+            Clase06ClaseDerivada c1 = new Clase06ClaseDerivada();
+            Clase06ClaseDerivada c1decoded;
+            c1.var1 = 1;
+            c1.var2 = "2";
+            c1.var3 = 3;
+
+            // - XMLSerializer
+            #region XMLSerializer
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Clase06ClaseDerivada));
+            TextWriter writer = new StreamWriter("fichero.txt");
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                serializer.Serialize(writer, c1);
+            }
+            watch.Stop();
+            writer.Close();
+
+            // Repetimos una sola vez para generar el fichero co una única serialización
+            writer = new StreamWriter("fichero.txt");
+            serializer.Serialize(writer, c1);
+            writer.Close();
+
+            Console.WriteLine("Codificación Clase06ClaseDerivada con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            FileStream fs;
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                fs = new FileStream("fichero.txt", FileMode.Open);
+                c1decoded = (Clase06ClaseDerivada)serializer.Deserialize(fs);
+                fs.Close();
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase06ClaseDerivada con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion XMLSerializer
+
+            // - BinaryFormatter
+            #region BinaryFormatter
+            Console.WriteLine("Serialización con BinaryFormatter");
+
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    formatter.Serialize(fs, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs.Close();
+                }
+                Console.WriteLine("Codificación Clase06ClaseDerivada con BinaryFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase06ClaseDerivada)formatter.Deserialize(fs);
+                    fs.Close();
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+                }
+                watch.Stop();
+                fs.Close();
+                Console.WriteLine("Decodificación Clase06ClaseDerivada con BinaryFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+            #endregion BinaryFormatter
+
+            // - SOAPFormatter
+            #region SOAPFormatter
+            Console.WriteLine("Serialización con SOAPFormatter");
+
+            FileStream fs3 = new FileStream("DataFile.soap", FileMode.Create);
+            fs3.Close();
+            SoapFormatter soapFormatter = new SoapFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs3 = new FileStream("DataFile.soap", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    soapFormatter.Serialize(fs3, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs3.Close();
+                }
+                Console.WriteLine("Codificación Clase06ClaseDerivada con SOAPFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs3 = new FileStream("DataFile.soap", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase06ClaseDerivada)soapFormatter.Deserialize(fs3);
+                    fs3.Close();
+                    fs3 = new FileStream("DataFile.soap", FileMode.Open);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase06ClaseDerivada con SOAPFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs3.Close();
+            }
+            #endregion
+
+            // DataContractSerializer
+            #region DataContractSerializer
+            Console.WriteLine("Serialización con DataContractSerializer");
+
+            MemoryStream stream1 = new MemoryStream();
+            MemoryStream stream2 = new MemoryStream();
+            //Serialize the Record object to a memory stream using DataContractSerializer.
+            DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase06ClaseDerivada));
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                DCserializer.WriteObject(stream1, c1);
+                watch.Stop();
+                if (i == 0)
+                {
+                    stream1.Position = 0;
+                    stream1.CopyTo(stream2, (int)stream1.Length);
+                }
+            }
+            Console.WriteLine("Codificación Clase06ClaseDerivada con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                stream2.Position = 0;
+                //Deserialize the Record object back into a new record object.
+                c1decoded = (Clase06ClaseDerivada)DCserializer.ReadObject(stream2);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase06ClaseDerivada con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion DataContractSerializer
+
+            // SharpSerializer (XML)
+            #region SharpSerializer
+            Console.WriteLine("Serialización con SharpSerializer (XML)");
+
+            var SharpSerializer = new SharpSerializer();
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                SharpSerializer.Serialize(c1, "SharpSerializer.xml");
+                watch.Stop();
+            }
+            Console.WriteLine("Codificación Clase06ClaseDerivada con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase06ClaseDerivada)SharpSerializer.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase06ClaseDerivada con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion SharpSerializer
+
+            // SharpSerializer (Binario)
+            #region SharpSerializer
+            Console.WriteLine("Serialización con SharpSerializer (Binario)");
+
+            var SharpSerializer2 = new SharpSerializer(true);
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación Clase06ClaseDerivada con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase06ClaseDerivada)SharpSerializer2.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase06ClaseDerivada con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion SharpSerializer
+
+            // Protobuf
+            #region Protobuf
+            linea1 += ";";
+            linea2 += ";";
+            /*
+
+                        Console.WriteLine("Serialización con Protobuf");
+
+                        Stream protoStream = new MemoryStream();
+                        Stream protoStream2 = new MemoryStream();
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            ProtoBuf.Serializer.Serialize(protoStream, c1);
+                            if (i == 0)
+                            {
+                                protoStream2.Position = 0;
+                                stream1.CopyTo(protoStream2, (int)protoStream.Length);
+                            }
+
+                        }
+                        watch.Stop();
+                        Console.WriteLine("Codificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea1 += watch.ElapsedMilliseconds + ";";
+
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            protoStream.Position = 0;
+                            c1decoded = ProtoBuf.Serializer.Deserialize<Clase06ClaseDerivada>(protoStream2);
+                        }
+                        watch.Stop();
+                        Console.WriteLine("Decodificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea2 += watch.ElapsedMilliseconds + ";";
+            */
+            #endregion Protobuf
+
+            // - Nuestro proyecto en CSV
+            #region NuestroProyecto(CSV)
+            Console.WriteLine("Serialización con nuestro proyecto (CSV)");
+
+            // Generando el serializador a partir del tipo
+            Generador g1 = new Generador(c1.GetType());
+            dynamic serializador1 = g1.getSerializer();
+            string str = "";
+            if (serializador1 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str = serializador1.codificar(c1);
+                    //                    strSerializado = Clase06ClaseDerivadaCodec.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase06ClaseDerivada con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase06ClaseDerivada();
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador1.decodificar(str, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase06ClaseDerivada con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+            #endregion NuestroProyecto(CSV)
+
+            // - Nuestro proyecto en XML
+            #region NuestroProyecto(XML)
+            Console.WriteLine("Serialización con nuestro proyecto en XML");
+
+            // Generando el serializador a partir del tipo
+            g1 = new Generador(c1.GetType(), "XML");
+            serializador1 = g1.getSerializer();
+
+            if (serializador1 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str = serializador1.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase06ClaseDerivada con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase06ClaseDerivada();
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador1.decodificar(str, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase06ClaseDerivada con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+
+            return linea1 + "\r\n" + linea2;
+
+            #endregion NuestroProyecto(XML)
+        }
+
+        public string benchmarkClase07ClaseConTodo()
+        {
+            string linea1 = "";
+            string linea2 = "";
+            FileStream fs;
+
+            /*
+             * 07. Clase con todo
+             */
+            linea1 += "Clase07ClaseConTodo (Encode);";
+            linea2 += "Clase07ClaseConTodo (Decode);";
+            Console.WriteLine("============== Clase con todo (Clase07ClaseConTodo) ==============\r\n");
+
+            // Instanciando y rellenando campos
+            Clase07ClaseConTodo c1 = new Clase07ClaseConTodo();
+            Clase07ClaseConTodo c1decoded;
+
+            // - XMLSerializer
+            #region XMLSerializer
+            linea1 += ";";
+            linea2 += ";";
+            /*
+
+                        XmlSerializer serializer = new XmlSerializer(typeof(Clase07ClaseConTodo));
+                        TextWriter writer = new StreamWriter("fichero.txt");
+
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            serializer.Serialize(writer, c1);
+                        }
+                        watch.Stop();
+                        writer.Close();
+
+                        // Repetimos una sola vez para generar el fichero co una única serialización
+                        writer = new StreamWriter("fichero.txt");
+                        serializer.Serialize(writer, c1);
+                        writer.Close();
+
+                        Console.WriteLine("Codificación Clase07ClaseConTodo con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea1 += watch.ElapsedMilliseconds + ";";
+
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            fs = new FileStream("fichero.txt", FileMode.Open);
+                            c1decoded = (Clase07ClaseConTodo)serializer.Deserialize(fs);
+                            fs.Close();
+                        }
+                        watch.Stop();
+                        Console.WriteLine("Decodificación Clase07ClaseConTodo con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea2 += watch.ElapsedMilliseconds + ";";
+            */
+            #endregion
+
+            // - BinaryFormatter
+            #region BinaryFormatter
+            Console.WriteLine("Serialización con BinaryFormatter");
+
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    formatter.Serialize(fs, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs.Close();
+                }
+                Console.WriteLine("Codificación Clase07ClaseConTodo con BinaryFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase07ClaseConTodo)formatter.Deserialize(fs);
+                    fs.Close();
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+                }
+                watch.Stop();
+                fs.Close();
+                Console.WriteLine("Decodificación Clase07ClaseConTodo con BinaryFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+            #endregion
+
+            // - SOAPFormatter
+            #region SOAPFormatter
+            Console.WriteLine("Serialización con SOAPFormatter");
+
+            FileStream fs3 = new FileStream("DataFile.soap", FileMode.Create);
+            fs3.Close();
+            SoapFormatter soapFormatter = new SoapFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs3 = new FileStream("DataFile.soap", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    soapFormatter.Serialize(fs3, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs3.Close();
+                }
+                Console.WriteLine("Codificación Clase07ClaseConTodo con SOAPFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs3 = new FileStream("DataFile.soap", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase07ClaseConTodo)soapFormatter.Deserialize(fs3);
+                    fs3.Close();
+                    fs3 = new FileStream("DataFile.soap", FileMode.Open);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase07ClaseConTodo con SOAPFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs3.Close();
+            }
+            #endregion
+
+            // DataContractSerializer
+            #region DataContractSerializer
+            Console.WriteLine("Serialización con DataContractSerializer");
+
+            MemoryStream stream1 = new MemoryStream();
+            MemoryStream stream2 = new MemoryStream();
+            //Serialize the Record object to a memory stream using DataContractSerializer.
+            DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase07ClaseConTodo));
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                DCserializer.WriteObject(stream1, c1);
+                watch.Stop();
+                if (i == 0)
+                {
+                    stream1.Position = 0;
+                    stream1.CopyTo(stream2, (int)stream1.Length);
+                }
+            }
+            Console.WriteLine("Codificación Clase07ClaseConTodo con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                stream2.Position = 0;
+                //Deserialize the Record object back into a new record object.
+                c1decoded = (Clase07ClaseConTodo)DCserializer.ReadObject(stream2);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase07ClaseConTodo con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion DataContractSerializer
+
+            // SharpSerializer (XML)
+            #region SharpSerializer
+            Console.WriteLine("Serialización con SharpSerializer (XML)");
+
+            var SharpSerializer = new SharpSerializer();
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                SharpSerializer.Serialize(c1, "SharpSerializer.xml");
+                watch.Stop();
+            }
+            Console.WriteLine("Codificación Clase07ClaseConTodo con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase07ClaseConTodo)SharpSerializer.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase07ClaseConTodo con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion SharpSerializer
+
+            // SharpSerializer (Binario)
+            #region SharpSerializer
+            Console.WriteLine("Serialización con SharpSerializer (Binario)");
+
+            var SharpSerializer2 = new SharpSerializer(true);
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación Clase07ClaseConTodo con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase07ClaseConTodo)SharpSerializer2.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase07ClaseConTodo con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion SharpSerializer
+
+            // Protobuf
+            #region Protobuf
+            linea1 += ";";
+            linea2 += ";";
+            /*
+
+                        Console.WriteLine("Serialización con Protobuf");
+
+                        Stream protoStream = new MemoryStream();
+                        Stream protoStream2 = new MemoryStream();
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            ProtoBuf.Serializer.Serialize(protoStream, c1);
+                            if (i == 0)
+                            {
+                                protoStream2.Position = 0;
+                                stream1.CopyTo(protoStream2, (int)protoStream.Length);
+                            }
+
+                        }
+                        watch.Stop();
+                        Console.WriteLine("Codificación Clase07ClaseConTodo con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea1 += watch.ElapsedMilliseconds + ";";
+
+                        watch.Restart(); // Comienza a contar el tiempo
+                        for (int i = 0; i < veces; i++)
+                        {
+                            protoStream.Position = 0;
+                            c1decoded = ProtoBuf.Serializer.Deserialize<Clase07ClaseConTodo>(protoStream2);
+                        }
+                        watch.Stop();
+                        Console.WriteLine("Decodificación Clase07ClaseConTodo con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+                        linea2 += watch.ElapsedMilliseconds + ";";
+            */
+            #endregion Protobuf
+
+            // - Nuestro proyecto en CSV
+            #region NuestroProyecto(CSV)
+            Console.WriteLine("Serialización con nuestro proyecto (CSV)");
+
+            // Generando el serializador a partir del tipo
+            Generador g1 = new Generador(c1.GetType());
+            dynamic serializador1 = g1.getSerializer();
+            string str = "";
+            if (serializador1 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str = serializador1.codificar(c1);
+                    //                    strSerializado = Clase07ClaseConTodoCodec.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase07ClaseConTodo con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase07ClaseConTodo();
+                c1decoded.basePublicInt = 0;
+                c1decoded.lista = new List<int>();
+                c1decoded.publicArray2DInt = null;
+                c1decoded.publicArrayInt = null;
+                c1decoded.publicArrayMatrizEscalonadaInt = null;
+                c1decoded.publicInt = 0;
+                c1decoded.publicStaticColores = Clase07ClaseConTodo.colores.ROJO;
+
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador1.decodificar(str, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase07ClaseConTodo con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+            #endregion NuestroProyecto(CSV)
+
+            // - Nuestro proyecto en XML
+            #region NuestroProyecto(XML)
+            Console.WriteLine("Serialización con nuestro proyecto en XML");
+
+            // Generando el serializador a partir del tipo
+            g1 = new Generador(c1.GetType(), "XML");
+            serializador1 = g1.getSerializer();
+
+            if (serializador1 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str = serializador1.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase07ClaseConTodo con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase07ClaseConTodo();
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador1.decodificar(str, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase07ClaseConTodo con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+
+            return linea1 + "\r\n" + linea2;
+
+            #endregion NuestroProyecto(XML)
+        }
+
+        public string benchmarkClase08List()
+        {
+            string linea1 = "";
+            string linea2 = "";
+            FileStream fs;
+
+            /*
+             * 08. Clase con lista
+             */
+            linea1 += "Clase08List(Encode);";
+            linea2 += "Clase08List (Decode);";
+            Console.WriteLine("============== Clase con lista (Clase08Lit) ==============\r\n");
+
+            // Instanciando y rellenando campos
+            Clase08List c1 = new Clase08List();
+            Clase08List c1decoded;
+
+            c1.var1 = new List<int>();
+            c1.var1.Add(1);
+            c1.var1.Add(2);
+            c1.var1.Add(3);
+
+            c1.var2 = new List<Clase08List.clase>();
+
+            Clase08List.clase cAux1 = new Clase08List.clase();
+            cAux1.v1 = "Uno";
+            cAux1.v2 = 2;
+            c1.var2.Add(cAux1);
+
+            Clase08List.clase cAux2 = new Clase08List.clase();
+            cAux1.v1 = "Tres";
+            cAux1.v2 = 4;
+            c1.var2.Add(cAux2);
+
+            Clase08List.clase cAux3 = new Clase08List.clase();
+            cAux1.v1 = "Cinco";
+            cAux1.v2 = 6;
+            c1.var2.Add(cAux3);
+
+            c1.var3 = new Dictionary<int, string>();
+            c1.var3.Add(1, "uno");
+            c1.var3.Add(2, "dos");
+            c1.var3.Add(3, "tres");
+
+            c1.var4 = new Dictionary<int, Clase08List.clase>();
+            c1.var4.Add(1, cAux1);
+            c1.var4.Add(2, cAux2);
+            c1.var4.Add(3, cAux3);
+
+            // - XMLSerializer
+            #region XMLSerializer
+            linea1 += ";";
+            linea2 += ";";
+/*
+            XmlSerializer serializer = new XmlSerializer(typeof(Clase08List));
+            TextWriter writer = new StreamWriter("fichero.txt");
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                serializer.Serialize(writer, c1);
+            }
+            watch.Stop();
+            writer.Close();
+
+            // Repetimos una sola vez para generar el fichero co una única serialización
+            writer = new StreamWriter("fichero.txt");
+            serializer.Serialize(writer, c1);
+            writer.Close();
+
+            Console.WriteLine("Codificación Clase08List con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                fs = new FileStream("fichero.txt", FileMode.Open);
+                c1decoded = (Clase08List)serializer.Deserialize(fs);
+                fs.Close();
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase08List con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";"; 
+*/
+            #endregion XMLSerializer
+
+            // - BinaryFormatter
+            #region BinaryFormatter
+            Console.WriteLine("Serialización con BinaryFormatter");
+
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    formatter.Serialize(fs, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs.Close();
+                }
+                Console.WriteLine("Codificación Clase08List con BinaryFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase08List)formatter.Deserialize(fs);
+                    fs.Close();
+                    fs = new FileStream("BinaryFormatter.dat", FileMode.Open);
+                }
+                watch.Stop();
+                fs.Close();
+                Console.WriteLine("Decodificación Clase08List con BinaryFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+            #endregion BinaryFormatter
+
+            /*
+             * El serializador Soap no admite la serialización de tipos genéricos: System.Collections.Generic.List`1[System.Int32
+             */ 
+            // - SOAPFormatter
+            #region SOAPFormatter
+            linea1 += ";";
+            linea2 += ";";
+/*
+            Console.WriteLine("Serialización con SOAPFormatter");
+
+            FileStream fs3 = new FileStream("DataFile.soap", FileMode.Create);
+            fs3.Close();
+            SoapFormatter soapFormatter = new SoapFormatter();
+            try
+            {
+                long tiempoTotal = 0;
+                for (int i = 0; i < veces; i++)
+                {
+                    fs3 = new FileStream("DataFile.soap", FileMode.Create);
+                    watch.Restart(); // Comienza a contar el tiempo
+                    soapFormatter.Serialize(fs3, c1);
+                    watch.Stop();
+                    tiempoTotal += watch.ElapsedMilliseconds;
+                    fs3.Close();
+                }
+                Console.WriteLine("Codificación Clase08List con SOAPFormatter: " + tiempoTotal + " milisegundos");
+                linea1 += tiempoTotal + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+
+            fs3 = new FileStream("DataFile.soap", FileMode.Open);
+            try
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    c1decoded = (Clase08List)soapFormatter.Deserialize(fs3);
+                    fs3.Close();
+                    fs3 = new FileStream("DataFile.soap", FileMode.Open);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase08List con SOAPFormatter: " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs3.Close();
+            }
+*/ 
+            #endregion SOAPFormatter
+
+            // DataContractSerializer
+            #region DataContractSerializer
+            Console.WriteLine("Serialización con DataContractSerializer");
+
+            MemoryStream stream1 = new MemoryStream();
+            MemoryStream stream2 = new MemoryStream();
+            //Serialize the Record object to a memory stream using DataContractSerializer.
+            DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase08List));
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                DCserializer.WriteObject(stream1, c1);
+                watch.Stop();
+                if (i == 0)
+                {
+                    stream1.Position = 0;
+                    stream1.CopyTo(stream2, (int)stream1.Length);
+                }
+            }
+            Console.WriteLine("Codificación Clase08List con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                stream2.Position = 0;
+                //Deserialize the Record object back into a new record object.
+                c1decoded = (Clase08List)DCserializer.ReadObject(stream2);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase08List con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+            #endregion DataContractSerializer
+
+            /*
+             * Falla con un List de Object (List<Clase08List.clase>)
+             */ 
+            // SharpSerializer (XML)
+            #region SharpSerializer
+            linea1 += ";";
+            linea2 += ";";
+/*
+            Console.WriteLine("Serialización con SharpSerializer (XML)");
+
+            var SharpSerializer = new SharpSerializer();
+            for (int i = 0; i < veces; i++)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                SharpSerializer.Serialize(c1, "SharpSerializer.xml");
+                watch.Stop();
+            }
+            Console.WriteLine("Codificación Clase08List con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase08List)SharpSerializer.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase08List con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+*/ 
+            #endregion SharpSerializer
+
+            // SharpSerializer (Binario)
+            #region SharpSerializer
+            linea1 += ";";
+            linea2 += ";";
+/*
+            Console.WriteLine("Serialización con SharpSerializer (Binario)");
+
+            var SharpSerializer2 = new SharpSerializer(true);
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación Clase08List con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                c1decoded = (Clase08List)SharpSerializer2.Deserialize("SharpSerializer.xml");
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase08List con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+ */ 
+            #endregion SharpSerializer
+
+            // Protobuf
+            #region Protobuf
+//            linea1 += ";";
+//            linea2 += ";";
+
+
+            Console.WriteLine("Serialización con Protobuf");
+
+            Stream protoStream = new MemoryStream();
+            Stream protoStream2 = new MemoryStream();
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                ProtoBuf.Serializer.Serialize(protoStream, c1);
+                if (i == 0)
+                {
+                    protoStream2.Position = 0;
+                    stream1.CopyTo(protoStream2, (int)protoStream.Length);
+                }
+
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación Clase08List con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                protoStream.Position = 0;
+                c1decoded = ProtoBuf.Serializer.Deserialize<Clase08List>(protoStream2);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase08List con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
+
+            #endregion Protobuf
+
+            // - Nuestro proyecto en CSV
+            #region NuestroProyecto(CSV)
+/*
+            Console.WriteLine("Serialización con nuestro proyecto (CSV)");
+
+            // Generando el serializador a partir del tipo
+            Generador g1 = new Generador(c1.GetType());
+            dynamic serializador1 = g1.getSerializer();
+            string str = "";
+            if (serializador1 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str = serializador1.codificar(c1);
+                    //                    strSerializado = Clase07ClaseConTodoCodec.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase08List con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase08List();
+
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador1.decodificar(str, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase08List con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea2 += watch.ElapsedMilliseconds + ";";
+            }
+            else
+            {
+                Console.WriteLine("Error generando el serializador");
+            }
+ */ 
+            #endregion NuestroProyecto(CSV)
+
+            // - Nuestro proyecto en XML
+            #region NuestroProyecto(XML)
+            Console.WriteLine("Serialización con nuestro proyecto en XML");
+
+            // Generando el serializador a partir del tipo
+            Generador g2 = new Generador(c1.GetType(), "XML");
+            dynamic serializador2 = g2.getSerializer();
+            string str2 = "";
+
+            if (serializador2 != null)
+            {
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    str2 = serializador2.codificar(c1);
+                }
+                watch.Stop();
+                Console.WriteLine("Codificación Clase08List con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                linea1 += watch.ElapsedMilliseconds + ";";
+
+                c1decoded = new Clase08List();
+                watch.Restart(); // Comienza a contar el tiempo
+                for (int i = 0; i < veces; i++)
+                {
+                    serializador2.decodificar(str2, ref c1decoded);
+                }
+                watch.Stop();
+                Console.WriteLine("Decodificación Clase08List con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
                 linea2 += watch.ElapsedMilliseconds + ";";
             }
             else

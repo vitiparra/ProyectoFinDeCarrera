@@ -19,8 +19,8 @@ namespace Fase04
             string str = "";
 
             Fase02.Clase01Basica c1 = new Clase01Basica();
-            c1.var1 = 2;
-            c1.var2 = "Hola";
+//            c1.var1 = 2;
+//            c1.var2 = "Hola";
 
             Fase02.Clase03Array c3 = new Clase03Array();
             c3.var1 = new int[1];

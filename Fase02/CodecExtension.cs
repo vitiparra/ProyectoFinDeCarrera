@@ -17,7 +17,8 @@ namespace CodecExtensions
             if(obj.GetType() == typeof(Fase02.Clase01Basica))
             {
                 Fase02.Clase01Basica c = (Fase02.Clase01Basica)obj;
-                return string.Format("{0},{1}", c.var1, c.var2);
+                return "";
+//                return string.Format("{0},{1}", c.var1, c.var2);
             }
             else if (obj.GetType() == typeof(Fase02.Clase02ArrayNormal))
             {
@@ -99,10 +100,10 @@ namespace CodecExtensions
                     v1 = 0;
                     v2 = "";
                 }
-
+                /*
                 c.var1 = v1;
                 c.var2 = v2;
-
+                */
                 obj = c;
             }
             else if (tipo == typeof(Fase02.Clase02ArrayNormal))

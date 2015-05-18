@@ -51,6 +51,10 @@
       <Project>{1b63ed64-15bd-4dbf-9823-f8bfdd14659f}</Project>
       <Name>Fase02</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fase06\Fase06.csproj">
+      <Project>{9b78b66c-cc8c-475a-ac22-87fa892ac37c}</Project>
+      <Name>Fase06</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

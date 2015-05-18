@@ -10,7 +10,8 @@ namespace Fase02
     {
         public String encode(ref Clase01Basica c)
         {
-            return string.Format("{0},{1}", c.var1, c.var2);
+            return "";
+//            return string.Format("{0},{1}", c.var1, c.var2);
         }
     }
 }

@@ -4,16 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ProtoBuf;
+
 namespace Fase02
 {
+    [ProtoContract]
+    [Serializable]
     public class ClaseBase
     {
+        [ProtoMember(1)]
         public int var1 { get; set; }
+
+        [ProtoMember(2)]
         public string var2 { get; set; }
     }
 
-    public class Clase06ClaseDerivada: ClaseBase
+    [ProtoContract]
+    [Serializable]
+    public class Clase06ClaseDerivada : ClaseBase
     {
+        [ProtoMember(1)]
         public int var3 { get; set; }
 
 

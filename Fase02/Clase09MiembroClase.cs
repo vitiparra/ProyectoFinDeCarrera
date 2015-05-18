@@ -12,9 +12,9 @@ namespace Fase02
         public Clase09MiembroClase()
         {
             Clase01Basica c1 = new Clase01Basica();
-            c1.var1 = 1;
+/*            c1.var1 = 1;
             c1.var2 = "hola";
             objClase01 = c1;
-        }
+*/        }
     }
 }

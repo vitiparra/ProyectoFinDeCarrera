@@ -27,7 +27,8 @@ namespace Fase02
             // serializo obj.var1 como entero
             // serializo obj.var2 como string
     //        throw new System.NotImplementedException();
-            return string.Format("{0},{1}", obj.var1, obj.var2);
+            return "";
+//            return string.Format("{0},{1}", obj.var1, obj.var2);
         }
         public static void decode(ref Clase01Basica c, String s)
         {
@@ -43,9 +44,10 @@ namespace Fase02
                 v1 = Convert.ToInt16(parametros[0]);
                 v2 = parametros[1];
             }
-
+            /*
             c.var1 = v1;
             c.var2 = v2;
+             */ 
         }
     }
     
