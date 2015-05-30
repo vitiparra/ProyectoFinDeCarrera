@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Polenter.SharpSerializer">
-      <HintPath>..\sharpSerializerDll\Polenter.SharpSerializer.dll</HintPath>
+      <HintPath>sharpSerializerDll\Polenter.SharpSerializer.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net">
       <HintPath>.\protobuf-net.dll</HintPath>
