@@ -220,17 +220,17 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase01Basica));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c1);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase01Basica con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -252,12 +252,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c1, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase01Basica con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -279,7 +279,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c1, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase01Basica con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -288,7 +288,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                c1decoded = (Clase01Basica)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                c1decoded = (Clase01Basica)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase01Basica con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -460,10 +460,10 @@ namespace Fase07
             // - XMLSerializer
             #region XMLSerializer
             FileStream fs;
+/*
             linea1 += ";";
             linea2 += ";";
-/*
-
+*/
             XmlSerializer serializer = new XmlSerializer(typeof(Clase02ArrayNormal));
             TextWriter writer = new StreamWriter("fichero.txt");
 
@@ -477,7 +477,7 @@ namespace Fase07
 
             // Generamos el fichero de nuevo, con una única serialización
             writer = new StreamWriter("fichero.txt");
-            serializer.Serialize(writer, c1);
+            serializer.Serialize(writer, c);
             writer.Close();
 
             Console.WriteLine("Codificación Clase02ArrayNormal con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -492,8 +492,7 @@ namespace Fase07
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase02ArrayNormal con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
-            linea2 += watch.ElapsedMilliseconds + ";";
-*/ 
+            linea2 += watch.ElapsedMilliseconds + ";"; 
             #endregion
 
             // - BinaryFormatter
@@ -617,17 +616,17 @@ namespace Fase07
 
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase03Array));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase02ArrayNormal con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -650,12 +649,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase02ArrayNormal con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -677,7 +676,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase02ArrayNormal con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -686,7 +685,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                decoded = (Clase02ArrayNormal)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                decoded = (Clase02ArrayNormal)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase02ArrayNormal con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -908,7 +907,7 @@ namespace Fase07
 
             // Generamos el fichero de nuevo, con una única serialización
             writer = new StreamWriter("fichero.txt");
-            serializer.Serialize(writer, c1);
+            serializer.Serialize(writer, c);
             writer.Close();
 
             Console.WriteLine("Codificación Clase01Basica con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
@@ -924,7 +923,7 @@ namespace Fase07
             watch.Stop();
             Console.WriteLine("Decodificación Clase01Basica con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea2 += watch.ElapsedMilliseconds + ";";
-*/ 
+*/
             #endregion
 
             // - BinaryFormatter
@@ -945,6 +944,7 @@ namespace Fase07
                     tiempoTotal += watch.ElapsedMilliseconds;
                     fs.Close();
                 }
+                watch.Stop();
                 Console.WriteLine("Codificación Clase01Basica con BinaryFormatter: " + tiempoTotal + " milisegundos");
                 linea1 += tiempoTotal + ";";
             }
@@ -984,7 +984,6 @@ namespace Fase07
             #region SOAPFormatter
             linea1 += ";";
             linea2 += ";";
-
 /*
             Console.WriteLine("Serialización con SOAPFormatter");
 
@@ -1044,7 +1043,6 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             linea1 += ";";
             linea2 += ";";
-
 /*
             Console.WriteLine("Serialización con DataContractSerializer");
 
@@ -1083,12 +1081,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase01Basica con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -1110,7 +1108,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase01Basica con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -1119,7 +1117,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                decoded = (Clase03Array)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                decoded = (Clase03Array)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase01Basica con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -1405,17 +1403,17 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase04Struct));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase04Struct con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -1437,12 +1435,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase04Struct con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -1464,7 +1462,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase04Struct con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -1473,7 +1471,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                cdecoded = (Clase04Struct)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                cdecoded = (Clase04Struct)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase04Struct con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -1760,17 +1758,17 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase05Clase));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c1);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase05Clase con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -1792,12 +1790,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c1, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase05Clase con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -1819,7 +1817,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c1, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase05Clase con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -1828,7 +1826,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                c1decoded = (Clase05Clase)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                c1decoded = (Clase05Clase)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase05Clase con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -2115,17 +2113,17 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase06ClaseDerivada));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c1);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase06ClaseDerivada con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -2147,12 +2145,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c1, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase06ClaseDerivada con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -2174,7 +2172,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c1, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase06ClaseDerivada con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -2183,7 +2181,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                c1decoded = (Clase06ClaseDerivada)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                c1decoded = (Clase06ClaseDerivada)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase06ClaseDerivada con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -2192,39 +2190,39 @@ namespace Fase07
 
             // Protobuf
             #region Protobuf
+            /*
             linea1 += ";";
             linea2 += ";";
-            /*
-
-                        Console.WriteLine("Serialización con Protobuf");
-
-                        Stream protoStream = new MemoryStream();
-                        Stream protoStream2 = new MemoryStream();
-                        watch.Restart(); // Comienza a contar el tiempo
-                        for (int i = 0; i < veces; i++)
-                        {
-                            ProtoBuf.Serializer.Serialize(protoStream, c1);
-                            if (i == 0)
-                            {
-                                protoStream2.Position = 0;
-                                stream1.CopyTo(protoStream2, (int)protoStream.Length);
-                            }
-
-                        }
-                        watch.Stop();
-                        Console.WriteLine("Codificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
-                        linea1 += watch.ElapsedMilliseconds + ";";
-
-                        watch.Restart(); // Comienza a contar el tiempo
-                        for (int i = 0; i < veces; i++)
-                        {
-                            protoStream.Position = 0;
-                            c1decoded = ProtoBuf.Serializer.Deserialize<Clase06ClaseDerivada>(protoStream2);
-                        }
-                        watch.Stop();
-                        Console.WriteLine("Decodificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
-                        linea2 += watch.ElapsedMilliseconds + ";";
             */
+
+            Console.WriteLine("Serialización con Protobuf");
+
+            Stream protoStream = new MemoryStream();
+            Stream protoStream2 = new MemoryStream();
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                ProtoBuf.Serializer.Serialize(protoStream, c1);
+                if (i == 0)
+                {
+                    protoStream2.Position = 0;
+                    stream1.CopyTo(protoStream2, (int)protoStream.Length);
+                }
+
+            }
+            watch.Stop();
+            Console.WriteLine("Codificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea1 += watch.ElapsedMilliseconds + ";";
+
+            watch.Restart(); // Comienza a contar el tiempo
+            for (int i = 0; i < veces; i++)
+            {
+                protoStream.Position = 0;
+                c1decoded = ProtoBuf.Serializer.Deserialize<Clase06ClaseDerivada>(protoStream2);
+            }
+            watch.Stop();
+            Console.WriteLine("Decodificación Clase06ClaseDerivada con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
+            linea2 += watch.ElapsedMilliseconds + ";";
             #endregion Protobuf
 
             // - Nuestro proyecto en CSV
@@ -2321,11 +2319,12 @@ namespace Fase07
 
             // - XMLSerializer
             #region XMLSerializer
+            /*
             linea1 += ";";
             linea2 += ";";
-            /*
+            */
 
-                        XmlSerializer serializer = new XmlSerializer(typeof(Clase07ClaseConTodo));
+            XmlSerializer serializer = new XmlSerializer(typeof(Clase07ClaseConTodo));
                         TextWriter writer = new StreamWriter("fichero.txt");
 
                         watch.Restart(); // Comienza a contar el tiempo
@@ -2354,7 +2353,6 @@ namespace Fase07
                         watch.Stop();
                         Console.WriteLine("Decodificación Clase07ClaseConTodo con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
                         linea2 += watch.ElapsedMilliseconds + ";";
-            */
             #endregion
 
             // - BinaryFormatter
@@ -2471,17 +2469,17 @@ namespace Fase07
             MemoryStream stream2 = new MemoryStream();
             //Serialize the Record object to a memory stream using DataContractSerializer.
             DataContractSerializer DCserializer = new DataContractSerializer(typeof(Clase07ClaseConTodo));
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 DCserializer.WriteObject(stream1, c1);
-                watch.Stop();
                 if (i == 0)
                 {
                     stream1.Position = 0;
                     stream1.CopyTo(stream2, (int)stream1.Length);
                 }
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase07ClaseConTodo con DataContractSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -2503,12 +2501,12 @@ namespace Fase07
             Console.WriteLine("Serialización con SharpSerializer (XML)");
 
             var SharpSerializer = new SharpSerializer();
+            watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                watch.Restart(); // Comienza a contar el tiempo
                 SharpSerializer.Serialize(c1, "SharpSerializer.xml");
-                watch.Stop();
             }
+            watch.Stop();
             Console.WriteLine("Codificación Clase07ClaseConTodo con SharpSerializer (XML): " + watch.ElapsedMilliseconds + " milisegundos");
             linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -2530,7 +2528,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                SharpSerializer2.Serialize(c1, "SharpSerializer.xml");
+                SharpSerializer2.Serialize(c1, "SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Codificación Clase07ClaseConTodo con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -2539,7 +2537,7 @@ namespace Fase07
             watch.Restart(); // Comienza a contar el tiempo
             for (int i = 0; i < veces; i++)
             {
-                c1decoded = (Clase07ClaseConTodo)SharpSerializer2.Deserialize("SharpSerializer.xml");
+                c1decoded = (Clase07ClaseConTodo)SharpSerializer2.Deserialize("SharpSerializer.dat");
             }
             watch.Stop();
             Console.WriteLine("Decodificación Clase07ClaseConTodo con SharpSerializer (Binario): " + watch.ElapsedMilliseconds + " milisegundos");
@@ -2548,11 +2546,12 @@ namespace Fase07
 
             // Protobuf
             #region Protobuf
+            /*
             linea1 += ";";
             linea2 += ";";
-            /*
+            */
 
-                        Console.WriteLine("Serialización con Protobuf");
+            Console.WriteLine("Serialización con Protobuf");
 
                         Stream protoStream = new MemoryStream();
                         Stream protoStream2 = new MemoryStream();
@@ -2580,7 +2579,6 @@ namespace Fase07
                         watch.Stop();
                         Console.WriteLine("Decodificación Clase07ClaseConTodo con Protobuf: " + watch.ElapsedMilliseconds + " milisegundos");
                         linea2 += watch.ElapsedMilliseconds + ";";
-            */
             #endregion Protobuf
 
             // - Nuestro proyecto en CSV
@@ -2601,6 +2599,7 @@ namespace Fase07
                 }
                 watch.Stop();
                 Console.WriteLine("Codificación Clase07ClaseConTodo con nuestro proyecto (CSV): " + watch.ElapsedMilliseconds + " milisegundos");
+                Console.WriteLine("Texto codificado (CSV): " + str);
                 linea1 += watch.ElapsedMilliseconds + ";";
 
                 c1decoded = new Clase07ClaseConTodo();
@@ -2644,6 +2643,7 @@ namespace Fase07
                 }
                 watch.Stop();
                 Console.WriteLine("Codificación Clase07ClaseConTodo con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
+                Console.WriteLine("Texto codificado (XML): " + str);
                 linea1 += watch.ElapsedMilliseconds + ";";
 
                 c1decoded = new Clase07ClaseConTodo();

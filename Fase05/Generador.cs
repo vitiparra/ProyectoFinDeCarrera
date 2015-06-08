@@ -199,12 +199,7 @@ namespace Serializer
             strEncode += @"
             StringBuilder texto = new StringBuilder(""" + abrir("elementos") + "\");";
 
-            switch (this.tipoDeCodificacion) 
-            {
-                // Aquí vendrán todas las modalidades de codificación (JSON, CSV, Binary, etc.)
-                case tiposDeCodificacion.XML:
-                default:
-                    strDecode += @"
+            strDecode += @"
             XmlDocument xml = new XmlDocument();
             /*
              * Aquí va el control de errores del documento XML
@@ -216,8 +211,6 @@ namespace Serializer
             Console.WriteLine(""4"");
             XmlNodeReader nr = new XmlNodeReader(nodoPrincipal);
             Console.WriteLine(""5"");";
-                    break;
-            }
 
             foreach (MemberInfo miembro in miembros)
             {

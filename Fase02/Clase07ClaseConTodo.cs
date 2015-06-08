@@ -41,11 +41,9 @@ namespace Fase02
         [ProtoMember(4)]
         public int[] publicArrayInt { get; set; }
 
-        [ProtoMember(5)]
         [NonSerialized]
         public int[,] publicArray2DInt;
 
-        [ProtoMember(6)]
         [NonSerialized]
         public int[][] publicArrayMatrizEscalonadaInt;
 
