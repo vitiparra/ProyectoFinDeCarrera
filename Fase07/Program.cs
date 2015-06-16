@@ -379,6 +379,7 @@ namespace Fase07
                     str = serializador1.codificar(c1);
                 }
                 watch.Stop();
+                Console.WriteLine(str);
                 Console.WriteLine("Codificación Clase01Basica con nuestro proyecto (XML): " + watch.ElapsedMilliseconds + " milisegundos");
                 linea1 += watch.ElapsedMilliseconds + ";";
 
@@ -2319,11 +2320,10 @@ namespace Fase07
 
             // - XMLSerializer
             #region XMLSerializer
-            /*
             linea1 += ";";
             linea2 += ";";
-            */
 
+            /*
             XmlSerializer serializer = new XmlSerializer(typeof(Clase07ClaseConTodo));
                         TextWriter writer = new StreamWriter("fichero.txt");
 
@@ -2353,6 +2353,7 @@ namespace Fase07
                         watch.Stop();
                         Console.WriteLine("Decodificación Clase07ClaseConTodo con XMLSerializer: " + watch.ElapsedMilliseconds + " milisegundos");
                         linea2 += watch.ElapsedMilliseconds + ";";
+            */
             #endregion
 
             // - BinaryFormatter
