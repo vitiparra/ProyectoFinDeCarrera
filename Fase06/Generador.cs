@@ -67,7 +67,7 @@ namespace Fase06
             // TODO Identificar a partir de un atributo del tipo si hay que codificar de otra manera
         }
 
-        // Alias de generateSerializer
+        // Alias de getSerializer
         private dynamic crearSerializador()
         {
             return this.getSerializer();
@@ -78,8 +78,6 @@ namespace Fase06
          */
         public dynamic getSerializer()
         {
-            dynamic serializador = null;
-
             // 1º Generar el código de la clase. Se guarda en strCodigo
             this.generateSerializer();
             #region mostrarCodigo
@@ -95,7 +93,7 @@ namespace Fase06
  
             #endregion
             // 2º Compilar e instanciar la clase serializador
-            serializador = this.compile(this.tipoInicial);
+            dynamic serializador = this.compile(this.tipoInicial);
             return serializador;
         }
 
@@ -116,7 +114,7 @@ namespace Fase06
                     this.tipo = par.Key;
 
                     // Generar los métodos encode y decode (se hace a la vez)
-                    this.generateEncodeAndDecodeMethods();
+                    this.generateClass();
                 }
 
                 // Se cierra la clase en cuestión (puede haber varias)
@@ -151,7 +149,7 @@ namespace Serializer
     }"; // Cierre de namespace
         }
 
-        private void generateEncodeAndDecodeMethods()
+        private void generateClass()
         {
             // Cabecera de la clase
             strCodigo += @"
